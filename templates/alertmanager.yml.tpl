@@ -1,0 +1,9 @@
+# ${managed_marker}
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: default
+
+receivers:
+  - name: default
