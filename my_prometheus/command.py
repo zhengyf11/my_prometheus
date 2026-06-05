@@ -46,6 +46,13 @@ def run(ctx, cmd, check=True, capture=False, input_text=None, secrets=None, time
     stderr = subprocess.PIPE if capture else None
     stdin = subprocess.PIPE if input_text is not None else None
     try:
+        env = os.environ.copy()
+        proxy = getattr(ctx, "proxy", None)
+        if proxy:
+            env.setdefault("HTTP_PROXY", proxy)
+            env.setdefault("HTTPS_PROXY", proxy)
+            env.setdefault("http_proxy", proxy)
+            env.setdefault("https_proxy", proxy)
         proc = subprocess.run(
             cmd,
             shell=False,
@@ -55,7 +62,7 @@ def run(ctx, cmd, check=True, capture=False, input_text=None, secrets=None, time
             stderr=stderr,
             universal_newlines=True,
             input=input_text,
-            env=os.environ.copy(),
+            env=env,
             timeout=timeout if timeout is not None else ctx.command_timeout,
         )
     except subprocess.TimeoutExpired:

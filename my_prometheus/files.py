@@ -45,7 +45,16 @@ def backup_file(path):
     return backup
 
 
-def write_managed_file(ctx, path, content, mode=0o644, owner=None, group=None, marker=True):
+def write_managed_file(
+    ctx,
+    path,
+    content,
+    mode=0o644,
+    owner=None,
+    group=None,
+    marker=True,
+    preserve_existing=False,
+):
     path = Path(path)
     if marker and MANAGED_MARKER not in content:
         if content.startswith("#!"):
@@ -65,6 +74,15 @@ def write_managed_file(ctx, path, content, mode=0o644, owner=None, group=None, m
         if old == content:
             changed = False
         else:
+            if marker and MANAGED_MARKER not in old and not ctx.force:
+                raise RuntimeError(
+                    "{0} exists and is not managed by this installer; rerun with --force to replace it after backup".format(
+                        path
+                    )
+                )
+            if preserve_existing and not ctx.force:
+                LOG.info("preserving existing %s; use --force to regenerate it", path)
+                return False
             backup = backup_file(path)
             LOG.info("backed up %s to %s", path, backup)
     if changed:
@@ -96,6 +114,8 @@ def copy_file(ctx, source, dest, mode=0o644, owner=None, group=None):
     if dest.exists() and filecmp.cmp(str(source), str(dest), shallow=False):
         changed = False
     elif dest.exists():
+        if not ctx.force:
+            raise RuntimeError("{0} exists and differs; rerun with --force to replace it after backup".format(dest))
         backup = backup_file(dest)
         LOG.info("backed up %s to %s", dest, backup)
     if changed:

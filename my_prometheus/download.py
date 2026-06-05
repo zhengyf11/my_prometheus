@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import os
 import shutil
@@ -22,13 +23,40 @@ def version_number(version):
     return value[1:] if value.startswith("v") else value
 
 
-def download_file(ctx, url, dest):
+def open_url(ctx, request, timeout):
+    if isinstance(request, str):
+        request = urllib.request.Request(request, headers={"User-Agent": "my_prometheus-installer"})
+    if getattr(ctx, "proxy", None):
+        proxy_handler = urllib.request.ProxyHandler({"http": ctx.proxy, "https": ctx.proxy})
+        opener = urllib.request.build_opener(proxy_handler)
+        return opener.open(request, timeout=timeout)
+    return urllib.request.urlopen(request, timeout=timeout)
+
+
+def fetch_url_bytes(ctx, url):
+    attempts = max(1, int(ctx.download_retries))
+    timeout = max(30, int(ctx.download_timeout))
+    last_error = None
+    for attempt in range(1, attempts + 1):
+        LOG.info("fetching %s (attempt %s/%s)", url, attempt, attempts)
+        try:
+            with open_url(ctx, url, timeout) as response:
+                return response.read()
+        except Exception as exc:
+            last_error = exc
+            if attempt < attempts:
+                time.sleep(min(10, attempt * 2))
+    raise RuntimeError("failed to fetch {0}: {1}".format(url, last_error))
+
+
+def download_file(ctx, url, dest, sha256=None):
     dest = Path(dest)
     ensure_dir(ctx, dest.parent)
     if dest.exists() and dest.stat().st_size > 0:
         temp = dest.with_name(dest.name + ".tmp")
         if temp.exists() and not ctx.dry_run:
             temp.unlink()
+        verify_sha256(ctx, dest, sha256)
         LOG.info("using cached download: %s", dest)
         return dest
     if ctx.dry_run:
@@ -42,9 +70,10 @@ def download_file(ctx, url, dest):
         LOG.info("downloading %s (attempt %s/%s)", url, attempt, attempts)
         req = urllib.request.Request(url, headers={"User-Agent": "my_prometheus-installer"})
         try:
-            with urllib.request.urlopen(req, timeout=timeout) as response:
+            with open_url(ctx, req, timeout) as response:
                 with open(str(temp), "wb") as handle:
                     shutil.copyfileobj(response, handle)
+            verify_sha256(ctx, temp, sha256)
             os.replace(str(temp), str(dest))
             return dest
         except Exception as exc:
@@ -59,6 +88,76 @@ def download_file(ctx, url, dest):
             url, attempts, last_error, dest
         )
     )
+
+
+def load_checksum_map(ctx, project, version):
+    if not ctx.verify_checksum:
+        return {}
+    if ctx.checksum_file:
+        checksum_path = Path(ctx.checksum_file)
+        if not checksum_path.exists():
+            raise RuntimeError("checksum file does not exist: {0}".format(checksum_path))
+        with open(str(checksum_path), "r") as handle:
+            return parse_checksum_text(handle.read())
+    url = github_release_tar_url(project, version, "sha256sums.txt")
+    return parse_checksum_text(fetch_url_bytes(ctx, url).decode("utf-8", "replace"))
+
+
+def release_asset_sha256(ctx, project, version, asset_name):
+    if not ctx.verify_checksum:
+        return None
+    checksums = load_checksum_map(ctx, project, version)
+    if asset_name not in checksums:
+        raise RuntimeError("checksum for {0} was not found".format(asset_name))
+    return checksums[asset_name]
+
+
+def parse_checksum_text(text):
+    checksums = {}
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        parts = stripped.split()
+        if len(parts) < 2:
+            continue
+        digest = parts[0].strip()
+        if not is_sha256_digest(digest):
+            continue
+        filename = parts[1].strip().lstrip("*")
+        checksums[filename] = digest
+    return checksums
+
+
+def is_sha256_digest(value):
+    if len(str(value)) != 64:
+        return False
+    try:
+        int(str(value), 16)
+    except ValueError:
+        return False
+    return True
+
+
+def file_sha256(path):
+    digest = hashlib.sha256()
+    with open(str(path), "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def verify_sha256(ctx, path, expected):
+    if not ctx.verify_checksum or not expected:
+        return
+    if not is_sha256_digest(expected):
+        raise RuntimeError("invalid sha256 checksum for {0}: {1}".format(path, expected))
+    actual = file_sha256(path)
+    if actual.lower() != expected.lower():
+        raise RuntimeError(
+            "checksum mismatch for {0}: expected {1}, got {2}".format(path, expected, actual)
+        )
+    LOG.info("verified checksum: %s", path)
 
 
 def extract_tarball(ctx, tarball, dest_dir):

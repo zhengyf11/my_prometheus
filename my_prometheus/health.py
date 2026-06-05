@@ -60,6 +60,9 @@ def check_prometheus_targets(ctx):
 
 
 def check_grafana_datasource(ctx):
+    if not ctx.grafana_admin_password:
+        LOG.info("Grafana datasource auth check skipped; admin password is unchanged and not known")
+        return
     token = "{0}:{1}".format(ctx.grafana_admin_user, ctx.grafana_admin_password).encode("utf-8")
     headers = {
         "Authorization": "Basic " + base64.b64encode(token).decode("ascii"),
@@ -104,7 +107,12 @@ def print_summary(ctx):
     if ctx.with_alertmanager:
         print("Alertmanager: http://{0}:{1}".format(host, ctx.alertmanager_port))
     print("Grafana user: {0}".format(ctx.grafana_admin_user))
-    print("Grafana password: {0}".format(ctx.grafana_admin_password))
+    if ctx.grafana_password_changed:
+        print("Grafana password: {0}".format(ctx.grafana_admin_password))
+        if ctx.generated_grafana_password:
+            print("Grafana generated credential file: {0}".format(ctx.grafana_credentials_file))
+    else:
+        print("Grafana password: unchanged; use --reset-grafana-admin-password to reset it")
     print("Config: {0}".format(ctx.config_dir / "prometheus.yml"))
     print("Data: {0}".format(ctx.prometheus_data_dir))
     print("Logs: journalctl -u {0}".format(" -u ".join(ctx.service_list())))

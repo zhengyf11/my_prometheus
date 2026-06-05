@@ -1,6 +1,7 @@
 import argparse
 import logging
 
+from . import __version__
 from .context import (
     DEFAULT_ALERTMANAGER_VERSION,
     DEFAULT_NODE_EXPORTER_VERSION,
@@ -37,6 +38,7 @@ def build_parser():
     parser = argparse.ArgumentParser(
         description="Install Prometheus, Node Exporter, Grafana, and optional Alertmanager."
     )
+    parser.add_argument("--version", action="version", version="my_prometheus {0}".format(__version__))
     parser.add_argument(
         "--prometheus-version",
         default=env_default("PROMETHEUS_VERSION", DEFAULT_PROMETHEUS_VERSION),
@@ -62,7 +64,16 @@ def build_parser():
         "--grafana-admin-password",
         default=env_default("GRAFANA_ADMIN_PASSWORD", None),
     )
-    parser.add_argument("--listen-address", default=env_default("LISTEN_ADDRESS", "0.0.0.0"))
+    parser.add_argument("--reset-grafana-admin-password", action="store_true")
+    parser.add_argument(
+        "--listen-address",
+        default=env_default("LISTEN_ADDRESS", "0.0.0.0"),
+        help="Compatibility default for Prometheus, Grafana, and Alertmanager listen addresses.",
+    )
+    parser.add_argument("--prometheus-listen-address", default=env_default("PROMETHEUS_LISTEN_ADDRESS", None))
+    parser.add_argument("--node-exporter-listen-address", default=env_default("NODE_EXPORTER_LISTEN_ADDRESS", "127.0.0.1"))
+    parser.add_argument("--grafana-listen-address", default=env_default("GRAFANA_LISTEN_ADDRESS", None))
+    parser.add_argument("--alertmanager-listen-address", default=env_default("ALERTMANAGER_LISTEN_ADDRESS", None))
     parser.add_argument("--prometheus-port", type=int, default=int(env_default("PROMETHEUS_PORT", "9090")))
     parser.add_argument("--node-exporter-port", type=int, default=int(env_default("NODE_EXPORTER_PORT", "9100")))
     parser.add_argument("--grafana-port", type=int, default=int(env_default("GRAFANA_PORT", "3000")))
@@ -75,11 +86,16 @@ def build_parser():
     parser.add_argument("--state-dir", default=env_default("STATE_DIR", "/var/lib/my_prometheus"))
     parser.add_argument("--bin-dir", default=env_default("BIN_DIR", "/usr/local/bin"))
     parser.add_argument("--with-alertmanager", type=parse_bool, default=env_bool("WITH_ALERTMANAGER", False))
+    parser.add_argument("--install-alertmanager", action="store_true")
     parser.add_argument("--open-firewall", type=parse_bool, default=env_bool("OPEN_FIREWALL", True))
+    parser.add_argument("--skip-firewall", action="store_true")
     parser.add_argument("--skip-network-check", action="store_true")
     parser.add_argument("--download-timeout", type=int, default=int(env_default("DOWNLOAD_TIMEOUT", "300")))
     parser.add_argument("--download-retries", type=int, default=int(env_default("DOWNLOAD_RETRIES", "3")))
     parser.add_argument("--command-timeout", type=int, default=int(env_default("COMMAND_TIMEOUT", "600")))
+    parser.add_argument("--checksum-file", default=env_default("CHECKSUM_FILE", None))
+    parser.add_argument("--no-verify-checksum", action="store_true")
+    parser.add_argument("--proxy", default=env_default("PROXY", None))
     parser.add_argument("--force", action="store_true", help="Replace unrelated files after backing them up.")
     parser.add_argument("--yes", "-y", action="store_true", help="Run without confirmation.")
     parser.add_argument("--dry-run", action="store_true", help="Print actions without changing the system.")
@@ -107,6 +123,8 @@ def confirm(ctx):
 def main(argv=None):
     parser = build_parser()
     args = parser.parse_args(argv)
+    if args.grafana_admin_user != "admin":
+        parser.error("--grafana-admin-user currently supports only 'admin'")
     configure_logging(args.verbose)
     ctx = InstallContext(args)
 
@@ -128,6 +146,8 @@ def main(argv=None):
         return 130
     except Exception as exc:
         LOG.error("%s", exc)
+        if getattr(ctx, "grafana_password_changed", False):
+            LOG.error("Grafana admin password was changed during this run: %s", ctx.grafana_admin_password)
         if ctx.verbose:
             LOG.exception("installer failed")
         return 1
