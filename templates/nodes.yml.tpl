@@ -1,5 +1,5 @@
 # ${managed_marker}
 - targets:
-    - localhost:${node_exporter_port}
+    - ${node_exporter_target}
   labels:
     role: local

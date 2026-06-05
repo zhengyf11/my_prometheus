@@ -10,12 +10,12 @@ scrape_configs:
   - job_name: prometheus
     static_configs:
       - targets:
-          - localhost:${prometheus_port}
+          - ${prometheus_target}
 
   - job_name: node_exporter
     static_configs:
       - targets:
-          - localhost:${node_exporter_port}
+          - ${node_exporter_target}
 
   - job_name: file_sd_nodes
     file_sd_configs:

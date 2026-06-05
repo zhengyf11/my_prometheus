@@ -1,13 +1,11 @@
 import logging
 import gzip
 import os
-import time
-import urllib.request
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from .command import command_exists, run
-from .download import download_file, version_number
+from .download import download_file, fetch_url_bytes, version_number, verify_sha256
 from .files import write_managed_file
 
 
@@ -61,42 +59,36 @@ sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 
 
 def install_grafana_package(ctx):
+    was_installed = is_grafana_installed(ctx)
     setup_grafana_repo(ctx)
     rpm_path = resolve_grafana_rpm(ctx)
     install_packages(ctx, [str(rpm_path)])
+    return was_installed
+
+
+def is_grafana_installed(ctx):
+    proc = run(ctx, ["rpm", "-q", "grafana"], check=False, capture=True)
+    return proc.returncode == 0
 
 
 def urlopen_bytes(ctx, url):
-    attempts = max(1, int(ctx.download_retries))
-    timeout = max(30, int(ctx.download_timeout))
-    last_error = None
-    for attempt in range(1, attempts + 1):
-        LOG.info("fetching %s (attempt %s/%s)", url, attempt, attempts)
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "my_prometheus-installer"})
-            with urllib.request.urlopen(req, timeout=timeout) as response:
-                return response.read()
-        except Exception as exc:
-            last_error = exc
-            if attempt < attempts:
-                time.sleep(min(10, attempt * 2))
-    raise RuntimeError("failed to fetch {0}: {1}".format(url, last_error))
+    return fetch_url_bytes(ctx, url)
 
 
 def resolve_grafana_rpm(ctx):
-    cached = find_cached_grafana_rpm(ctx)
-    if cached is not None:
-        return cached
-
     packages = load_grafana_packages(ctx)
     selected = select_grafana_package(ctx, packages)
+    cached = find_cached_grafana_rpm(ctx, selected)
+    if cached is not None:
+        verify_sha256(ctx, cached, selected.get("checksum"))
+        return cached
     href = selected["href"]
     filename = os.path.basename(href)
     url = GRAFANA_REPO_BASE + "/" + href.lstrip("/")
-    return download_file(ctx, url, ctx.download_dir / filename)
+    return download_file(ctx, url, ctx.download_dir / filename, sha256=selected.get("checksum"))
 
 
-def find_cached_grafana_rpm(ctx):
+def find_cached_grafana_rpm(ctx, selected=None):
     download_dir = Path(ctx.download_dir)
     if not download_dir.exists():
         return None
@@ -105,8 +97,11 @@ def find_cached_grafana_rpm(ctx):
     if getattr(ctx, "prometheus_arch", None):
         arch_tokens.append(ctx.prometheus_arch)
     candidates = []
+    selected_name = os.path.basename(selected["href"]) if selected else None
     for path in download_dir.glob("grafana-*.rpm"):
         name = path.name
+        if selected_name and name != selected_name:
+            continue
         if not any(token and token in name for token in arch_tokens):
             continue
         if requested != "latest" and "grafana-{0}-".format(requested) not in name:
@@ -114,6 +109,8 @@ def find_cached_grafana_rpm(ctx):
         candidates.append(path)
     for path in download_dir.glob("grafana_*.rpm"):
         name = path.name
+        if selected_name and name != selected_name:
+            continue
         if not any(token and token in name for token in arch_tokens):
             continue
         if requested != "latest" and "grafana_{0}_".format(requested) not in name:
@@ -157,6 +154,7 @@ def load_grafana_packages(ctx):
         version = package.find("common:version", ns)
         location = package.find("common:location", ns)
         time_node = package.find("common:time", ns)
+        checksum_node = package.find("common:checksum", ns)
         if version is None or location is None:
             continue
         packages.append(
@@ -166,6 +164,8 @@ def load_grafana_packages(ctx):
                 "epoch": version.get("epoch") or "0",
                 "href": location.get("href"),
                 "time": int(time_node.get("file", "0")) if time_node is not None else 0,
+                "checksum": text_of(checksum_node),
+                "checksum_type": checksum_node.get("type") if checksum_node is not None else None,
             }
         )
     if not packages:
@@ -190,9 +190,20 @@ def select_grafana_package(ctx, packages):
         for package in packages:
             full = "{0}-{1}".format(package["version"], package["release"])
             if requested in (package["version"], full):
+                ensure_supported_checksum(ctx, package)
                 LOG.info("selected Grafana RPM: %s-%s", package["version"], package["release"])
                 return package
         raise RuntimeError("Grafana version {0} was not found in {1}".format(requested, GRAFANA_REPO_BASE))
     selected = sorted(packages, key=lambda item: item["time"], reverse=True)[0]
+    ensure_supported_checksum(ctx, selected)
     LOG.info("selected latest Grafana RPM: %s-%s", selected["version"], selected["release"])
     return selected
+
+
+def ensure_supported_checksum(ctx, package):
+    if not ctx.verify_checksum:
+        return
+    if not package.get("checksum"):
+        raise RuntimeError("Grafana package checksum was not found in repo metadata")
+    if package.get("checksum_type") != "sha256":
+        raise RuntimeError("unsupported Grafana checksum type: {0}".format(package.get("checksum_type")))

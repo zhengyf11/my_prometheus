@@ -16,16 +16,22 @@ class InstallContext(object):
         self.alertmanager_version = args.alertmanager_version
         self.grafana_version = args.grafana_version
         self.grafana_admin_user = args.grafana_admin_user
-        self.grafana_admin_password = args.grafana_admin_password or generate_password()
-        self.generated_grafana_password = args.grafana_admin_password is None
+        self.grafana_admin_password = args.grafana_admin_password
+        self.generated_grafana_password = False
+        self.reset_grafana_admin_password = args.reset_grafana_admin_password
+        self.grafana_password_changed = False
         self.listen_address = args.listen_address
+        self.prometheus_listen_address = args.prometheus_listen_address or args.listen_address
+        self.node_exporter_listen_address = args.node_exporter_listen_address
+        self.grafana_listen_address = args.grafana_listen_address or args.listen_address
+        self.alertmanager_listen_address = args.alertmanager_listen_address or args.listen_address
         self.prometheus_port = args.prometheus_port
         self.node_exporter_port = args.node_exporter_port
         self.grafana_port = args.grafana_port
         self.alertmanager_port = args.alertmanager_port
         self.retention_time = args.retention_time
-        self.with_alertmanager = args.with_alertmanager
-        self.open_firewall = args.open_firewall
+        self.with_alertmanager = args.with_alertmanager or args.install_alertmanager
+        self.open_firewall = args.open_firewall and not args.skip_firewall
         self.yes = args.yes
         self.dry_run = args.dry_run
         self.verbose = args.verbose
@@ -34,6 +40,9 @@ class InstallContext(object):
         self.download_timeout = args.download_timeout
         self.download_retries = args.download_retries
         self.command_timeout = args.command_timeout
+        self.verify_checksum = not args.no_verify_checksum
+        self.checksum_file = Path(args.checksum_file) if args.checksum_file else None
+        self.proxy = args.proxy
 
         self.install_dir = Path(args.install_dir)
         self.download_dir = Path(args.download_dir)
@@ -43,6 +52,7 @@ class InstallContext(object):
         self.prometheus_data_dir = Path(args.prometheus_data_dir)
         self.state_dir = Path(args.state_dir)
         self.state_file = self.state_dir / "install-state.json"
+        self.grafana_credentials_file = self.state_dir / "grafana-admin-credentials.json"
         self.bin_dir = Path(args.bin_dir)
         self.systemd_dir = Path("/etc/systemd/system")
         self.grafana_provisioning_dir = Path("/etc/grafana/provisioning")
@@ -62,25 +72,32 @@ class InstallContext(object):
 
     @property
     def prometheus_url(self):
-        return "http://localhost:{0}".format(self.prometheus_port)
+        return "http://{0}:{1}".format(local_http_host(self.prometheus_listen_address), self.prometheus_port)
 
     @property
     def node_exporter_url(self):
-        return "http://localhost:{0}".format(self.node_exporter_port)
+        return "http://{0}:{1}".format(local_http_host(self.node_exporter_listen_address), self.node_exporter_port)
 
     @property
     def grafana_url(self):
-        return "http://localhost:{0}".format(self.grafana_port)
+        return "http://{0}:{1}".format(local_http_host(self.grafana_listen_address), self.grafana_port)
 
     @property
     def alertmanager_url(self):
-        return "http://localhost:{0}".format(self.alertmanager_port)
+        return "http://{0}:{1}".format(local_http_host(self.alertmanager_listen_address), self.alertmanager_port)
 
     def service_list(self):
         services = ["prometheus", "node_exporter", "grafana-server"]
         if self.with_alertmanager:
             services.append("alertmanager")
         return services
+
+    def ensure_grafana_admin_password(self):
+        if self.grafana_admin_password:
+            return self.grafana_admin_password
+        self.grafana_admin_password = generate_password()
+        self.generated_grafana_password = True
+        return self.grafana_admin_password
 
 
 def env_default(name, default):
@@ -97,3 +114,11 @@ def env_bool(name, default):
 def generate_password(length=18):
     alphabet = string.ascii_letters + string.digits
     return "".join(secrets.choice(alphabet) for _ in range(length))
+
+
+def local_http_host(address):
+    if address in (None, "", "0.0.0.0", "::", "[::]"):
+        return "localhost"
+    if ":" in str(address) and not str(address).startswith("["):
+        return "[{0}]".format(address)
+    return address

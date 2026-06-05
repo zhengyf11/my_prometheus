@@ -1,6 +1,13 @@
 import logging
 
-from .download import download_file, extract_tarball, github_release_tar_url, install_binary, version_number
+from .download import (
+    download_file,
+    extract_tarball,
+    github_release_tar_url,
+    install_binary,
+    release_asset_sha256,
+    version_number,
+)
 from .files import ensure_dir
 from .packages import ensure_base_packages
 from .systemd import daemon_reload, enable_now, restart, write_service
@@ -25,7 +32,12 @@ def install_node_exporter(ctx):
 
     asset = node_exporter_asset(ctx)
     url = github_release_tar_url("node_exporter", ctx.node_exporter_version, asset)
-    tarball = download_file(ctx, url, ctx.download_dir / asset)
+    tarball = download_file(
+        ctx,
+        url,
+        ctx.download_dir / asset,
+        sha256=release_asset_sha256(ctx, "node_exporter", ctx.node_exporter_version, asset),
+    )
     extracted = extract_tarball(ctx, tarball, ctx.install_dir)
     install_binary(ctx, extracted / "node_exporter", "node_exporter")
 
@@ -35,7 +47,7 @@ def install_node_exporter(ctx):
         "node_exporter.service.tpl",
         {
             "bin_dir": ctx.bin_dir,
-            "listen_address": "127.0.0.1",
+            "listen_address": ctx.node_exporter_listen_address,
             "node_exporter_port": ctx.node_exporter_port,
         },
     )

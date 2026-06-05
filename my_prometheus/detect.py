@@ -2,9 +2,9 @@ import logging
 import os
 import platform
 import socket
-import urllib.request
 
 from .command import command_exists, run, run_output
+from .download import open_url
 
 
 LOG = logging.getLogger(__name__)
@@ -112,8 +112,7 @@ def check_network(ctx):
     ]
     for url in urls:
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "my_prometheus-installer"})
-            with urllib.request.urlopen(req, timeout=10) as response:
+            with open_url(ctx, url, timeout=10) as response:
                 if response.status >= 400:
                     raise RuntimeError("unexpected HTTP status {0}".format(response.status))
         except Exception as exc:

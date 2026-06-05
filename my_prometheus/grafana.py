@@ -9,6 +9,7 @@ import urllib.request
 from .command import command_exists, run
 from .files import backup_file, copy_file, ensure_dir, write_managed_file
 from .packages import install_grafana_package
+from .state import read_grafana_credentials, write_grafana_credentials
 from .systemd import enable_now, restart
 
 
@@ -17,7 +18,7 @@ LOG = logging.getLogger(__name__)
 
 def install_grafana(ctx):
     LOG.info("installing Grafana %s", ctx.grafana_version)
-    install_grafana_package(ctx)
+    was_installed = install_grafana_package(ctx)
     ensure_dir(ctx, ctx.grafana_provisioning_dir / "datasources")
     ensure_dir(ctx, ctx.grafana_provisioning_dir / "dashboards")
     ensure_dir(ctx, ctx.grafana_dashboard_dir, owner="grafana", group="grafana")
@@ -27,13 +28,31 @@ def install_grafana(ctx):
     enable_now(ctx, "grafana-server")
     restart(ctx, "grafana-server")
     wait_for_grafana(ctx)
-    set_admin_password(ctx)
+    prepare_grafana_password(ctx, was_installed)
+
+
+def prepare_grafana_password(ctx, was_installed):
+    if ctx.reset_grafana_admin_password or not was_installed:
+        ctx.ensure_grafana_admin_password()
+        set_admin_password(ctx)
+        ctx.grafana_password_changed = True
+        if ctx.generated_grafana_password:
+            write_grafana_credentials(ctx)
+        return
+
+    if not ctx.grafana_admin_password:
+        credentials = read_grafana_credentials(ctx)
+        if credentials.get("password"):
+            ctx.grafana_admin_password = credentials["password"]
+            LOG.info("using stored Grafana credentials for health checks")
+    LOG.info("Grafana admin password unchanged; use --reset-grafana-admin-password to reset it")
 
 
 def configure_grafana_ini(ctx):
     path = "/etc/grafana/grafana.ini"
     values = {
         "server": {
+            "http_addr": grafana_http_addr(ctx.grafana_listen_address),
             "http_port": str(ctx.grafana_port),
         },
         "users": {
@@ -79,6 +98,15 @@ def update_ini_values(ctx, path, values):
             if "=" in candidate:
                 key = candidate.split("=", 1)[0].strip()
                 if key in values[current]:
+                    if not stripped.startswith(";"):
+                        old_value = candidate.split("=", 1)[1].strip()
+                        new_value = values[current][key]
+                        if old_value != new_value and not ctx.force:
+                            raise RuntimeError(
+                                "{0} [{1}] {2} is already set to {3}; rerun with --force to change it to {4}".format(
+                                    path, current, key, old_value, new_value
+                                )
+                            )
                     new_line = "{0} = {1}\n".format(key, values[current][key])
                     output.append(new_line)
                     seen[current].add(key)
@@ -110,6 +138,12 @@ def update_ini_values(ctx, path, values):
     os.chown(path, stat_result.st_uid, stat_result.st_gid)
 
 
+def grafana_http_addr(address):
+    if address in (None, "", "0.0.0.0", "::", "[::]"):
+        return ""
+    return str(address)
+
+
 def provision_datasource(ctx):
     content = """apiVersion: 1
 
@@ -118,10 +152,10 @@ datasources:
     uid: Prometheus
     type: prometheus
     access: proxy
-    url: http://localhost:{prometheus_port}
+    url: {prometheus_url}
     isDefault: true
     editable: true
-""".format(prometheus_port=ctx.prometheus_port)
+""".format(prometheus_url=ctx.prometheus_url)
     write_managed_file(
         ctx,
         ctx.grafana_provisioning_dir / "datasources" / "prometheus.yml",
@@ -180,6 +214,7 @@ def wait_for_grafana(ctx, timeout=90):
 
 
 def set_admin_password(ctx):
+    ctx.ensure_grafana_admin_password()
     if command_exists("grafana-cli"):
         cmd = ["grafana-cli", "admin", "reset-admin-password", ctx.grafana_admin_password]
     elif command_exists("grafana"):
