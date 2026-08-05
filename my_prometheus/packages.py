@@ -6,21 +6,23 @@ from pathlib import Path
 
 from .command import command_exists, run
 from .download import download_file, fetch_url_bytes, version_number, verify_sha256
-from .files import write_managed_file
+from .files import ensure_dir, write_managed_file
 
 
 LOG = logging.getLogger(__name__)
 
 
-BASE_PACKAGES = ["tar", "gzip", "coreutils", "shadow-utils", "systemd", "openssl", "ca-certificates"]
+RPM_BASE_PACKAGES = ["tar", "gzip", "coreutils", "shadow-utils", "systemd", "openssl", "ca-certificates"]
+APT_BASE_PACKAGES = ["tar", "gzip", "coreutils", "passwd", "systemd", "openssl", "ca-certificates"]
 GRAFANA_REPO_BASE = "https://rpm.grafana.com"
+GRAFANA_APT_BASE = "https://apt.grafana.com"
 
 
 def install_packages(ctx, packages, extra_args=None):
     if not packages:
         return
     cmd = [ctx.package_manager, "-y"]
-    if os.path.exists("/etc/yum.repos.d/grafana.repo"):
+    if ctx.package_manager in ("dnf", "yum") and os.path.exists("/etc/yum.repos.d/grafana.repo"):
         cmd.append("--disablerepo=grafana")
     if extra_args:
         cmd.extend(extra_args)
@@ -30,7 +32,20 @@ def install_packages(ctx, packages, extra_args=None):
 
 
 def ensure_base_packages(ctx):
-    install_packages(ctx, BASE_PACKAGES)
+    if ctx.package_manager == "apt-get":
+        update_package_index(ctx)
+        install_packages(ctx, APT_BASE_PACKAGES)
+        return
+    install_packages(ctx, RPM_BASE_PACKAGES)
+
+
+def update_package_index(ctx, force=False):
+    if ctx.package_manager != "apt-get":
+        return
+    if getattr(ctx, "package_index_updated", False) and not force:
+        return
+    run(ctx, [ctx.package_manager, "update"])
+    ctx.package_index_updated = True
 
 
 def setup_grafana_repo(ctx):
@@ -60,6 +75,15 @@ sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 
 def install_grafana_package(ctx):
     was_installed = is_grafana_installed(ctx)
+    if ctx.package_manager == "apt-get":
+        setup_grafana_apt_repo(ctx)
+        update_package_index(ctx, force=True)
+        package = "grafana"
+        requested = normalize_grafana_version(ctx.grafana_version)
+        if requested != "latest":
+            package += "=" + requested
+        install_packages(ctx, [package])
+        return was_installed
     setup_grafana_repo(ctx)
     rpm_path = resolve_grafana_rpm(ctx)
     install_packages(ctx, [str(rpm_path)])
@@ -67,8 +91,29 @@ def install_grafana_package(ctx):
 
 
 def is_grafana_installed(ctx):
+    if ctx.package_manager == "apt-get":
+        proc = run(
+            ctx,
+            ["dpkg-query", "-W", "-f=${Status}", "grafana"],
+            check=False,
+            capture=True,
+        )
+        return proc.returncode == 0 and "install ok installed" in (proc.stdout or "")
     proc = run(ctx, ["rpm", "-q", "grafana"], check=False, capture=True)
     return proc.returncode == 0
+
+
+def setup_grafana_apt_repo(ctx):
+    keyring_dir = Path("/etc/apt/keyrings")
+    key_path = keyring_dir / "grafana.asc"
+    source_path = Path("/etc/apt/sources.list.d/grafana.list")
+    ensure_dir(ctx, keyring_dir, mode=0o755)
+    key = fetch_url_bytes(ctx, GRAFANA_APT_BASE + "/gpg.key").decode("utf-8")
+    write_managed_file(ctx, key_path, key, mode=0o644, marker=False)
+    source = (
+        "deb [signed-by={0}] {1} stable main\n".format(key_path, GRAFANA_APT_BASE)
+    )
+    write_managed_file(ctx, source_path, source, mode=0o644)
 
 
 def urlopen_bytes(ctx, url):

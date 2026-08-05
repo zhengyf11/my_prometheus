@@ -10,7 +10,7 @@ from .download import open_url
 LOG = logging.getLogger(__name__)
 
 
-SUPPORTED_ID_LIKE = ("rhel", "fedora", "centos")
+SUPPORTED_ID_LIKE = ("rhel", "fedora", "centos", "debian", "ubuntu")
 ARCH_MAP = {
     "x86_64": "amd64",
     "amd64": "amd64",
@@ -44,7 +44,9 @@ def detect_package_manager():
         return "dnf"
     if command_exists("yum"):
         return "yum"
-    raise RuntimeError("dnf or yum was not found")
+    if command_exists("apt-get"):
+        return "apt-get"
+    raise RuntimeError("dnf, yum or apt-get was not found")
 
 
 def detect_arch():
@@ -106,10 +108,12 @@ def check_network(ctx):
     if ctx.skip_network_check:
         LOG.info("network preflight skipped")
         return
-    urls = [
-        "https://github.com/prometheus/prometheus/releases/",
-        "https://rpm.grafana.com/",
-    ]
+    grafana_url = (
+        "https://apt.grafana.com/"
+        if ctx.package_manager == "apt-get"
+        else "https://rpm.grafana.com/"
+    )
+    urls = ["https://github.com/prometheus/prometheus/releases/", grafana_url]
     for url in urls:
         try:
             with open_url(ctx, url, timeout=10) as response:

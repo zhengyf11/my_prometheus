@@ -1,6 +1,6 @@
 # my_prometheus
 
-Python 一键安装部署 Prometheus、Node Exporter 和 Grafana 的工具，面向 CentOS/RHEL 系 systemd 服务器。
+Python 一键安装部署 Prometheus、Node Exporter 和 Grafana 的工具，面向 Ubuntu、Debian、CentOS/RHEL 系 systemd 服务器。
 
 ## 快速开始
 
@@ -14,6 +14,7 @@ sudo python3 install.py --yes
 
 - CentOS Stream 8/9、RHEL 8/9 兼容发行版
 - Rocky Linux、AlmaLinux、TencentOS 等 `ID_LIKE` 包含 `rhel`、`centos` 或 `fedora` 的系统
+- Ubuntu 20.04/22.04/24.04、Debian 11/12 等使用 APT 和 systemd 的发行版
 - systemd
 - Python 3.6+
 - x86_64，预留 aarch64 支持
@@ -24,7 +25,7 @@ CentOS 7 需要先确保系统存在可用的 `python3`。
 
 - Prometheus `3.12.0`
 - Node Exporter `1.11.1`
-- Grafana OSS，默认通过 Grafana 官方 RPM 仓库安装最新版
+- Grafana OSS，默认通过 Grafana 官方 RPM 或 APT 仓库安装最新版
 - Alertmanager 可选，默认不安装
 
 ## 常用参数
@@ -71,7 +72,7 @@ sudo -E python3 install.py --yes
 - Node Exporter: `9100`，默认只监听 `127.0.0.1`
 - Alertmanager: `9093`，仅启用 `--with-alertmanager true` 或 `--install-alertmanager` 时安装
 
-如果 firewalld 正在运行，安装器会默认开放 `9090/tcp` 和 `3000/tcp`。Node Exporter 默认只给本机 Prometheus 抓取，不对外开放。
+如果 firewalld 或 UFW 正在运行，安装器会默认开放 `9090/tcp` 和 `3000/tcp`。Node Exporter 默认只给本机 Prometheus 抓取，不对外开放。
 
 ## 监听地址
 
@@ -107,7 +108,7 @@ HTTP/HTTPS 代理：
 sudo python3 install.py --yes --proxy http://proxy.example:8080
 ```
 
-`--proxy` 会作用于 Python 下载、Grafana repo metadata 获取，并通过环境变量传给外部命令。若系统包管理器仓库还需要专门的 proxy 配置，请同步配置 yum/dnf。
+`--proxy` 会作用于 Python 下载、Grafana repo metadata 获取，并通过环境变量传给外部命令。若系统包管理器仓库还需要专门的 proxy 配置，请同步配置 yum/dnf/apt。
 
 ## Grafana 密码策略
 

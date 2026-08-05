@@ -53,6 +53,8 @@ def run(ctx, cmd, check=True, capture=False, input_text=None, secrets=None, time
             env.setdefault("HTTPS_PROXY", proxy)
             env.setdefault("http_proxy", proxy)
             env.setdefault("https_proxy", proxy)
+        if os.path.basename(cmd[0]) == "apt-get":
+            env.setdefault("DEBIAN_FRONTEND", "noninteractive")
         proc = subprocess.run(
             cmd,
             shell=False,

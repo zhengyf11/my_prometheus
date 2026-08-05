@@ -215,6 +215,9 @@ def wait_for_grafana(ctx, timeout=90):
 
 def set_admin_password(ctx):
     ctx.ensure_grafana_admin_password()
+    if ctx.dry_run:
+        LOG.info("[dry-run] reset Grafana admin password")
+        return
     if command_exists("grafana-cli"):
         cmd = ["grafana-cli", "admin", "reset-admin-password", ctx.grafana_admin_password]
     elif command_exists("grafana"):
