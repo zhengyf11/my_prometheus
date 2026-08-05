@@ -218,10 +218,20 @@ def set_admin_password(ctx):
     if ctx.dry_run:
         LOG.info("[dry-run] reset Grafana admin password")
         return
-    if command_exists("grafana-cli"):
+    if command_exists("grafana"):
+        cmd = [
+            "grafana",
+            "cli",
+            "--homepath",
+            "/usr/share/grafana",
+            "--config",
+            "/etc/grafana/grafana.ini",
+            "admin",
+            "reset-admin-password",
+            ctx.grafana_admin_password,
+        ]
+    elif command_exists("grafana-cli"):
         cmd = ["grafana-cli", "admin", "reset-admin-password", ctx.grafana_admin_password]
-    elif command_exists("grafana"):
-        cmd = ["grafana", "cli", "admin", "reset-admin-password", ctx.grafana_admin_password]
     else:
         raise RuntimeError("grafana-cli was not found after installing Grafana")
     run(ctx, cmd, secrets=[ctx.grafana_admin_password])

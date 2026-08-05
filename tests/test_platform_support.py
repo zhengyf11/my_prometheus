@@ -99,6 +99,20 @@ class GrafanaTests(unittest.TestCase):
             grafana.set_admin_password(ctx)
         command_exists.assert_not_called()
 
+    def test_password_reset_prefers_new_cli_with_explicit_paths(self):
+        ctx = Context()
+        ctx.dry_run = False
+        ctx.grafana_admin_password = "test-password"
+        with mock.patch.object(grafana, "command_exists", return_value=True), \
+                mock.patch.object(grafana, "run") as run:
+            grafana.set_admin_password(ctx)
+
+        command = run.call_args[0][1]
+        self.assertEqual(command[:2], ["grafana", "cli"])
+        self.assertIn("/usr/share/grafana", command)
+        self.assertIn("/etc/grafana/grafana.ini", command)
+        self.assertEqual(run.call_args[1]["secrets"], ["test-password"])
+
 
 if __name__ == "__main__":
     unittest.main()
