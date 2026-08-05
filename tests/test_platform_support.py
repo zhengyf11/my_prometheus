@@ -2,7 +2,7 @@ import subprocess
 import unittest
 from unittest import mock
 
-from my_prometheus import detect, firewall, grafana, packages
+from my_prometheus import command, detect, firewall, grafana, packages
 
 
 class Context(object):
@@ -17,6 +17,25 @@ class Context(object):
 
     def ensure_grafana_admin_password(self):
         return self.grafana_admin_password
+
+
+class CommandTests(unittest.TestCase):
+    def test_failed_command_redacts_secret(self):
+        ctx = Context()
+        ctx.dry_run = False
+        ctx.proxy = None
+        ctx.command_timeout = 10
+        failed = subprocess.CompletedProcess([], 1, "", "failed")
+        with mock.patch.object(command.subprocess, "run", return_value=failed):
+            with self.assertRaises(command.CommandError) as raised:
+                command.run(
+                    ctx,
+                    ["tool", "--password", "secret-value"],
+                    secrets=["secret-value"],
+                )
+
+        self.assertNotIn("secret-value", str(raised.exception))
+        self.assertIn("******", str(raised.exception))
 
 
 class DetectTests(unittest.TestCase):
