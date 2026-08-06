@@ -1,0 +1,3190 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "description": "Complete SGLang metrics dashboard generated from the PD and Router metric catalogs. The configured data source is intentionally a placeholder.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "content": "# SGLang PD Disaggregated Metrics\n\nThis dashboard covers **122 metric families** for separate prefill and decode engines. It currently uses the placeholder Prometheus data source `SGLangPlaceholder`, so no live values are expected until that data source URL is replaced. Metrics are lazily registered; feature-gated metrics may still show no data after a real source is connected.",
+        "mode": "markdown"
+      },
+      "title": "Dashboard Scope",
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 2,
+      "panels": [],
+      "title": "HTTP, Process and Functions",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 6
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:http_requests_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:http_requests_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:http_responses_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:http_responses_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:process_cpu_seconds_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:process_cpu_seconds_total",
+          "refId": "Q03"
+        }
+      ],
+      "title": "HTTP, Process and Functions - Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 6
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:http_requests_active{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:http_requests_active",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:routing_keys_active{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:routing_keys_active",
+          "refId": "Q02"
+        }
+      ],
+      "title": "HTTP, Process and Functions - Current State",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 6
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:func_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:func_latency_seconds",
+          "refId": "Q01"
+        }
+      ],
+      "title": "HTTP, Process and Functions - P95",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Requests, Tokens and User Latency",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:prompt_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:prompt_tokens_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:generation_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:generation_tokens_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:spec_verify_calls_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:spec_verify_calls_total",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:cached_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:cached_tokens_total",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_requests_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_requests_total",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_so_requests_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_so_requests_total",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_aborted_requests_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_aborted_requests_total",
+          "refId": "Q07"
+        }
+      ],
+      "title": "Requests, Tokens and User Latency - Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prompt_tokens_histogram",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:uncached_prompt_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:uncached_prompt_tokens_histogram",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:generation_tokens_histogram",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:get_loads_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:get_loads_duration_seconds",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:time_to_first_token_seconds",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:inter_token_latency_seconds",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:e2e_request_latency_seconds",
+          "refId": "Q07"
+        }
+      ],
+      "title": "Requests, Tokens and User Latency - P95",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 9,
+      "panels": [],
+      "title": "Scheduler State",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_running_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_running_reqs",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_queue_reqs",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_grammar_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_grammar_queue_reqs",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:gen_throughput{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:gen_throughput",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:cache_hit_rate{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:cache_hit_rate",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:decode_sum_seq_lens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:decode_sum_seq_lens",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:utilization{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:utilization",
+          "refId": "Q07"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:fwd_occupancy{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:fwd_occupancy",
+          "refId": "Q08"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:new_token_ratio{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:new_token_ratio",
+          "refId": "Q09"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:is_cuda_graph{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:is_cuda_graph",
+          "refId": "Q10"
+        }
+      ],
+      "title": "Scheduler State - Current State",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 35
+      },
+      "id": 11,
+      "panels": [],
+      "title": "KV, SWA and Mamba Pools",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:token_usage{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:token_usage",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:full_token_usage{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:full_token_usage",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:swa_token_usage{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:swa_token_usage",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:mamba_usage{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:mamba_usage",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_used_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_used_tokens",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:kv_available_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:kv_available_tokens",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:kv_evictable_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:kv_evictable_tokens",
+          "refId": "Q07"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:kv_used_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:kv_used_tokens",
+          "refId": "Q08"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:swa_available_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:swa_available_tokens",
+          "refId": "Q09"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:swa_evictable_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:swa_evictable_tokens",
+          "refId": "Q10"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:swa_used_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:swa_used_tokens",
+          "refId": "Q11"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:mamba_available_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:mamba_available_tokens",
+          "refId": "Q12"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:mamba_evictable_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:mamba_evictable_tokens",
+          "refId": "Q13"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:mamba_used_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:mamba_used_tokens",
+          "refId": "Q14"
+        }
+      ],
+      "title": "KV, SWA and Mamba Pools - Current State",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 13,
+      "panels": [],
+      "title": "CUDA, Tokens and MFU Runtime",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 46
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:cuda_graph_passes_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:cuda_graph_passes_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:realtime_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:realtime_tokens_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:forward_execution_seconds_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:forward_execution_seconds_total",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:estimated_flops_per_gpu_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:estimated_flops_per_gpu_total",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:estimated_read_bytes_per_gpu_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:estimated_read_bytes_per_gpu_total",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:estimated_write_bytes_per_gpu_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:estimated_write_bytes_per_gpu_total",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:dp_cooperation_realtime_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:dp_cooperation_realtime_tokens_total",
+          "refId": "Q07"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:dp_cooperation_forward_execution_seconds_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:dp_cooperation_forward_execution_seconds_total",
+          "refId": "Q08"
+        }
+      ],
+      "title": "CUDA, Tokens and MFU Runtime - Rate",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 55
+      },
+      "id": 15,
+      "panels": [],
+      "title": "Engine Capacity and Startup",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 56
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:max_total_num_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:max_total_num_tokens",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:max_running_requests_under_SLO{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:max_running_requests_under_SLO",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:engine_startup_time{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:engine_startup_time",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:engine_load_weights_time{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:engine_load_weights_time",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:page_size{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:page_size",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_pages{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_pages",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:context_len{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:context_len",
+          "refId": "Q07"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:startup_available_gpu_memory_gb{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:startup_available_gpu_memory_gb",
+          "refId": "Q08"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:weight_load_duration_seconds{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:weight_load_duration_seconds",
+          "refId": "Q09"
+        }
+      ],
+      "title": "Engine Capacity and Startup - Current State",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 65
+      },
+      "id": 17,
+      "panels": [],
+      "title": "Retraction, Queue and Stage Latency",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 66
+      },
+      "id": 18,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_retracted_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_retracted_reqs",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_paused_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_paused_reqs",
+          "refId": "Q02"
+        }
+      ],
+      "title": "Retraction, Queue and Stage Latency - Current State",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 66
+      },
+      "id": 19,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_retracted_requests_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_retracted_requests_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_retracted_input_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_retracted_input_tokens_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_retracted_output_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_retracted_output_tokens_total",
+          "refId": "Q03"
+        }
+      ],
+      "title": "Retraction, Queue and Stage Latency - Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 66
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:queue_time_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:queue_time_seconds",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:per_stage_req_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:per_stage_req_latency_seconds",
+          "refId": "Q02"
+        }
+      ],
+      "title": "Retraction, Queue and Stage Latency - P95",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 75
+      },
+      "id": 21,
+      "panels": [],
+      "title": "Grammar",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 76
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_compilation_time_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_compilation_time_seconds",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_schema_count_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_schema_count",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_ebnf_size_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_ebnf_size",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_tree_traversal_time_avg_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_avg",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_tree_traversal_time_max_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_max",
+          "refId": "Q05"
+        }
+      ],
+      "title": "Grammar - P95",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 76
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_grammar_cache_hit_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_grammar_cache_hit_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_grammar_aborted_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_grammar_aborted_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_grammar_timeout_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_grammar_timeout_total",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_grammar_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_grammar_total",
+          "refId": "Q04"
+        }
+      ],
+      "title": "Grammar - Rate",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 85
+      },
+      "id": 24,
+      "panels": [],
+      "title": "Speculative Decoding and Prefill Delayer",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 86
+      },
+      "id": 25,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:spec_accept_length{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:spec_accept_length",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:spec_accept_rate{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:spec_accept_rate",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:spec_cap_length{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:spec_cap_length",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:spec_block_accept_length{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:spec_block_accept_length",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:spec_num_steps{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:spec_num_steps",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:spec_num_draft_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:spec_num_draft_tokens",
+          "refId": "Q06"
+        }
+      ],
+      "title": "Speculative Decoding and Prefill Delayer - Current State",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 86
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefill_delayer_wait_forward_passes_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefill_delayer_wait_forward_passes",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefill_delayer_wait_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefill_delayer_wait_seconds",
+          "refId": "Q02"
+        }
+      ],
+      "title": "Speculative Decoding and Prefill Delayer - P95",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 86
+      },
+      "id": 27,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:prefill_delayer_outcomes_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:prefill_delayer_outcomes_total",
+          "refId": "Q01"
+        }
+      ],
+      "title": "Speculative Decoding and Prefill Delayer - Rate",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 95
+      },
+      "id": 28,
+      "panels": [],
+      "title": "PD Queues and KV Transfer",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 96
+      },
+      "id": 29,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_prefill_bootstrap_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_prefill_bootstrap_queue_reqs",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_prefill_inflight_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_prefill_inflight_queue_reqs",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_decode_prealloc_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_decode_prealloc_queue_reqs",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_decode_transfer_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_decode_transfer_queue_reqs",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:pending_prealloc_token_usage{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:pending_prealloc_token_usage",
+          "refId": "Q05"
+        }
+      ],
+      "title": "PD Queues and KV Transfer - Current State",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 96
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_speed_gb_s_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_speed_gb_s",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_latency_ms",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_total_mb_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_total_mb",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_bootstrap_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_bootstrap_ms",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_alloc_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_alloc_ms",
+          "refId": "Q05"
+        }
+      ],
+      "title": "PD Queues and KV Transfer - P95",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 96
+      },
+      "id": 31,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_bootstrap_failed_reqs_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_bootstrap_failed_reqs_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_transfer_failed_reqs_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_transfer_failed_reqs_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:num_prefill_retries_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:num_prefill_retries_total",
+          "refId": "Q03"
+        }
+      ],
+      "title": "PD Queues and KV Transfer - Rate",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 105
+      },
+      "id": 32,
+      "panels": [],
+      "title": "Prefix Cache and Routing Keys",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 106
+      },
+      "id": 33,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:eviction_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:eviction_duration_seconds",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:load_back_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:load_back_duration_seconds",
+          "refId": "Q02"
+        }
+      ],
+      "title": "Prefix Cache and Routing Keys - P95",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 106
+      },
+      "id": 34,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:evicted_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:evicted_tokens_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:load_back_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:load_back_tokens_total",
+          "refId": "Q02"
+        }
+      ],
+      "title": "Prefix Cache and Routing Keys - Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 106
+      },
+      "id": 35,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_unique_running_routing_keys{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_unique_running_routing_keys",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:routing_key_running_req_count{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:routing_key_running_req_count",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:routing_key_all_req_count{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:routing_key_all_req_count",
+          "refId": "Q03"
+        }
+      ],
+      "title": "Prefix Cache and Routing Keys - Current State",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 115
+      },
+      "id": 36,
+      "panels": [],
+      "title": "Optional LoRA, HiCache, Streaming and EPLB",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 0,
+        "y": 116
+      },
+      "id": 37,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:lora_pool_slots_used{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:lora_pool_slots_used",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:lora_pool_slots_total{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:lora_pool_slots_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:lora_pool_utilization{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:lora_pool_utilization",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:hicache_host_used_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:hicache_host_used_tokens",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:hicache_host_total_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:hicache_host_total_tokens",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:num_streaming_sessions{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:num_streaming_sessions",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:streaming_session_held_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:streaming_session_held_tokens",
+          "refId": "Q07"
+        }
+      ],
+      "title": "Optional LoRA, HiCache, Streaming and EPLB - Current State",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 6,
+        "y": 116
+      },
+      "id": 38,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:prefetched_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:prefetched_tokens_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:backuped_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:backuped_tokens_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "sum by (instance) (rate(sglang:failed_session_recoveries_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} sglang:failed_session_recoveries_total",
+          "refId": "Q03"
+        }
+      ],
+      "title": "Optional LoRA, HiCache, Streaming and EPLB - Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 12,
+        "y": 116
+      },
+      "id": 39,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefetch_pgs_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefetch_pgs",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:backup_pgs_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:backup_pgs",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefetch_bandwidth_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefetch_bandwidth",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:backup_bandwidth_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:backup_bandwidth",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:eplb_gpu_physical_count_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:eplb_gpu_physical_count",
+          "refId": "Q05"
+        }
+      ],
+      "title": "Optional LoRA, HiCache, Streaming and EPLB - P95",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "SGLangPlaceholder"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 116
+      },
+      "id": 40,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SGLangPlaceholder"
+          },
+          "expr": "max by (instance) (sglang:eplb_balancedness{instance=~\"$instance\",model_name=~\"$model|^$\"})",
+          "legendFormat": "{{instance}} sglang:eplb_balancedness",
+          "refId": "Q01"
+        }
+      ],
+      "title": "Optional LoRA, HiCache, Streaming and EPLB - Quantiles",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 39,
+  "tags": [
+    "sglang",
+    "split",
+    "complete-metrics",
+    "placeholder-source"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "SGLangPlaceholder"
+        },
+        "definition": "label_values(up{job=\"file_sd_nodes\",role=~\"sglang-prefill|sglang-decode\"}, role)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Role",
+        "multi": true,
+        "name": "role",
+        "options": [],
+        "query": {
+          "query": "label_values(up{job=\"file_sd_nodes\",role=~\"sglang-prefill|sglang-decode\"}, role)",
+          "refId": "Variable-role"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "SGLangPlaceholder"
+        },
+        "definition": "label_values(up{job=\"file_sd_nodes\",role=~\"$role\"}, instance)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Instance",
+        "multi": true,
+        "name": "instance",
+        "options": [],
+        "query": {
+          "query": "label_values(up{job=\"file_sd_nodes\",role=~\"$role\"}, instance)",
+          "refId": "Variable-instance"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "SGLangPlaceholder"
+        },
+        "definition": "label_values(sglang:num_requests_total{instance=~\"$instance\",engine_type=~\"prefill|decode\"}, model_name)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Model",
+        "multi": true,
+        "name": "model",
+        "options": [],
+        "query": {
+          "query": "label_values(sglang:num_requests_total{instance=~\"$instance\",engine_type=~\"prefill|decode\"}, model_name)",
+          "refId": "Variable-model"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "SGLang PD Disaggregated Metrics",
+  "uid": "my-prometheus-sglang-pd-disaggregated",
+  "version": 1,
+  "weekStart": "",
+  "x-metricsCatalog": [
+    {
+      "name": "sglang:http_requests_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:http_responses_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:http_requests_active",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:routing_keys_active",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:process_cpu_seconds_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:func_latency_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:prompt_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:generation_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:spec_verify_calls_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:prompt_tokens_histogram",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:uncached_prompt_tokens_histogram",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:generation_tokens_histogram",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:cached_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_requests_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:get_loads_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:num_so_requests_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_aborted_requests_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:time_to_first_token_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:inter_token_latency_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:e2e_request_latency_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:num_running_reqs",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:num_queue_reqs",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:num_grammar_queue_reqs",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:gen_throughput",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:cache_hit_rate",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:decode_sum_seq_lens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:utilization",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:fwd_occupancy",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:new_token_ratio",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:is_cuda_graph",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:token_usage",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:full_token_usage",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:swa_token_usage",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:mamba_usage",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:num_used_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:kv_available_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:kv_evictable_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:kv_used_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:swa_available_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:swa_evictable_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:swa_used_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:mamba_available_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:mamba_evictable_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:mamba_used_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:cuda_graph_passes_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:realtime_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:forward_execution_seconds_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:estimated_flops_per_gpu_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:estimated_read_bytes_per_gpu_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:estimated_write_bytes_per_gpu_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:dp_cooperation_realtime_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:dp_cooperation_forward_execution_seconds_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:max_total_num_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:max_running_requests_under_SLO",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:engine_startup_time",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:engine_load_weights_time",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:page_size",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:num_pages",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:context_len",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:startup_available_gpu_memory_gb",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:weight_load_duration_seconds",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:num_retracted_reqs",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:num_retracted_requests_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_retracted_input_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_retracted_output_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_paused_reqs",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:queue_time_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:per_stage_req_latency_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:grammar_compilation_time_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:num_grammar_cache_hit_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_grammar_aborted_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_grammar_timeout_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_grammar_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:grammar_schema_count",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:grammar_ebnf_size",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:grammar_tree_traversal_time_avg",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:grammar_tree_traversal_time_max",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:spec_accept_length",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:spec_accept_rate",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:spec_cap_length",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:spec_block_accept_length",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:spec_num_steps",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:spec_num_draft_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:prefill_delayer_wait_forward_passes",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:prefill_delayer_wait_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:prefill_delayer_outcomes_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_prefill_bootstrap_queue_reqs",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:num_prefill_inflight_queue_reqs",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:num_decode_prealloc_queue_reqs",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:num_decode_transfer_queue_reqs",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:pending_prealloc_token_usage",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:kv_transfer_speed_gb_s",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:kv_transfer_latency_ms",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:kv_transfer_total_mb",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:kv_transfer_bootstrap_ms",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:kv_transfer_alloc_ms",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:num_bootstrap_failed_reqs_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_transfer_failed_reqs_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_prefill_retries_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:eviction_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:evicted_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:load_back_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:load_back_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_unique_running_routing_keys",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:routing_key_running_req_count",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:routing_key_all_req_count",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:lora_pool_slots_used",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:lora_pool_slots_total",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:lora_pool_utilization",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:hicache_host_used_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:hicache_host_total_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:num_streaming_sessions",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:streaming_session_held_tokens",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:prefetched_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:backuped_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:prefetch_pgs",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:backup_pgs",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:prefetch_bandwidth",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:backup_bandwidth",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:eplb_gpu_physical_count",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:eplb_balancedness",
+      "type": "summary"
+    },
+    {
+      "name": "sglang:failed_session_recoveries_total",
+      "type": "counter"
+    }
+  ]
+}

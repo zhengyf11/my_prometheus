@@ -157,6 +157,13 @@ datasources:
     url: {prometheus_url}
     isDefault: true
     editable: true
+  - name: SGLang Placeholder
+    uid: SGLangPlaceholder
+    type: prometheus
+    access: proxy
+    url: http://127.0.0.1:19090
+    isDefault: false
+    editable: true
 """.format(prometheus_url=ctx.prometheus_url)
     write_managed_file(
         ctx,
@@ -169,6 +176,10 @@ datasources:
 
 
 def provision_dashboards(ctx):
+    linux_dashboard_dir = ctx.grafana_dashboard_dir / "linux"
+    sglang_dashboard_dir = ctx.grafana_dashboard_dir / "sglang"
+    ensure_dir(ctx, linux_dashboard_dir, owner="grafana", group="grafana")
+    ensure_dir(ctx, sglang_dashboard_dir, owner="grafana", group="grafana")
     provider = """apiVersion: 1
 
 providers:
@@ -180,7 +191,16 @@ providers:
     updateIntervalSeconds: 30
     allowUiUpdates: true
     options:
-      path: /var/lib/grafana/dashboards
+      path: /var/lib/grafana/dashboards/linux
+  - name: my-prometheus-sglang
+    orgId: 1
+    folder: SGLang
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/sglang
 """
     write_managed_file(
         ctx,
@@ -193,19 +213,24 @@ providers:
     copy_file(
         ctx,
         ctx.grafana_assets_dir / "dashboards" / "node-overview.json",
-        ctx.grafana_dashboard_dir / "node-overview.json",
+        linux_dashboard_dir / "node-overview.json",
         mode=0o644,
         owner="grafana",
         group="grafana",
     )
-    copy_file(
-        ctx,
-        ctx.grafana_assets_dir / "dashboards" / "sglang-overview.json",
-        ctx.grafana_dashboard_dir / "sglang-overview.json",
-        mode=0o644,
-        owner="grafana",
-        group="grafana",
-    )
+    for name in (
+        "sglang-pd-unified.json",
+        "sglang-pd-disaggregated.json",
+        "sglang-router.json",
+    ):
+        copy_file(
+            ctx,
+            ctx.grafana_assets_dir / "dashboards" / name,
+            sglang_dashboard_dir / name,
+            mode=0o644,
+            owner="grafana",
+            group="grafana",
+        )
 
 
 def wait_for_grafana(ctx, timeout=90):

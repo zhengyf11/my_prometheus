@@ -61,19 +61,21 @@ Prometheus: http://<服务器IP>:9090
 Grafana:    http://<服务器IP>:3000
 ```
 
-Grafana 使用 `admin` 和上面凭据文件中的密码登录。安装器已经创建 Prometheus 数据源，并在 `Linux Hosts` 目录中导入：
+Grafana 使用 `admin` 和上面凭据文件中的密码登录。安装器会创建两个 Dashboard 目录：
 
-- `Linux Node Overview`：主机 CPU、内存、磁盘和网络状态。
-- `SGLang Inference Overview`：SGLang 流量、token 吞吐、请求队列、延迟、KV Cache、运行时利用率、推测解码和引擎容量。
+- `Linux Hosts`：包含 `Linux Node Overview`，使用真实的本机 Prometheus 数据源。
+- `SGLang`：包含 `SGLang PD Unified Metrics`、`SGLang PD Disaggregated Metrics`、`SGLang Router Metrics` 三套看板。
 
-SGLang dashboard 顶部可以按 `Instance` 和 `Model` 筛选，同一套面板可切换查看 `10.30.0.3:30000`、`10.30.0.2:31001` 等采集目标。
+SGLang 三套看板当前统一使用占位数据源 `SGLangPlaceholder`，地址为 `http://127.0.0.1:19090`。该端口默认没有服务，因此部署后看板结构、分类和 PromQL 可见，但暂时不会显示实时数据。接入真实数据时只需要修改数据源 URL，不需要修改三个 Dashboard JSON。
 
 Dashboard JSON 分为仓库源文件和安装后的运行时文件：
 
 | Dashboard | 仓库源文件 | Grafana 实际加载文件 |
 |---|---|---|
-| Linux Node Overview | `grafana/dashboards/node-overview.json` | `/var/lib/grafana/dashboards/node-overview.json` |
-| SGLang Inference Overview | `grafana/dashboards/sglang-overview.json` | `/var/lib/grafana/dashboards/sglang-overview.json` |
+| Linux Node Overview | `grafana/dashboards/node-overview.json` | `/var/lib/grafana/dashboards/linux/node-overview.json` |
+| SGLang PD Unified Metrics | `grafana/dashboards/sglang-pd-unified.json` | `/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json` |
+| SGLang PD Disaggregated Metrics | `grafana/dashboards/sglang-pd-disaggregated.json` | `/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json` |
+| SGLang Router Metrics | `grafana/dashboards/sglang-router.json` | `/var/lib/grafana/dashboards/sglang/sglang-router.json` |
 
 Grafana 的 dashboard provider 配置位于：
 
@@ -81,7 +83,7 @@ Grafana 的 dashboard provider 配置位于：
 /etc/grafana/provisioning/dashboards/dashboards.yml
 ```
 
-该 provider 每 30 秒扫描一次 `/var/lib/grafana/dashboards`。修改仓库源文件后，需要重新执行安装器，或者将 JSON 复制到运行时目录；只修改仓库文件不会自动影响正在运行的 Grafana。
+provider 每 30 秒分别扫描 `/var/lib/grafana/dashboards/linux` 和 `/var/lib/grafana/dashboards/sglang`。修改仓库源文件后，需要重新执行安装器，或者将 JSON 复制到对应运行时目录；只修改仓库文件不会自动影响正在运行的 Grafana。
 
 服务器只开放 SSH 时，可以建立本地隧道：
 
@@ -205,10 +207,14 @@ ssh -p 33003 root@117.187.188.18
 /var/lib/prometheus                        Prometheus 数据
 /etc/grafana                               Grafana 配置
 /etc/grafana/provisioning/dashboards/dashboards.yml  Dashboard provider
-/var/lib/grafana/dashboards/node-overview.json       Node dashboard 运行时文件
-/var/lib/grafana/dashboards/sglang-overview.json     SGLang dashboard 运行时文件
+/var/lib/grafana/dashboards/linux/node-overview.json                Node dashboard 运行时文件
+/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json           PD 合部 dashboard 运行时文件
+/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json     PD 分离 dashboard 运行时文件
+/var/lib/grafana/dashboards/sglang/sglang-router.json               Router dashboard 运行时文件
 /opt/my_prometheus-installer/grafana/dashboards/node-overview.json    Node dashboard 源文件
-/opt/my_prometheus-installer/grafana/dashboards/sglang-overview.json  SGLang dashboard 源文件
+/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-unified.json        PD 合部 dashboard 源文件
+/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-disaggregated.json  PD 分离 dashboard 源文件
+/opt/my_prometheus-installer/grafana/dashboards/sglang-router.json            Router dashboard 源文件
 /var/lib/my_prometheus                     安装状态和 Grafana 凭据
 /etc/systemd/system/prometheus.service     Prometheus unit
 /etc/systemd/system/node_exporter.service  Node Exporter unit
@@ -238,7 +244,8 @@ ssh -p 33003 root@117.187.188.18
   指定 Grafana 扫描 Dashboard JSON 的目录
               |
               v
-/var/lib/grafana/dashboards/*.json
+/var/lib/grafana/dashboards/linux/*.json
+/var/lib/grafana/dashboards/sglang/*.json
   定义页面、变量、面板和 PromQL
 ```
 
@@ -250,10 +257,10 @@ ssh -p 33003 root@117.187.188.18
 | Prometheus 主配置 | `/etc/prometheus/prometheus.yml` | 每 15 秒抓取一次；`file_sd_nodes` job 每 30 秒读取 `/etc/prometheus/targets/*.yml` |
 | 本机 Node Exporter 目标 | `/etc/prometheus/targets/nodes.yml` | `127.0.0.1:9100`，附加 `role: local` |
 | SGLang 目标 | `/etc/prometheus/targets/03-sglang.yml` | 指定 SGLang 服务的 IP、端口以及 `role`、`node`、`endpoint` 标签 |
-| Grafana 数据源 | `/etc/grafana/provisioning/datasources/prometheus.yml` | 数据源名称和 UID 均为 `Prometheus`，查询 `http://localhost:9090` |
-| Dashboard provider | `/etc/grafana/provisioning/dashboards/dashboards.yml` | 每 30 秒扫描 `/var/lib/grafana/dashboards`，在 `Linux Hosts` 文件夹中加载 JSON |
-| Node Dashboard | `/var/lib/grafana/dashboards/node-overview.json` | 定义 Linux Node Overview 的面板和 PromQL |
-| SGLang Dashboard | `/var/lib/grafana/dashboards/sglang-overview.json` | 定义 SGLang Inference Overview 的变量、面板和 PromQL |
+| Grafana 数据源 | `/etc/grafana/provisioning/datasources/prometheus.yml` | Linux 使用真实 `Prometheus`；SGLang 使用占位 `SGLangPlaceholder` |
+| Dashboard provider | `/etc/grafana/provisioning/dashboards/dashboards.yml` | 分别把 `linux` 运行时目录加载到 `Linux Hosts`，把 `sglang` 运行时目录加载到 `SGLang` |
+| Node Dashboard | `/var/lib/grafana/dashboards/linux/node-overview.json` | 定义 Linux Node Overview 的面板和 PromQL |
+| SGLang Dashboards | `/var/lib/grafana/dashboards/sglang/*.json` | 定义 PD 合部、PD 分离和 Router 三套面板及 PromQL |
 
 仓库文件与 03 节点运行时文件的对应关系：
 
@@ -264,14 +271,16 @@ ssh -p 33003 root@117.187.188.18
 | 无仓库模板，由运维人员维护 | Prometheus 的 file SD 自动发现 | `/etc/prometheus/targets/03-sglang.yml` |
 | `my_prometheus/grafana.py` 中的 `provision_datasource` | 安装器生成数据源配置 | `/etc/grafana/provisioning/datasources/prometheus.yml` |
 | `my_prometheus/grafana.py` 中的 `provision_dashboards` | 安装器生成 provider 配置 | `/etc/grafana/provisioning/dashboards/dashboards.yml` |
-| `grafana/dashboards/node-overview.json` | 安装器复制 JSON | `/var/lib/grafana/dashboards/node-overview.json` |
-| `grafana/dashboards/sglang-overview.json` | 安装器复制 JSON | `/var/lib/grafana/dashboards/sglang-overview.json` |
+| `grafana/dashboards/node-overview.json` | 安装器复制 JSON | `/var/lib/grafana/dashboards/linux/node-overview.json` |
+| `grafana/dashboards/sglang-pd-unified.json` | 安装器复制 JSON | `/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json` |
+| `grafana/dashboards/sglang-pd-disaggregated.json` | 安装器复制 JSON | `/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json` |
+| `grafana/dashboards/sglang-router.json` | 安装器复制 JSON | `/var/lib/grafana/dashboards/sglang/sglang-router.json` |
 
-03 节点上的仓库副本位于 `/opt/my_prometheus-installer`。例如 SGLang Dashboard 存在两份文件：
+03 节点上的仓库副本位于 `/opt/my_prometheus-installer`。例如 PD 合部 Dashboard 存在两份文件：
 
 ```text
-/opt/my_prometheus-installer/grafana/dashboards/sglang-overview.json  仓库源文件
-/var/lib/grafana/dashboards/sglang-overview.json                    Grafana 实际读取的运行时文件
+/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-unified.json  仓库源文件
+/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json              Grafana 实际读取的运行时文件
 ```
 
 Grafana 不直接读取 `/opt/my_prometheus-installer`。只更新仓库源文件不会改变当前页面，必须重新执行安装器，或者把源 JSON 发布到 `/var/lib/grafana/dashboards`。
@@ -292,7 +301,9 @@ Prometheus :9090
               |
               | PromQL 查询
               v
-Grafana Prometheus datasource（UID: Prometheus）
+Grafana datasource
+  Linux: UID Prometheus
+  SGLang: UID SGLangPlaceholder（当前为占位地址）
               |
               v
 Dashboard JSON 中的变量和 panel targets
@@ -306,9 +317,9 @@ Dashboard JSON 中的变量和 panel targets
 1. `/etc/prometheus/targets/03-sglang.yml` 指定采集源，目前配置了 `10.30.0.3:30000` 和 `10.30.0.2:31001`。
 2. `/etc/prometheus/prometheus.yml` 中的 `file_sd_nodes` job 发现该文件。target 中没有配置 `metrics_path` 时，Prometheus 默认请求 `http://<IP>:<端口>/metrics`。
 3. Prometheus 将目标地址写入 `instance` 标签，将 job 写为 `file_sd_nodes`，并保留 target 文件声明的 `role="sglang"`、`node`、`endpoint` 标签。
-4. Grafana 数据源配置把 Dashboard 的 PromQL 发送到本机 `http://localhost:9090`。
-5. `sglang-overview.json` 使用数据源 UID `Prometheus`。`Instance` 变量来自 `up{job="file_sd_nodes",role="sglang"}`，`Model` 变量来自 `sglang:num_requests_total` 的 `model_name` 标签。
-6. 各面板再使用 `$instance`、`$model` 查询 `sglang:*` 指标并完成分类展示。
+4. Linux Dashboard 通过真实 `Prometheus` 数据源查询本机 `http://localhost:9090`；三套 SGLang Dashboard 当前改用独立占位数据源。
+5. 三套 SGLang JSON 当前使用数据源 UID `SGLangPlaceholder`，它暂时指向无服务的 `http://127.0.0.1:19090`，所以不会读取本机真实 Prometheus。
+6. 接入真实数据源后，各看板通过各自的 `role` 筛选 Instance，再使用 `$instance` 等变量查询 `sglang:*`、`smg_*` 或 `router_*` 指标。
 
 当前 `/etc/prometheus/targets/03-sglang.yml` 的生效内容是：
 
@@ -334,16 +345,20 @@ Dashboard JSON 中的变量和 panel targets
 
 Dashboard 展示哪些数据，不是在 `dashboards.yml` provider 中配置的。`dashboards.yml` 只告诉 Grafana 去哪个目录加载 JSON；具体面板、数据查询和下拉变量都定义在 Dashboard JSON 内。
 
-当前 SGLang Dashboard 的仓库源文件是：
+当前三个 SGLang Dashboard 的仓库源文件是：
 
 ```text
-/opt/my_prometheus-installer/grafana/dashboards/sglang-overview.json
+/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-unified.json
+/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-disaggregated.json
+/opt/my_prometheus-installer/grafana/dashboards/sglang-router.json
 ```
 
 Grafana 实际读取的是：
 
 ```text
-/var/lib/grafana/dashboards/sglang-overview.json
+/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json
+/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json
+/var/lib/grafana/dashboards/sglang/sglang-router.json
 ```
 
 Dashboard JSON 中与数据有关的主要结构是：
@@ -373,21 +388,21 @@ templating.list[]
 ```json
 "datasource": {
   "type": "prometheus",
-  "uid": "Prometheus"
+  "uid": "SGLangPlaceholder"
 }
 ```
 
-这里的 `uid: Prometheus` 对应 `/etc/grafana/provisioning/datasources/prometheus.yml` 中的：
+这里的 `uid: SGLangPlaceholder` 对应 `/etc/grafana/provisioning/datasources/prometheus.yml` 中的：
 
 ```yaml
 datasources:
-  - name: Prometheus
-    uid: Prometheus
+  - name: SGLang Placeholder
+    uid: SGLangPlaceholder
     type: prometheus
-    url: http://localhost:9090
+    url: http://127.0.0.1:19090
 ```
 
-所以 Dashboard 不直接连接 SGLang，而是把 PromQL 发给本机 Prometheus。
+所以 Dashboard 不直接连接 SGLang，而是把 PromQL 发给这个占位地址。后续把该 URL 改成真实 Prometheus 地址并重启 Grafana，三个 Dashboard 即可保持原 UID 和 PromQL 不变。
 
 #### 2.3.2 面板查询哪些指标
 
@@ -452,7 +467,7 @@ Dashboard 顶部的 `Instance` 下拉列表配置在：
 templating.list[] 中 name 为 instance 的对象
 ```
 
-当前关键配置是：
+PD 合部 Dashboard 的关键配置是：
 
 ```json
 {
@@ -461,11 +476,11 @@ templating.list[] 中 name 为 instance 的对象
   "type": "query",
   "datasource": {
     "type": "prometheus",
-    "uid": "Prometheus"
+    "uid": "SGLangPlaceholder"
   },
-  "definition": "label_values(up{job=\"file_sd_nodes\",role=\"sglang\"}, instance)",
+  "definition": "label_values(up{job=\"file_sd_nodes\",role=\"sglang-unified\"}, instance)",
   "query": {
-    "query": "label_values(up{job=\"file_sd_nodes\",role=\"sglang\"}, instance)"
+    "query": "label_values(up{job=\"file_sd_nodes\",role=\"sglang-unified\"}, instance)"
   },
   "multi": true,
   "includeAll": true,
@@ -476,7 +491,7 @@ templating.list[] 中 name 为 instance 的对象
 决定下拉选项的是：
 
 ```promql
-label_values(up{job="file_sd_nodes",role="sglang"}, instance)
+label_values(up{job="file_sd_nodes",role="sglang-unified"}, instance)
 ```
 
 其生成过程如下：
@@ -484,13 +499,13 @@ label_values(up{job="file_sd_nodes",role="sglang"}, instance)
 ```text
 /etc/prometheus/targets/03-sglang.yml
   targets: 10.30.0.3:30000
-  labels.role: sglang
+  labels.role: sglang-unified
               |
               v
 Prometheus 生成时间序列
 up{
   job="file_sd_nodes",
-  role="sglang",
+  role="sglang-unified",
   instance="10.30.0.3:30000"
 }
               |
@@ -504,34 +519,50 @@ Instance 下拉列表出现 10.30.0.3:30000
 因此，Instance 下拉列表中的内容不是直接写死在 Dashboard JSON 中的，而是同时由以下两处决定：
 
 1. `/etc/prometheus/targets/*.yml` 中有哪些 target，以及 target 带什么 `role` 标签。
-2. Dashboard 变量查询中的 `job="file_sd_nodes",role="sglang"` 过滤条件。
+2. Dashboard 变量查询中的 job 和 role 过滤条件。
 
 `up` 指标在 target 抓取失败时仍然存在，只是值为 0，所以 DOWN 的目标也可以保留在 Instance 下拉列表中。
 
+三套 Dashboard 使用不同的角色条件：
+
+| Dashboard | Instance 变量查询 |
+|---|---|
+| PD 合部 | `label_values(up{job="file_sd_nodes",role="sglang-unified"}, instance)` |
+| PD 分离 | 先选择 `role=sglang-prefill|sglang-decode`，再用 `label_values(up{job="file_sd_nodes",role=~"$role"}, instance)` |
+| Router | `label_values(up{job="file_sd_nodes",role="sglang-router"}, instance)` |
+
+当前 03 节点旧 target 使用的是 `role: sglang`，与三套新 Dashboard 的角色条件不同；同时新 Dashboard 暂时连接占位数据源。后续接入真实 Prometheus 时，需要把 target 角色按上表标记。
+
 #### 2.3.4 Model 下拉列表
 
-`Model` 下拉列表配置在 `templating.list[]` 中 `name` 为 `model` 的对象，当前查询是：
+PD 合部和 PD 分离 Dashboard 都有 `Model` 下拉列表，配置在 `templating.list[]` 中 `name` 为 `model` 的对象。PD 合部查询是：
 
 ```promql
 label_values(
-  sglang:num_requests_total{instance=~"$instance"},
+  sglang:num_requests_total{instance=~"$instance",engine_type="unified"},
   model_name
 )
 ```
 
-它从所选实例的 `sglang:num_requests_total` 指标中提取 `model_name` 标签。因此目标虽然可能出现在 Instance 下拉列表中，但如果它不暴露 `sglang:num_requests_total`，或者指标没有 `model_name` 标签，就不会为 Model 下拉列表提供选项。
+PD 分离查询使用 `engine_type=~"prefill|decode"`。它们都从所选实例的 `sglang:num_requests_total` 指标中提取 `model_name` 标签。Router 指标没有统一的 `model_name` 标签，因此 Router Dashboard 不设置 Model 变量。
+
+Engine 面板查询使用 `model_name=~"$model|^$"`：所选模型会过滤带 `model_name` 的指标，`|^$` 同时保留没有该标签的 HTTP、进程等全局指标。
 
 手工修改变量 JSON 时，应同步修改 `definition` 和 `query.query`，避免导入或后续 UI 编辑时显示不一致。
 
-#### 2.3.5 Router 为什么不能直接使用现有变量和面板
+#### 2.3.5 三套 Dashboard 的指标范围
 
-现有 Instance 变量只选择 `role="sglang"`，面板主要查询 `sglang:*`。Router 指标使用 `smg_*` 前缀，因此 Router Dashboard 应分别配置：
+三个 Dashboard 已经按指标体系拆分：
 
-```promql
-label_values(up{job="file_sd_nodes",role="sglang-router"}, instance)
-```
+| Dashboard | 指标范围 | 完整指标族数量 |
+|---|---|---:|
+| SGLang PD Unified Metrics | `sglang:*`，`engine_type="unified"` 对应的合部 Engine | 122 |
+| SGLang PD Disaggregated Metrics | `sglang:*`，Prefill/Decode Engine 共用全集，并突出 PD 队列与 KV 传输 | 122 |
+| SGLang Router Metrics | Router `smg_*` 与 Router Mesh `router_*` | 61 |
 
-以及查询 Router 指标的 panel target，例如：
+指标按模块分类成 Row；每个指标族至少出现在一个 `panels[].targets[].expr` 中。Counter 面板展示 `rate`，Histogram 面板展示 P95，Gauge/Summary 面板展示当前序列。功能未启用或事件尚未发生时，懒创建指标显示 No data 属于正常现象。
+
+Router 面板查询示例：
 
 ```promql
 sum by (instance) (
@@ -539,7 +570,7 @@ sum by (instance) (
 )
 ```
 
-只把 Router target 加入 Prometheus，不修改 Dashboard 的变量和 `targets[].expr`，不会让现有 SGLang 面板自动展示 Router 数据。
+只把 Router target 加入 Prometheus，不会让 Engine Dashboard 自动展示 Router 数据；Router target 必须使用 `role: sglang-router`，并在独立 Router Dashboard 中查询。
 
 ### 2.4 Router 指标与现有 Dashboard 的关系
 
@@ -550,7 +581,7 @@ http://127.0.0.1:8000/metrics   返回 404，8000 是业务 API 端口
 http://127.0.0.1:29000/metrics  返回 200，29000 是 Router metrics 端口
 ```
 
-当前 `/etc/prometheus/targets/03-sglang.yml` 尚未配置 `10.30.0.3:29000`，因此 Prometheus 和 Grafana 不会自动看到 Router 指标。即使后续加入该 target，现有 `SGLang Inference Overview` 主要查询 `sglang:*` 指标，而 Router 暴露的是 `smg_*` 指标，不能直接复用现有面板；应给 Router 使用独立的 `role` 和独立 Dashboard，例如：
+当前 `/etc/prometheus/targets/03-sglang.yml` 尚未配置 `10.30.0.3:29000`，并且 SGLang Router Dashboard 当前连接占位数据源，因此暂时不会显示 Router 实时指标。后续接入真实 Prometheus 时，应给 Router 使用独立的 `role`：
 
 ```yaml
 - targets:
@@ -571,7 +602,7 @@ http://127.0.0.1:29000/metrics  返回 200，29000 是 Router metrics 端口
 | `/etc/prometheus/prometheus.yml` | 先用 `promtool check config` 校验，再调用 `POST /-/reload` 或重启 Prometheus |
 | `/etc/grafana/provisioning/datasources/prometheus.yml` | 重启 `grafana-server` 重新执行 provisioning |
 | `/etc/grafana/provisioning/dashboards/dashboards.yml` | 重启 `grafana-server` 重新加载 provider |
-| `/var/lib/grafana/dashboards/*.json` | provider 最多约 30 秒自动扫描，不需要重启 Grafana |
+| `/var/lib/grafana/dashboards/linux/*.json`、`/var/lib/grafana/dashboards/sglang/*.json` | provider 最多约 30 秒自动扫描，不需要重启 Grafana |
 | `/opt/my_prometheus-installer/grafana/dashboards/*.json` | 只是仓库源文件；发布到运行时目录后才影响页面 |
 
 Prometheus 主配置修改后的校验和热加载命令：

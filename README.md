@@ -26,7 +26,7 @@ CentOS 7 需要先确保系统存在可用的 `python3`。
 - Prometheus `3.12.0`
 - Node Exporter `1.11.1`
 - Grafana OSS，默认通过 Grafana 官方 RPM 或 APT 仓库安装最新版
-- Grafana dashboards：Linux Node Overview 和 SGLang Inference Overview
+- Grafana dashboards：Linux Node Overview，以及独立 `SGLang` 目录中的 PD 合部、PD 分离和 Router 三套完整指标看板
 - Alertmanager 可选，默认不安装
 
 ## 常用参数
@@ -130,11 +130,22 @@ sudo python3 install.py --yes --reset-grafana-admin-password --grafana-admin-pas
 - Prometheus file_sd 目标：`/etc/prometheus/targets/nodes.yml`
 - Prometheus 规则：`/etc/prometheus/rules/default.yml`
 - Prometheus 数据：`/var/lib/prometheus`
-- Grafana Node dashboard：`/var/lib/grafana/dashboards/node-overview.json`
-- Grafana SGLang dashboard：`/var/lib/grafana/dashboards/sglang-overview.json`
+- Grafana Node dashboard：`/var/lib/grafana/dashboards/linux/node-overview.json`
+- Grafana PD 合部 dashboard：`/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json`
+- Grafana PD 分离 dashboard：`/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json`
+- Grafana Router dashboard：`/var/lib/grafana/dashboards/sglang/sglang-router.json`
 - Grafana dashboard provider：`/etc/grafana/provisioning/dashboards/dashboards.yml`
+- Grafana 数据源 provisioning：`/etc/grafana/provisioning/datasources/prometheus.yml`；SGLang 看板当前使用占位数据源 `SGLangPlaceholder`
 - 安装状态：`/var/lib/my_prometheus/install-state.json`
 - 自动生成的 Grafana 凭据：`/var/lib/my_prometheus/grafana-admin-credentials.json`
+
+三套 SGLang Dashboard 由 `tools/generate_sglang_dashboards.py` 中的分类指标清单生成。修改指标分类、类型或看板结构后执行：
+
+```bash
+python3 tools/generate_sglang_dashboards.py
+```
+
+生成后应同时提交脚本和三个 JSON，测试会校验 122 个 Engine 指标族与 61 个 Router 指标族均被 PromQL 覆盖。
 
 ## 配置保护
 

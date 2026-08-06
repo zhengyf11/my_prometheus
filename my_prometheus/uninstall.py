@@ -42,11 +42,19 @@ class UninstallContext(object):
         self.grafana_data_dir = Path("/var/lib/grafana")
         self.grafana_ini = Path("/etc/grafana/grafana.ini")
         self.grafana_provisioning_dir = Path("/etc/grafana/provisioning")
-        self.grafana_dashboard = Path("/var/lib/grafana/dashboards/node-overview.json")
-        self.sglang_dashboard = Path("/var/lib/grafana/dashboards/sglang-overview.json")
+        self.grafana_dashboard = Path("/var/lib/grafana/dashboards/linux/node-overview.json")
+        self.sglang_dashboards = [
+            Path("/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json"),
+            Path("/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json"),
+            Path("/var/lib/grafana/dashboards/sglang/sglang-router.json"),
+        ]
         self.repo_root = Path(__file__).resolve().parent.parent
         self.dashboard_source = self.repo_root / "grafana/dashboards/node-overview.json"
-        self.sglang_dashboard_source = self.repo_root / "grafana/dashboards/sglang-overview.json"
+        self.sglang_dashboard_sources = [
+            self.repo_root / "grafana/dashboards/sglang-pd-unified.json",
+            self.repo_root / "grafana/dashboards/sglang-pd-disaggregated.json",
+            self.repo_root / "grafana/dashboards/sglang-router.json",
+        ]
 
         self.prometheus_port = args.prometheus_port
         self.grafana_port = args.grafana_port
@@ -211,7 +219,10 @@ def remove_grafana_files(ctx):
         ctx, ctx.grafana_provisioning_dir / "dashboards/dashboards.yml"
     )
     remove_dashboard(ctx, ctx.dashboard_source, ctx.grafana_dashboard)
-    remove_dashboard(ctx, ctx.sglang_dashboard_source, ctx.sglang_dashboard)
+    for source, destination in zip(
+        ctx.sglang_dashboard_sources, ctx.sglang_dashboards
+    ):
+        remove_dashboard(ctx, source, destination)
     restore_oldest_backup(ctx, ctx.grafana_ini)
 
 

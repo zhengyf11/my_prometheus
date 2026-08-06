@@ -138,12 +138,37 @@ class GrafanaTests(unittest.TestCase):
         ctx.grafana_provisioning_dir = Path("/etc/grafana/provisioning")
         ctx.grafana_dashboard_dir = Path("/var/lib/grafana/dashboards")
         ctx.grafana_assets_dir = Path("/repo/grafana")
-        with mock.patch.object(grafana, "write_managed_file"), \
+        with mock.patch.object(grafana, "write_managed_file") as write, \
+                mock.patch.object(grafana, "ensure_dir"), \
                 mock.patch.object(grafana, "copy_file") as copy:
             grafana.provision_dashboards(ctx)
 
         sources = [call[0][1].name for call in copy.call_args_list]
-        self.assertEqual(sources, ["node-overview.json", "sglang-overview.json"])
+        self.assertEqual(sources, [
+            "node-overview.json",
+            "sglang-pd-unified.json",
+            "sglang-pd-disaggregated.json",
+            "sglang-router.json",
+        ])
+        destinations = [str(call[0][2]) for call in copy.call_args_list]
+        self.assertIn("/var/lib/grafana/dashboards/linux/node-overview.json", destinations)
+        self.assertIn("/var/lib/grafana/dashboards/sglang/sglang-router.json", destinations)
+        provider = write.call_args[0][2]
+        self.assertIn("folder: Linux Hosts", provider)
+        self.assertIn("path: /var/lib/grafana/dashboards/linux", provider)
+        self.assertIn("folder: SGLang", provider)
+        self.assertIn("path: /var/lib/grafana/dashboards/sglang", provider)
+
+    def test_provisions_placeholder_sglang_datasource(self):
+        ctx = Context()
+        ctx.prometheus_url = "http://localhost:9090"
+        ctx.grafana_provisioning_dir = Path("/etc/grafana/provisioning")
+        with mock.patch.object(grafana, "write_managed_file") as write:
+            grafana.provision_datasource(ctx)
+
+        content = write.call_args[0][2]
+        self.assertIn("uid: SGLangPlaceholder", content)
+        self.assertIn("url: http://127.0.0.1:19090", content)
 
 
 if __name__ == "__main__":
