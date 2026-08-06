@@ -39,10 +39,13 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(sections, expected)
 
     def test_dashboard_can_filter_instance_and_model(self):
-        variables = {
-            variable["name"] for variable in self.dashboard["templating"]["list"]
-        }
+        variable_list = self.dashboard["templating"]["list"]
+        variables = {variable["name"] for variable in variable_list}
         self.assertEqual(variables, {"instance", "model"})
+
+        instance = next(item for item in variable_list if item["name"] == "instance")
+        self.assertIn('role="sglang"', instance["definition"])
+        self.assertTrue(instance["definition"].startswith("label_values(up{"))
 
         expressions = [
             target["expr"]

@@ -101,7 +101,7 @@
       },
       "targets": [
         {
-          "expr": "min(up{job=\"file_sd_nodes\",instance=~\"$instance\"})",
+          "expr": "min(up{job=\"file_sd_nodes\",role=\"sglang\",instance=~\"$instance\"})",
           "instant": true,
           "legendFormat": "Target",
           "refId": "A"
@@ -2045,7 +2045,7 @@
           "type": "prometheus",
           "uid": "Prometheus"
         },
-        "definition": "label_values(sglang:num_requests_total, instance)",
+        "definition": "label_values(up{job=\"file_sd_nodes\",role=\"sglang\"}, instance)",
         "hide": 0,
         "includeAll": true,
         "label": "Instance",
@@ -2053,7 +2053,7 @@
         "name": "instance",
         "options": [],
         "query": {
-          "query": "label_values(sglang:num_requests_total, instance)",
+          "query": "label_values(up{job=\"file_sd_nodes\",role=\"sglang\"}, instance)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
