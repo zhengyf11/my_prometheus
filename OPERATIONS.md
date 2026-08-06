@@ -68,6 +68,21 @@ Grafana 使用 `admin` 和上面凭据文件中的密码登录。安装器已经
 
 SGLang dashboard 顶部可以按 `Instance` 和 `Model` 筛选，同一套面板可切换查看 `127.0.0.1:30000`、`10.30.0.2:31001` 等采集目标。
 
+Dashboard JSON 分为仓库源文件和安装后的运行时文件：
+
+| Dashboard | 仓库源文件 | Grafana 实际加载文件 |
+|---|---|---|
+| Linux Node Overview | `grafana/dashboards/node-overview.json` | `/var/lib/grafana/dashboards/node-overview.json` |
+| SGLang Inference Overview | `grafana/dashboards/sglang-overview.json` | `/var/lib/grafana/dashboards/sglang-overview.json` |
+
+Grafana 的 dashboard provider 配置位于：
+
+```text
+/etc/grafana/provisioning/dashboards/dashboards.yml
+```
+
+该 provider 每 30 秒扫描一次 `/var/lib/grafana/dashboards`。修改仓库源文件后，需要重新执行安装器，或者将 JSON 复制到运行时目录；只修改仓库文件不会自动影响正在运行的 Grafana。
+
 服务器只开放 SSH 时，可以建立本地隧道：
 
 ```bash
@@ -189,7 +204,11 @@ ssh -p 33003 root@117.187.188.18
 /etc/prometheus                            Prometheus 配置
 /var/lib/prometheus                        Prometheus 数据
 /etc/grafana                               Grafana 配置
-/var/lib/grafana                           Grafana 数据和 dashboard
+/etc/grafana/provisioning/dashboards/dashboards.yml  Dashboard provider
+/var/lib/grafana/dashboards/node-overview.json       Node dashboard 运行时文件
+/var/lib/grafana/dashboards/sglang-overview.json     SGLang dashboard 运行时文件
+/opt/my_prometheus-installer/grafana/dashboards/node-overview.json    Node dashboard 源文件
+/opt/my_prometheus-installer/grafana/dashboards/sglang-overview.json  SGLang dashboard 源文件
 /var/lib/my_prometheus                     安装状态和 Grafana 凭据
 /etc/systemd/system/prometheus.service     Prometheus unit
 /etc/systemd/system/node_exporter.service  Node Exporter unit

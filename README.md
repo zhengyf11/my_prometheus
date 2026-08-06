@@ -130,7 +130,9 @@ sudo python3 install.py --yes --reset-grafana-admin-password --grafana-admin-pas
 - Prometheus file_sd 目标：`/etc/prometheus/targets/nodes.yml`
 - Prometheus 规则：`/etc/prometheus/rules/default.yml`
 - Prometheus 数据：`/var/lib/prometheus`
-- Grafana dashboard：`/var/lib/grafana/dashboards/node-overview.json`
+- Grafana Node dashboard：`/var/lib/grafana/dashboards/node-overview.json`
+- Grafana SGLang dashboard：`/var/lib/grafana/dashboards/sglang-overview.json`
+- Grafana dashboard provider：`/etc/grafana/provisioning/dashboards/dashboards.yml`
 - 安装状态：`/var/lib/my_prometheus/install-state.json`
 - 自动生成的 Grafana 凭据：`/var/lib/my_prometheus/grafana-admin-credentials.json`
 
