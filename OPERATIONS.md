@@ -330,7 +330,218 @@ Dashboard JSON 中的变量和 panel targets
 
 这里的 `node` 和 `endpoint` 是人工附加的展示标签，不决定网络访问地址；真正的采集地址由 `targets` 中的 `IP:端口` 决定。
 
-### 2.3 Router 指标与现有 Dashboard 的关系
+### 2.3 Dashboard 中展示哪些数据
+
+Dashboard 展示哪些数据，不是在 `dashboards.yml` provider 中配置的。`dashboards.yml` 只告诉 Grafana 去哪个目录加载 JSON；具体面板、数据查询和下拉变量都定义在 Dashboard JSON 内。
+
+当前 SGLang Dashboard 的仓库源文件是：
+
+```text
+/opt/my_prometheus-installer/grafana/dashboards/sglang-overview.json
+```
+
+Grafana 实际读取的是：
+
+```text
+/var/lib/grafana/dashboards/sglang-overview.json
+```
+
+Dashboard JSON 中与数据有关的主要结构是：
+
+```text
+panels[]
+  datasource                 该面板使用哪个 Grafana 数据源
+  targets[]
+    expr                     查询哪些指标以及如何聚合
+    legendFormat             查询结果在图例中的名称
+    refId                    同一面板内查询的标识 A、B、C...
+  title                      面板标题
+  type                       timeseries、stat 等展示类型
+  fieldConfig                单位、颜色、阈值等展示设置
+
+templating.list[]
+  name                       变量名，例如 instance、model
+  datasource                 变量从哪个数据源查询
+  query.query                下拉选项查询
+  multi/includeAll/allValue  是否支持多选和 All
+```
+
+#### 2.3.1 面板使用哪个数据源
+
+每个面板的 `datasource` 指向 Grafana 数据源 UID：
+
+```json
+"datasource": {
+  "type": "prometheus",
+  "uid": "Prometheus"
+}
+```
+
+这里的 `uid: Prometheus` 对应 `/etc/grafana/provisioning/datasources/prometheus.yml` 中的：
+
+```yaml
+datasources:
+  - name: Prometheus
+    uid: Prometheus
+    type: prometheus
+    url: http://localhost:9090
+```
+
+所以 Dashboard 不直接连接 SGLang，而是把 PromQL 发给本机 Prometheus。
+
+#### 2.3.2 面板查询哪些指标
+
+真正决定某个面板展示哪些数据的是：
+
+```text
+panels[].targets[].expr
+```
+
+例如 `Token Throughput` 面板配置了两条查询：
+
+```json
+"targets": [
+  {
+    "expr": "sum by (instance) (rate(sglang:prompt_tokens_total{instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval]))",
+    "legendFormat": "{{instance}} prompt",
+    "refId": "A"
+  },
+  {
+    "expr": "sum by (instance) (rate(sglang:generation_tokens_total{instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval]))",
+    "legendFormat": "{{instance}} generation",
+    "refId": "B"
+  }
+],
+"title": "Token Throughput",
+"type": "timeseries"
+```
+
+这个面板的数据含义是：
+
+| 配置 | 作用 |
+|---|---|
+| `sglang:prompt_tokens_total` | 输入/prefill Token 累计数 |
+| `sglang:generation_tokens_total` | 输出 Token 累计数 |
+| `rate(...[$__rate_interval])` | 转换成 Grafana 当前时间范围内的每秒速率 |
+| `instance=~"$instance"` | 只查询 Instance 下拉框选中的实例 |
+| `model_name=~"$model"` | 只查询 Model 下拉框选中的模型 |
+| `sum by (instance)` | 按实例汇总，同时保留实例维度 |
+| `legendFormat` | 设置图例名称，不改变查询结果 |
+
+再例如 `Time to First Token` 面板使用 `sglang:time_to_first_token_seconds_bucket`，通过三条 `expr` 分别计算 P50、P95 和 P99：
+
+```promql
+histogram_quantile(
+  0.95,
+  sum by (le) (
+    rate(sglang:time_to_first_token_seconds_bucket{
+      instance=~"$instance",
+      model_name=~"$model"
+    }[$__rate_interval])
+  )
+)
+```
+
+要增加、删除或替换一个面板的数据，需要修改对应 panel 的 `targets` 数组。`title`、`type`、`fieldConfig` 只负责标题和展示方式，不决定从 Prometheus 读取哪些指标。
+
+#### 2.3.3 Instance 下拉列表
+
+Dashboard 顶部的 `Instance` 下拉列表配置在：
+
+```text
+templating.list[] 中 name 为 instance 的对象
+```
+
+当前关键配置是：
+
+```json
+{
+  "name": "instance",
+  "label": "Instance",
+  "type": "query",
+  "datasource": {
+    "type": "prometheus",
+    "uid": "Prometheus"
+  },
+  "definition": "label_values(up{job=\"file_sd_nodes\",role=\"sglang\"}, instance)",
+  "query": {
+    "query": "label_values(up{job=\"file_sd_nodes\",role=\"sglang\"}, instance)"
+  },
+  "multi": true,
+  "includeAll": true,
+  "allValue": ".*"
+}
+```
+
+决定下拉选项的是：
+
+```promql
+label_values(up{job="file_sd_nodes",role="sglang"}, instance)
+```
+
+其生成过程如下：
+
+```text
+/etc/prometheus/targets/03-sglang.yml
+  targets: 10.30.0.3:30000
+  labels.role: sglang
+              |
+              v
+Prometheus 生成时间序列
+up{
+  job="file_sd_nodes",
+  role="sglang",
+  instance="10.30.0.3:30000"
+}
+              |
+              v
+Dashboard 变量查询 instance 标签
+              |
+              v
+Instance 下拉列表出现 10.30.0.3:30000
+```
+
+因此，Instance 下拉列表中的内容不是直接写死在 Dashboard JSON 中的，而是同时由以下两处决定：
+
+1. `/etc/prometheus/targets/*.yml` 中有哪些 target，以及 target 带什么 `role` 标签。
+2. Dashboard 变量查询中的 `job="file_sd_nodes",role="sglang"` 过滤条件。
+
+`up` 指标在 target 抓取失败时仍然存在，只是值为 0，所以 DOWN 的目标也可以保留在 Instance 下拉列表中。
+
+#### 2.3.4 Model 下拉列表
+
+`Model` 下拉列表配置在 `templating.list[]` 中 `name` 为 `model` 的对象，当前查询是：
+
+```promql
+label_values(
+  sglang:num_requests_total{instance=~"$instance"},
+  model_name
+)
+```
+
+它从所选实例的 `sglang:num_requests_total` 指标中提取 `model_name` 标签。因此目标虽然可能出现在 Instance 下拉列表中，但如果它不暴露 `sglang:num_requests_total`，或者指标没有 `model_name` 标签，就不会为 Model 下拉列表提供选项。
+
+手工修改变量 JSON 时，应同步修改 `definition` 和 `query.query`，避免导入或后续 UI 编辑时显示不一致。
+
+#### 2.3.5 Router 为什么不能直接使用现有变量和面板
+
+现有 Instance 变量只选择 `role="sglang"`，面板主要查询 `sglang:*`。Router 指标使用 `smg_*` 前缀，因此 Router Dashboard 应分别配置：
+
+```promql
+label_values(up{job="file_sd_nodes",role="sglang-router"}, instance)
+```
+
+以及查询 Router 指标的 panel target，例如：
+
+```promql
+sum by (instance) (
+  rate(smg_http_requests_total{instance=~"$instance"}[$__rate_interval])
+)
+```
+
+只把 Router target 加入 Prometheus，不修改 Dashboard 的变量和 `targets[].expr`，不会让现有 SGLang 面板自动展示 Router 数据。
+
+### 2.4 Router 指标与现有 Dashboard 的关系
 
 03 节点当前 Router 的业务 API 监听 `8000`，Prometheus 指标独立监听 `29000`：
 
@@ -352,7 +563,7 @@ http://127.0.0.1:29000/metrics  返回 200，29000 是 Router metrics 端口
 
 该示例只说明配置关系，不代表 03 节点已经写入此配置。
 
-### 2.4 配置修改后的生效方式
+### 2.5 配置修改后的生效方式
 
 | 修改内容 | 生效方式 |
 |---|---|
@@ -385,7 +596,7 @@ sed -n '1,160p' /etc/grafana/provisioning/dashboards/dashboards.yml
 ls -l /var/lib/grafana/dashboards
 ```
 
-### 2.5 状态检查
+### 2.6 状态检查
 
 查看 03-gpu 当前服务状态：
 
