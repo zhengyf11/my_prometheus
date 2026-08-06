@@ -9,7 +9,7 @@ import urllib.request
 from .command import command_exists, run
 from .files import backup_file, copy_file, ensure_dir, write_managed_file
 from .packages import install_grafana_package
-from .state import read_grafana_credentials, write_grafana_credentials
+from .state import read_grafana_credentials, read_state, write_grafana_credentials
 from .systemd import enable_now, restart
 
 
@@ -19,6 +19,8 @@ LOG = logging.getLogger(__name__)
 def install_grafana(ctx):
     LOG.info("installing Grafana %s", ctx.grafana_version)
     was_installed = install_grafana_package(ctx)
+    previous_state = read_state(ctx)
+    ctx.grafana_preexisting = previous_state.get("grafana_preexisting", was_installed)
     ensure_dir(ctx, ctx.grafana_provisioning_dir / "datasources")
     ensure_dir(ctx, ctx.grafana_provisioning_dir / "dashboards")
     ensure_dir(ctx, ctx.grafana_dashboard_dir, owner="grafana", group="grafana")

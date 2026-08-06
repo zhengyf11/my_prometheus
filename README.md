@@ -194,7 +194,25 @@ curl http://localhost:3000/api/health
 
 ## 卸载说明
 
-当前版本暂未实现 `uninstall.py`。需要手动清理时可停止服务后删除对应 systemd unit、二进制、配置和数据目录。生产环境删除 `/var/lib/prometheus` 前请先确认数据不再需要。
+先演练卸载过程：
+
+```bash
+sudo python3 uninstall.py --yes --dry-run
+```
+
+默认卸载服务、程序和 managed 配置，但保留监控数据：
+
+```bash
+sudo python3 uninstall.py --yes
+```
+
+确认不再需要历史数据时再执行彻底清理：
+
+```bash
+sudo python3 uninstall.py --yes --purge-data
+```
+
+完整的安装、访问、停服、卸载和 03-gpu 运维命令见 [OPERATIONS.md](OPERATIONS.md)。
 
 ## 排障
 
