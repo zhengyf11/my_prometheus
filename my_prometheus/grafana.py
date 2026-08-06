@@ -198,6 +198,14 @@ providers:
         owner="grafana",
         group="grafana",
     )
+    copy_file(
+        ctx,
+        ctx.grafana_assets_dir / "dashboards" / "sglang-overview.json",
+        ctx.grafana_dashboard_dir / "sglang-overview.json",
+        mode=0o644,
+        owner="grafana",
+        group="grafana",
+    )
 
 
 def wait_for_grafana(ctx, timeout=90):

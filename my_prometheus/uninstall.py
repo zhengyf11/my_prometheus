@@ -43,8 +43,10 @@ class UninstallContext(object):
         self.grafana_ini = Path("/etc/grafana/grafana.ini")
         self.grafana_provisioning_dir = Path("/etc/grafana/provisioning")
         self.grafana_dashboard = Path("/var/lib/grafana/dashboards/node-overview.json")
+        self.sglang_dashboard = Path("/var/lib/grafana/dashboards/sglang-overview.json")
         self.repo_root = Path(__file__).resolve().parent.parent
         self.dashboard_source = self.repo_root / "grafana/dashboards/node-overview.json"
+        self.sglang_dashboard_source = self.repo_root / "grafana/dashboards/sglang-overview.json"
 
         self.prometheus_port = args.prometheus_port
         self.grafana_port = args.grafana_port
@@ -208,18 +210,23 @@ def remove_grafana_files(ctx):
     remove_managed_file(
         ctx, ctx.grafana_provisioning_dir / "dashboards/dashboards.yml"
     )
-    if ctx.grafana_dashboard.exists():
+    remove_dashboard(ctx, ctx.dashboard_source, ctx.grafana_dashboard)
+    remove_dashboard(ctx, ctx.sglang_dashboard_source, ctx.sglang_dashboard)
+    restore_oldest_backup(ctx, ctx.grafana_ini)
+
+
+def remove_dashboard(ctx, source, destination):
+    if destination.exists():
         unchanged = (
-            ctx.dashboard_source.exists()
+            source.exists()
             and filecmp.cmp(
-                str(ctx.dashboard_source), str(ctx.grafana_dashboard), shallow=False
+                str(source), str(destination), shallow=False
             )
         )
         if unchanged or ctx.force:
-            remove_path(ctx, ctx.grafana_dashboard)
+            remove_path(ctx, destination)
         else:
-            LOG.warning("preserving modified dashboard %s", ctx.grafana_dashboard)
-    restore_oldest_backup(ctx, ctx.grafana_ini)
+            LOG.warning("preserving modified dashboard %s", destination)
 
 
 def remove_grafana_package(ctx):

@@ -1,5 +1,6 @@
 import subprocess
 import unittest
+from pathlib import Path
 from unittest import mock
 
 from my_prometheus import command, detect, firewall, grafana, packages
@@ -131,6 +132,18 @@ class GrafanaTests(unittest.TestCase):
         self.assertIn("/usr/share/grafana", command)
         self.assertIn("/etc/grafana/grafana.ini", command)
         self.assertEqual(run.call_args[1]["secrets"], ["test-password"])
+
+    def test_provisions_node_and_sglang_dashboards(self):
+        ctx = Context()
+        ctx.grafana_provisioning_dir = Path("/etc/grafana/provisioning")
+        ctx.grafana_dashboard_dir = Path("/var/lib/grafana/dashboards")
+        ctx.grafana_assets_dir = Path("/repo/grafana")
+        with mock.patch.object(grafana, "write_managed_file"), \
+                mock.patch.object(grafana, "copy_file") as copy:
+            grafana.provision_dashboards(ctx)
+
+        sources = [call[0][1].name for call in copy.call_args_list]
+        self.assertEqual(sources, ["node-overview.json", "sglang-overview.json"])
 
 
 if __name__ == "__main__":

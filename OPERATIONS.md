@@ -61,7 +61,12 @@ Prometheus: http://<服务器IP>:9090
 Grafana:    http://<服务器IP>:3000
 ```
 
-Grafana 使用 `admin` 和上面凭据文件中的密码登录。安装器已经创建 Prometheus 数据源，并导入 `Linux Hosts` 目录下的 Node Overview dashboard。
+Grafana 使用 `admin` 和上面凭据文件中的密码登录。安装器已经创建 Prometheus 数据源，并在 `Linux Hosts` 目录中导入：
+
+- `Linux Node Overview`：主机 CPU、内存、磁盘和网络状态。
+- `SGLang Inference Overview`：SGLang 流量、token 吞吐、请求队列、延迟、KV Cache、运行时利用率、推测解码和引擎容量。
+
+SGLang dashboard 顶部可以按 `Instance` 和 `Model` 筛选，同一套面板可切换查看 `127.0.0.1:30000`、`10.30.0.2:31001` 等采集目标。
 
 服务器只开放 SSH 时，可以建立本地隧道：
 

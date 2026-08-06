@@ -26,6 +26,7 @@ CentOS 7 需要先确保系统存在可用的 `python3`。
 - Prometheus `3.12.0`
 - Node Exporter `1.11.1`
 - Grafana OSS，默认通过 Grafana 官方 RPM 或 APT 仓库安装最新版
+- Grafana dashboards：Linux Node Overview 和 SGLang Inference Overview
 - Alertmanager 可选，默认不安装
 
 ## 常用参数
