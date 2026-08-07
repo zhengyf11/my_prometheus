@@ -139,7 +139,7 @@ sudo python3 install.py --yes --reset-grafana-admin-password --grafana-admin-pas
 - 安装状态：`/var/lib/my_prometheus/install-state.json`
 - 自动生成的 Grafana 凭据：`/var/lib/my_prometheus/grafana-admin-credentials.json`
 
-两套 SGLang Dashboard 由 `tools/generate_sglang_dashboards.py` 中的分类指标清单生成。PD 分离看板通过 `Role` 下拉框在 Prefill、Decode 和 Router 之间切换。修改指标分类、类型或看板结构后执行：
+两套 SGLang Dashboard 由 `tools/generate_sglang_dashboards.py` 中的分类指标清单生成。PD 分离看板的 `Role` 下拉框支持单选、多选和 All，可组合查看 Prefill、Decode 与 Router。修改指标分类、类型或看板结构后执行：
 
 ```bash
 python3 tools/generate_sglang_dashboards.py

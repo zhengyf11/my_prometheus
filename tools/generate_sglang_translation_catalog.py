@@ -20,7 +20,7 @@ DASHBOARDS = (
         "SGLang PD Disaggregated and Router Metrics",
         "SGLang PD 分离与 Router 指标",
         "Prefill / Decode / Router",
-        "通过 Role 下拉框选择 Prefill、Decode 或 Router，共覆盖 183 个指标族。",
+        "通过 Role 下拉框单选、多选或选择 All 查看 Prefill、Decode 和 Router，共覆盖 183 个指标族。",
     ),
 )
 
@@ -118,6 +118,18 @@ TOKENS = {
     "peer": "对端", "reconnects": "重连", "ack": "确认", "nack": "拒绝确认",
     "store": "存储", "cardinality": "基数", "hash": "哈希", "drift": "漂移",
     "ratio": "比率", "inflight": "处理中", "age": "时长", "generation": "生成",
+    "alloc": "分配", "back": "回载", "backup": "备份", "block": "块",
+    "cap": "上限", "cb": "熔断器", "cooperation": "协同", "db": "数据库",
+    "delayer": "延迟器", "dp": "DP", "ebnf": "EBNF", "entries": "条目",
+    "eplb": "EPLB", "full": "全量", "fwd": "前向", "get": "获取",
+    "hicache": "HiCache", "input": "输入", "is": "是否", "lb": "负载均衡",
+    "len": "长度", "length": "长度", "loads": "负载", "lora": "LoRA",
+    "mcp": "MCP", "ms": "毫秒", "new": "新建", "operation": "操作",
+    "output": "输出", "passes": "执行次数", "per": "每次", "pgs": "页组",
+    "prefetch": "预取", "rl": "限流", "session": "会话", "so": "结构化输出",
+    "steps": "步数", "time": "时间", "timeout": "超时", "tpot": "TPOT",
+    "ttft": "TTFT", "under": "满足", "usage": "使用率", "verify": "验证",
+    "weight": "权重", "workers": "Worker", "router": "Router", "SLO": "SLO",
 }
 
 TYPE_NAMES = {
@@ -136,7 +148,27 @@ def candidate_name(metric_name):
             break
     if short in EXACT_TRANSLATIONS:
         return EXACT_TRANSLATIONS[short]
-    return " ".join(TOKENS.get(token, token.upper()) for token in short.split("_"))
+    translated = " ".join(TOKENS[token] for token in short.split("_"))
+    translated = translated.replace(" 数量 请求", " 请求数")
+    translated = translated.replace("数量 请求", "请求数")
+    translated = translated.replace(" 累计", "累计数")
+    translated = translated.replace(" 秒", "（秒）")
+    translated = translated.replace(" 毫秒", "（毫秒）")
+    return translated
+
+
+def untranslated_tokens(groups):
+    unknown = set()
+    for items in groups.values():
+        for item in items:
+            short = item["name"].split(":", 1)[-1]
+            for prefix in ("smg_", "router_"):
+                if short.startswith(prefix):
+                    short = short[len(prefix):]
+                    break
+            if short not in EXACT_TRANSLATIONS:
+                unknown.update(token for token in short.split("_") if token not in TOKENS)
+    return unknown
 
 
 def introduction(item, translated):
@@ -166,10 +198,14 @@ def metric_rows(groups, scope):
 
 
 def main():
+    unknown = untranslated_tokens(ENGINE_GROUPS) | untranslated_tokens(ROUTER_GROUPS)
+    if unknown:
+        raise RuntimeError("missing metric-name translations: {0}".format(", ".join(sorted(unknown))))
+
     lines = [
         "# SGLang Dashboard 中文翻译候选清单",
         "",
-        "本文用于评审 Grafana 界面中文化范围，当前 Dashboard JSON **尚未应用这些中文名**。在“选择”列标记需要采用或需要调整的项即可。指标名保持 Prometheus 原名，不做翻译。",
+        "本文用于评审 Grafana 界面中文化范围，当前 Dashboard JSON **尚未应用这些中文名**。在“选择”列标记需要采用或需要调整的项即可。Prometheus 原始指标标识保持不变；“指标名称中文翻译候选”用于未来的面板标题、图例或说明文字。",
         "",
         "## 1. Dashboard 名称",
         "",
@@ -192,7 +228,7 @@ def main():
     lines.extend([
         "", "## 3. Engine 指标（PD 合部、Prefill、Decode 共用）", "",
         "共 122 个指标族。PD 合部和 PD 分离使用同一套 Collector，实际是否有样本取决于角色、功能开关和运行事件。",
-        "", "| 选择 | Prometheus 指标名 | 中文候选 | 类型 | 角色范围 | 分类候选 | 简介 |",
+        "", "| 选择 | Prometheus 指标名 | 指标名称中文翻译候选 | 类型 | 角色范围 | 分类候选 | 简介 |",
         "|---|---|---|---|---|---|---|",
     ])
     lines.extend(metric_rows(ENGINE_GROUPS, "Unified / Prefill / Decode"))
@@ -200,7 +236,7 @@ def main():
     lines.extend([
         "", "## 4. Router 指标", "",
         "共 61 个指标族，包含 Router 本体和 Router Mesh。",
-        "", "| 选择 | Prometheus 指标名 | 中文候选 | 类型 | 角色范围 | 分类候选 | 简介 |",
+        "", "| 选择 | Prometheus 指标名 | 指标名称中文翻译候选 | 类型 | 角色范围 | 分类候选 | 简介 |",
         "|---|---|---|---|---|---|---|",
     ])
     lines.extend(metric_rows(ROUTER_GROUPS, "Router"))

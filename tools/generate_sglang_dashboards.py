@@ -417,7 +417,6 @@ def variables(kind):
             query_variable(
                 "role", "Role",
                 'label_values(up{job="file_sd_nodes",role=~"sglang-prefill|sglang-decode|sglang-router"}, role)',
-                multi=False,
             ),
             query_variable(
                 "instance", "Instance",
@@ -519,8 +518,8 @@ def main():
         build_dashboard(
             "split-router", "SGLang PD Disaggregated and Router Metrics",
             "my-prometheus-sglang-pd-disaggregated", split_router_groups,
-            "separate prefill/decode engines, the Router, and Router Mesh; select one role "
-            "from the Role variable (panels for other roles show no data)",
+            "separate prefill/decode engines, the Router, and Router Mesh; select one or more "
+            "roles, or All, from the Role variable (panels without matching metrics show no data)",
         ),
     )
 

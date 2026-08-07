@@ -19,7 +19,7 @@
       },
       "id": 1,
       "options": {
-        "content": "# SGLang PD Disaggregated and Router Metrics\n\nThis dashboard covers **183 metric families** for separate prefill/decode engines, the Router, and Router Mesh; select one role from the Role variable (panels for other roles show no data). It uses the shared Prometheus data source `Prometheus` and selects scrape targets by their SGLang role label. Placeholder targets can be DOWN until the corresponding process is started. Metrics are lazily registered, so feature-gated metrics may show no data.",
+        "content": "# SGLang PD Disaggregated and Router Metrics\n\nThis dashboard covers **183 metric families** for separate prefill/decode engines, the Router, and Router Mesh; select one or more roles, or All, from the Role variable (panels without matching metrics show no data). It uses the shared Prometheus data source `Prometheus` and selects scrape targets by their SGLang role label. Placeholder targets can be DOWN until the corresponding process is started. Metrics are lazily registered, so feature-gated metrics may show no data.",
         "mode": "markdown"
       },
       "title": "Dashboard Scope",
@@ -4652,7 +4652,7 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {},
         "datasource": {
           "type": "prometheus",
@@ -4660,9 +4660,9 @@
         },
         "definition": "label_values(up{job=\"file_sd_nodes\",role=~\"sglang-prefill|sglang-decode|sglang-router\"}, role)",
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Role",
-        "multi": false,
+        "multi": true,
         "name": "role",
         "options": [],
         "query": {

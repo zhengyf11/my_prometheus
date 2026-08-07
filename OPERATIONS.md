@@ -64,7 +64,7 @@ Grafana:    http://<服务器IP>:3000
 Grafana 使用 `admin` 和上面凭据文件中的密码登录。安装器会创建两个 Dashboard 目录：
 
 - `Linux Hosts`：包含 `Linux Node Overview`，使用真实的本机 Prometheus 数据源。
-- `SGLang`：包含 `SGLang PD Unified Metrics` 和 `SGLang PD Disaggregated and Router Metrics` 两套看板。后者通过 `Role` 下拉框选择 Prefill、Decode 或 Router。
+- `SGLang`：包含 `SGLang PD Unified Metrics` 和 `SGLang PD Disaggregated and Router Metrics` 两套看板。后者的 `Role` 下拉框支持单选、多选和 All，可组合查看 Prefill、Decode 与 Router。
 
 Linux 与 SGLang 看板统一使用 Grafana 数据源 `Prometheus`，地址为 `http://localhost:9090`。SGLang 两套看板通过 Prometheus target 的 `role` 标签区分 PD 合部、Prefill、Decode 和 Router。安装器默认写入四个不可达的占位 target，因此看板结构和 Instance 下拉项可见，但 target 会显示 `DOWN`，业务指标暂时显示 No data。
 
@@ -259,6 +259,53 @@ ssh -p 33003 root@117.187.188.18
 | Dashboard provider | `/etc/grafana/provisioning/dashboards/dashboards.yml` | 分别把 `linux` 运行时目录加载到 `Linux Hosts`，把 `sglang` 运行时目录加载到 `SGLang` |
 | Node Dashboard | `/var/lib/grafana/dashboards/linux/node-overview.json` | 定义 Linux Node Overview 的面板和 PromQL |
 | SGLang Dashboards | `/var/lib/grafana/dashboards/sglang/*.json` | 定义 PD 合部，以及 PD 分离与 Router 两套面板及 PromQL |
+
+#### 2.1.1 指标采集与页面刷新周期
+
+Prometheus 请求各 target `/metrics` 的默认周期由 03 节点运行时配置指定：
+
+```yaml
+# /etc/prometheus/prometheus.yml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+```
+
+仓库中的来源关系是：
+
+```text
+my_prometheus/prometheus.py
+  scrape_interval = 15s
+              |
+              v
+templates/prometheus.yml.tpl
+  global.scrape_interval: ${scrape_interval}
+              |
+              v
+/etc/prometheus/prometheus.yml
+  global.scrape_interval: 15s
+```
+
+各时间配置的作用不同：
+
+| 配置 | 当前值 | 作用 |
+|---|---:|---|
+| `/etc/prometheus/prometheus.yml` 的 `global.scrape_interval` | 15 秒 | Prometheus 向每个 target 请求 `/metrics` 的默认采集周期 |
+| 同文件某个 `scrape_configs[]` job 内的 `scrape_interval` | 当前未单独设置 | 可覆盖全局值，只调整该 job 的采集周期 |
+| `file_sd_configs[].refresh_interval` | 30 秒 | 重新扫描 `/etc/prometheus/targets/*.yml` 的周期，不是指标采集周期 |
+| `global.evaluation_interval` | 15 秒 | 执行 recording/alerting rules 的周期，不是抓取周期 |
+| Dashboard JSON 顶层 `refresh` | 30 秒 | 浏览器打开看板时重新执行 PromQL 的周期，不改变 Prometheus 采集频率 |
+| Grafana provider 的 `updateIntervalSeconds` | 30 秒 | 扫描 Dashboard JSON 文件变更的周期，不改变指标采集频率 |
+
+临时修改 03 节点采集周期时，编辑 `/etc/prometheus/prometheus.yml`，校验后热加载：
+
+```bash
+vi /etc/prometheus/prometheus.yml
+promtool check config /etc/prometheus/prometheus.yml
+curl -fsS -X POST http://127.0.0.1:9090/-/reload
+```
+
+如果希望重新执行安装器后仍保持新默认值，还要同步修改 `my_prometheus/prometheus.py` 中传给模板的 `scrape_interval`；否则后续带 `--force` 的安装可能重新生成 15 秒配置。
 
 仓库文件与 03 节点运行时文件的对应关系：
 
@@ -538,7 +585,7 @@ Instance 下拉列表出现 10.30.0.3:30000
 | Dashboard | Instance 变量查询 |
 |---|---|
 | PD 合部 | `label_values(up{job="file_sd_nodes",role="sglang-unified"}, instance)` |
-| PD 分离与 Router | 先选择 `role=sglang-prefill|sglang-decode|sglang-router`，再用 `label_values(up{job="file_sd_nodes",role=~"$role"}, instance)` |
+| PD 分离与 Router | Role 支持多选和 All：先选择 `role=sglang-prefill|sglang-decode|sglang-router`，再用 `label_values(up{job="file_sd_nodes",role=~"$role"}, instance)` |
 
 当前 03 节点旧 target 使用的是 `role: sglang`，与两套新 Dashboard 的角色条件不同。所有看板使用同一个 Prometheus，但实际 SGLang target 必须按上表标记角色，才能进入对应看板的 Instance 下拉列表。
 

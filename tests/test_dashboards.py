@@ -78,8 +78,9 @@ class DashboardTests(unittest.TestCase):
         )
         for expected_role in ("sglang-prefill", "sglang-decode", "sglang-router"):
             self.assertIn(expected_role, role["definition"])
-        self.assertFalse(role["multi"])
-        self.assertFalse(role["includeAll"])
+        self.assertTrue(role["multi"])
+        self.assertTrue(role["includeAll"])
+        self.assertEqual(role["allValue"], ".*")
 
     def test_engine_dashboards_have_expected_sections(self):
         expected = {
