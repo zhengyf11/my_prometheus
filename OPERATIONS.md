@@ -378,16 +378,16 @@ sum by (instance) (
 输入 Token 长度分段为：
 
 ```text
-0-4k, 4k-16k, 16k-64k, 64k-256k, 256k-1M, 1M+
+0-4k, 4k-15k, 15k-60k, 60k-300k, 300k-1M, 1M+
 ```
 
 生成 Token 长度分段为：
 
 ```text
-0-512, 512-2k, 2k-8k, 8k-32k, 32k-128k, 128k+
+0-500, 500-2k, 2k-8k, 8k-30k, 30k-100k, 100k+
 ```
 
-分段面板使用 `increase(<metric>_bucket[$__range])` 计算当前 Dashboard 时间范围内的请求数，并用相邻累计 bucket 相减得到各区间。SGLang 必须精确导出边界 `4096/16384/65536/262144/1048576` 和 `512/2048/8192/32768/131072`；Prometheus Histogram 不能从其他 bucket 边界无损推导这些区间，缺少边界时面板会显示 `No data`。
+分段面板使用 `increase(<metric>_bucket[$__range])` 计算当前 Dashboard 时间范围内的请求数，并用相邻累计 bucket 相减得到各区间。查询使用 SGLang 默认导出的输入边界 `4000/15000/60000/300000/1000000` 和生成边界 `500/2000/8000/30000/100000`，不需要修改 SGLang 启动参数。最后一个区间使用 `<metric>_count - 最后一个有限 bucket` 计算；最外层使用 `round()` 消除 `increase()` 时间边界外推产生的小数，按整数展示请求个数。升级 SGLang 后如果默认 bucket 发生变化，需要同步修改生成器和测试。
 
 未缓存输入 Token Histogram 不单独展示。缓存命中率使用以下口径并限制在 `[0, 1]`：
 

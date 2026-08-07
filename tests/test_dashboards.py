@@ -244,19 +244,19 @@ class DashboardTests(unittest.TestCase):
                     self.assertTrue(any(name + "_sum" in expr for expr in matching))
                     self.assertTrue(any(name + "_count" in expr for expr in matching))
 
-    def test_token_histograms_use_requested_ranges(self):
+    def test_token_histograms_use_default_sglang_bucket_ranges(self):
         expected = {
             "sglang:prompt_tokens_histogram": {
                 "ranges": [
-                    "0-4k", "4k-16k", "16k-64k", "64k-256k", "256k-1M", "1M+",
+                    "0-4k", "4k-15k", "15k-60k", "60k-300k", "300k-1M", "1M+",
                 ],
-                "bounds": ["4096", "16384", "65536", "262144", "1048576"],
+                "bounds": ["4000", "15000", "60000", "300000", "1000000"],
             },
             "sglang:generation_tokens_histogram": {
                 "ranges": [
-                    "0-512", "512-2k", "2k-8k", "8k-32k", "32k-128k", "128k+",
+                    "0-500", "500-2k", "2k-8k", "8k-30k", "30k-100k", "100k+",
                 ],
-                "bounds": ["512", "2048", "8192", "32768", "131072"],
+                "bounds": ["500", "2000", "8000", "30000", "100000"],
             },
         }
         for dashboard in self.dashboards.values():
@@ -269,10 +269,12 @@ class DashboardTests(unittest.TestCase):
                     definition["ranges"],
                 )
                 expressions = "\n".join(target["expr"] for target in panel["targets"])
+                self.assertNotIn(r"\+", expressions)
                 for bound in definition["bounds"]:
                     self.assertIn(bound, expressions)
                 for target in panel["targets"]:
                     self.assertIn("increase(", target["expr"])
+                    self.assertIn("round(", target["expr"])
                     self.assertNotIn("histogram_quantile", target["expr"])
 
     def test_uncached_prompt_distribution_is_replaced_by_cache_hit_rate(self):

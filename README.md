@@ -353,7 +353,7 @@ SGLang 面板标题采用 `中文名称（大致解释）`，Prometheus 原始�
 - 未缓存输入 Token 长度不单独展示，页面使用总输入与未缓存输入 Token 计算缓存命中率。
 - 每个普通指标单独成图；关键指标和请求全链路时延放在靠前的独立分组中。
 
-输入 Token 分段为 `0-4k`、`4k-16k`、`16k-64k`、`64k-256k`、`256k-1M`、`1M+`；生成 Token 分段为 `0-512`、`512-2k`、`2k-8k`、`8k-32k`、`32k-128k`、`128k+`。这些统计依赖 SGLang `/metrics` 暴露对应的精确 Histogram bucket 边界；如果上游只提供其他边界，相关分段会显示 `No data`，不能用相邻边界替代后仍声称是上述区间。
+输入 Token 分段为 `0-4k`、`4k-15k`、`15k-60k`、`60k-300k`、`300k-1M`、`1M+`；生成 Token 分段为 `0-500`、`500-2k`、`2k-8k`、`8k-30k`、`30k-100k`、`100k+`。这些区间使用 SGLang 默认 Histogram bucket 的实际边界；每段数值由相邻累计 bucket 相减得到，因此不需要修改 SGLang 启动参数。
 
 在 PD 分离与 Router 看板中，所有 PromQL 都直接带有 `role=~"$role"`。选择 Router 后，PD 指标面板不会查询到 PD 数据；由于 Grafana 静态 Dashboard JSON 不支持按变量动态隐藏任意面板，不适用的 PD 面板仍会保留位置并显示 `No data`。
 

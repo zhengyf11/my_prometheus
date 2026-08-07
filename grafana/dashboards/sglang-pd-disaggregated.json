@@ -1622,7 +1622,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8f93\u5165 Token \u957f\u5ea6\u5206\u5e03\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:prompt_tokens_histogram`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6bcf\u4e2a\u8bf7\u6c42\u7684\u8f93\u5165 Token \u6570\u91cf\u5206\u5e03\u3002\n- \u7edf\u8ba1\u53e3\u5f84\uff1a\u6240\u9009 Dashboard \u65f6\u95f4\u8303\u56f4\u5185\u5b8c\u6210\u8bf7\u6c42\u7684\u5206\u6bb5\u6570\u91cf\u3002\n- \u524d\u7f6e\u6761\u4ef6\uff1aSGLang \u5fc5\u987b\u5bfc\u51fa\u672c\u9762\u677f\u4f7f\u7528\u7684\u7cbe\u786e Histogram bucket \u8fb9\u754c\u3002",
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8f93\u5165 Token \u957f\u5ea6\u5206\u5e03\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:prompt_tokens_histogram`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6bcf\u4e2a\u8bf7\u6c42\u7684\u8f93\u5165 Token \u6570\u91cf\u5206\u5e03\u3002\n- \u7edf\u8ba1\u53e3\u5f84\uff1a\u6240\u9009 Dashboard \u65f6\u95f4\u8303\u56f4\u5185\u5b8c\u6210\u8bf7\u6c42\u7684\u5206\u6bb5\u6570\u91cf\u3002\n- \u5206\u6bb5\u8fb9\u754c\uff1a\u4f7f\u7528 SGLang \u5f53\u524d\u9ed8\u8ba4 Histogram bucket\uff0c\u901a\u8fc7\u76f8\u90bb\u7d2f\u8ba1\u503c\u76f8\u51cf\u8ba1\u7b97\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1645,7 +1645,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"4096|4096.0\"}[$__range]))",
+          "expr": "round(sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"4000|4000[.]0\"}[$__range])))",
           "legendFormat": "{{instance}} 0-4k",
           "refId": "Q01",
           "instant": true
@@ -1655,8 +1655,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_min((sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"16384|16384.0\"}[$__range]))) - (sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"4096|4096.0\"}[$__range]))), 0)",
-          "legendFormat": "{{instance}} 4k-16k",
+          "expr": "round(clamp_min((sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"15000|15000[.]0\"}[$__range]))) - (sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"4000|4000[.]0\"}[$__range]))), 0))",
+          "legendFormat": "{{instance}} 4k-15k",
           "refId": "Q02",
           "instant": true
         },
@@ -1665,8 +1665,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_min((sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"65536|65536.0\"}[$__range]))) - (sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"16384|16384.0\"}[$__range]))), 0)",
-          "legendFormat": "{{instance}} 16k-64k",
+          "expr": "round(clamp_min((sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"60000|60000[.]0\"}[$__range]))) - (sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"15000|15000[.]0\"}[$__range]))), 0))",
+          "legendFormat": "{{instance}} 15k-60k",
           "refId": "Q03",
           "instant": true
         },
@@ -1675,8 +1675,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_min((sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"262144|262144.0\"}[$__range]))) - (sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"65536|65536.0\"}[$__range]))), 0)",
-          "legendFormat": "{{instance}} 64k-256k",
+          "expr": "round(clamp_min((sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"300000|300000[.]0\"}[$__range]))) - (sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"60000|60000[.]0\"}[$__range]))), 0))",
+          "legendFormat": "{{instance}} 60k-300k",
           "refId": "Q04",
           "instant": true
         },
@@ -1685,8 +1685,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_min((sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"1048576|1048576.0|1.048576e\\+06\"}[$__range]))) - (sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"262144|262144.0\"}[$__range]))), 0)",
-          "legendFormat": "{{instance}} 256k-1M",
+          "expr": "round(clamp_min((sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"1000000|1000000[.]0|1e[+]06\"}[$__range]))) - (sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"300000|300000[.]0\"}[$__range]))), 0))",
+          "legendFormat": "{{instance}} 300k-1M",
           "refId": "Q05",
           "instant": true
         },
@@ -1695,7 +1695,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_min((sum by (instance) (increase(sglang:prompt_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\"}[$__range]))) - (sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"1048576|1048576.0|1.048576e\\+06\"}[$__range]))), 0)",
+          "expr": "round(clamp_min((sum by (instance) (increase(sglang:prompt_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\"}[$__range]))) - (sum by (instance) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"1000000|1000000[.]0|1e[+]06\"}[$__range]))), 0))",
           "legendFormat": "{{instance}} 1M+",
           "refId": "Q06",
           "instant": true
@@ -1781,7 +1781,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u751f\u6210 Token \u957f\u5ea6\u5206\u5e03\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:generation_tokens_histogram`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6bcf\u4e2a\u8bf7\u6c42\u7684\u751f\u6210 Token \u6570\u91cf\u5206\u5e03\u3002\n- \u7edf\u8ba1\u53e3\u5f84\uff1a\u6240\u9009 Dashboard \u65f6\u95f4\u8303\u56f4\u5185\u5b8c\u6210\u8bf7\u6c42\u7684\u5206\u6bb5\u6570\u91cf\u3002\n- \u524d\u7f6e\u6761\u4ef6\uff1aSGLang \u5fc5\u987b\u5bfc\u51fa\u672c\u9762\u677f\u4f7f\u7528\u7684\u7cbe\u786e Histogram bucket \u8fb9\u754c\u3002",
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u751f\u6210 Token \u957f\u5ea6\u5206\u5e03\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:generation_tokens_histogram`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6bcf\u4e2a\u8bf7\u6c42\u7684\u751f\u6210 Token \u6570\u91cf\u5206\u5e03\u3002\n- \u7edf\u8ba1\u53e3\u5f84\uff1a\u6240\u9009 Dashboard \u65f6\u95f4\u8303\u56f4\u5185\u5b8c\u6210\u8bf7\u6c42\u7684\u5206\u6bb5\u6570\u91cf\u3002\n- \u5206\u6bb5\u8fb9\u754c\uff1a\u4f7f\u7528 SGLang \u5f53\u524d\u9ed8\u8ba4 Histogram bucket\uff0c\u901a\u8fc7\u76f8\u90bb\u7d2f\u8ba1\u503c\u76f8\u51cf\u8ba1\u7b97\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1804,8 +1804,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"512|512.0\"}[$__range]))",
-          "legendFormat": "{{instance}} 0-512",
+          "expr": "round(sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"500|500[.]0\"}[$__range])))",
+          "legendFormat": "{{instance}} 0-500",
           "refId": "Q01",
           "instant": true
         },
@@ -1814,8 +1814,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_min((sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"2048|2048.0\"}[$__range]))) - (sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"512|512.0\"}[$__range]))), 0)",
-          "legendFormat": "{{instance}} 512-2k",
+          "expr": "round(clamp_min((sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"2000|2000[.]0\"}[$__range]))) - (sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"500|500[.]0\"}[$__range]))), 0))",
+          "legendFormat": "{{instance}} 500-2k",
           "refId": "Q02",
           "instant": true
         },
@@ -1824,7 +1824,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_min((sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"8192|8192.0\"}[$__range]))) - (sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"2048|2048.0\"}[$__range]))), 0)",
+          "expr": "round(clamp_min((sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"8000|8000[.]0\"}[$__range]))) - (sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"2000|2000[.]0\"}[$__range]))), 0))",
           "legendFormat": "{{instance}} 2k-8k",
           "refId": "Q03",
           "instant": true
@@ -1834,8 +1834,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_min((sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"32768|32768.0\"}[$__range]))) - (sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"8192|8192.0\"}[$__range]))), 0)",
-          "legendFormat": "{{instance}} 8k-32k",
+          "expr": "round(clamp_min((sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"30000|30000[.]0\"}[$__range]))) - (sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"8000|8000[.]0\"}[$__range]))), 0))",
+          "legendFormat": "{{instance}} 8k-30k",
           "refId": "Q04",
           "instant": true
         },
@@ -1844,8 +1844,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_min((sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"131072|131072.0\"}[$__range]))) - (sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"32768|32768.0\"}[$__range]))), 0)",
-          "legendFormat": "{{instance}} 32k-128k",
+          "expr": "round(clamp_min((sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"100000|100000[.]0\"}[$__range]))) - (sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"30000|30000[.]0\"}[$__range]))), 0))",
+          "legendFormat": "{{instance}} 30k-100k",
           "refId": "Q05",
           "instant": true
         },
@@ -1854,8 +1854,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_min((sum by (instance) (increase(sglang:generation_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\"}[$__range]))) - (sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"131072|131072.0\"}[$__range]))), 0)",
-          "legendFormat": "{{instance}} 128k+",
+          "expr": "round(clamp_min((sum by (instance) (increase(sglang:generation_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\"}[$__range]))) - (sum by (instance) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model|^$\",le=~\"100000|100000[.]0\"}[$__range]))), 0))",
+          "legendFormat": "{{instance}} 100k+",
           "refId": "Q06",
           "instant": true
         }

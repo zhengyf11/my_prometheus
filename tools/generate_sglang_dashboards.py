@@ -318,25 +318,25 @@ PERCENT_METRICS = {
 }
 
 INPUT_TOKEN_BUCKETS = (
-    ("0-4k", None, ("4096", "4096.0")),
-    ("4k-16k", ("4096", "4096.0"), ("16384", "16384.0")),
-    ("16k-64k", ("16384", "16384.0"), ("65536", "65536.0")),
-    ("64k-256k", ("65536", "65536.0"), ("262144", "262144.0")),
+    ("0-4k", None, ("4000", "4000[.]0")),
+    ("4k-15k", ("4000", "4000[.]0"), ("15000", "15000[.]0")),
+    ("15k-60k", ("15000", "15000[.]0"), ("60000", "60000[.]0")),
+    ("60k-300k", ("60000", "60000[.]0"), ("300000", "300000[.]0")),
     (
-        "256k-1M",
-        ("262144", "262144.0"),
-        ("1048576", "1048576.0", "1.048576e\\+06"),
+        "300k-1M",
+        ("300000", "300000[.]0"),
+        ("1000000", "1000000[.]0", "1e[+]06"),
     ),
-    ("1M+", ("1048576", "1048576.0", "1.048576e\\+06"), None),
+    ("1M+", ("1000000", "1000000[.]0", "1e[+]06"), None),
 )
 
 GENERATION_TOKEN_BUCKETS = (
-    ("0-512", None, ("512", "512.0")),
-    ("512-2k", ("512", "512.0"), ("2048", "2048.0")),
-    ("2k-8k", ("2048", "2048.0"), ("8192", "8192.0")),
-    ("8k-32k", ("8192", "8192.0"), ("32768", "32768.0")),
-    ("32k-128k", ("32768", "32768.0"), ("131072", "131072.0")),
-    ("128k+", ("131072", "131072.0"), None),
+    ("0-500", None, ("500", "500[.]0")),
+    ("500-2k", ("500", "500[.]0"), ("2000", "2000[.]0")),
+    ("2k-8k", ("2000", "2000[.]0"), ("8000", "8000[.]0")),
+    ("8k-30k", ("8000", "8000[.]0"), ("30000", "30000[.]0")),
+    ("30k-100k", ("30000", "30000[.]0"), ("100000", "100000[.]0")),
+    ("100k+", ("100000", "100000[.]0"), None),
 )
 
 
@@ -499,9 +499,11 @@ def cumulative_bucket_expression(item, kind, bounds):
 def bucket_range_expression(item, kind, lower, upper):
     upper_expression = cumulative_bucket_expression(item, kind, upper)
     if lower is None:
-        return upper_expression
+        return "round({0})".format(upper_expression)
     lower_expression = cumulative_bucket_expression(item, kind, lower)
-    return "clamp_min(({0}) - ({1}), 0)".format(upper_expression, lower_expression)
+    return "round(clamp_min(({0}) - ({1}), 0))".format(
+        upper_expression, lower_expression
+    )
 
 
 def cache_hit_expression(item, kind):
@@ -569,7 +571,7 @@ def token_distribution_panel(item, panel_id, x, y, width, kind, buckets):
     panel = panel_base(item, panel_id, x, y, width, "short")
     panel["description"] += (
         "\n- 统计口径：所选 Dashboard 时间范围内完成请求的分段数量。"
-        "\n- 前置条件：SGLang 必须导出本面板使用的精确 Histogram bucket 边界。"
+        "\n- 分段边界：使用 SGLang 当前默认 Histogram bucket，通过相邻累计值相减计算。"
     )
     panel["targets"] = [
         target(
