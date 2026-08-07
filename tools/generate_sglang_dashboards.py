@@ -666,6 +666,16 @@ def timeseries_options():
     }
 
 
+def timeseries_custom_options():
+    return {
+        "drawStyle": "line",
+        "fillOpacity": 10,
+        "lineWidth": 1,
+        "showPoints": "never",
+        "spanNulls": False,
+    }
+
+
 def panel_base(item, panel_id, x, y, width, unit):
     return {
         "datasource": datasource(),
@@ -721,13 +731,7 @@ def cache_hit_panel(item, panel_id, x, y, width, kind):
         "- Prometheus 原指标：`sglang:uncached_prompt_tokens_histogram_sum`",
         "- 原始未缓存输入 Token 长度分布不单独展示。",
     ])
-    panel["fieldConfig"]["defaults"]["custom"] = {
-        "drawStyle": "line",
-        "fillOpacity": 10,
-        "lineWidth": 1,
-        "showPoints": "never",
-        "spanNulls": True,
-    }
+    panel["fieldConfig"]["defaults"]["custom"] = timeseries_custom_options()
     panel["options"] = timeseries_options()
     panel["targets"] = [target(cache_hit_expression(item, kind), legend_format(item), 0)]
     panel["type"] = "timeseries"
@@ -778,13 +782,7 @@ def metric_panel(item, panel_id, x, y, width, kind):
         panel["type"] = "stat"
         return panel
 
-    panel["fieldConfig"]["defaults"]["custom"] = {
-        "drawStyle": "line",
-        "fillOpacity": 10,
-        "lineWidth": 1,
-        "showPoints": "never",
-        "spanNulls": True,
-    }
+    panel["fieldConfig"]["defaults"]["custom"] = timeseries_custom_options()
     panel["options"] = timeseries_options()
     panel["type"] = "timeseries"
     return panel
@@ -801,6 +799,120 @@ def row_panel(title, panel_id, y):
     }
 
 
+def health_selector(kind):
+    labels = ['job="file_sd_nodes"', 'instance=~"$instance"']
+    if kind == "unified":
+        labels.append('role="sglang-unified"')
+    elif kind == "split-router":
+        labels.append('role=~"$role"')
+    else:
+        raise ValueError("unsupported dashboard kind: {0}".format(kind))
+    return ",".join(labels)
+
+
+def health_panel(title, description, expression_value, legend, panel_id, x, y, width,
+                 unit="short", panel_type="timeseries", instant=False,
+                 thresholds=None, mappings=None):
+    defaults = {
+        "color": {"mode": "thresholds" if thresholds else "palette-classic"},
+        "unit": unit,
+    }
+    if thresholds:
+        defaults["thresholds"] = {"mode": "absolute", "steps": thresholds}
+    if mappings:
+        defaults["mappings"] = mappings
+    panel = {
+        "datasource": datasource(),
+        "description": description,
+        "fieldConfig": {
+            "defaults": defaults,
+            "overrides": [],
+        },
+        "gridPos": {"h": 8, "w": width, "x": x, "y": y},
+        "id": panel_id,
+        "targets": [target(expression_value, legend, 0, instant=instant)],
+        "title": title,
+        "type": panel_type,
+        "x-panelKind": "scrape-health",
+    }
+    if panel_type == "stat":
+        panel["options"] = {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": False},
+            "textMode": "auto",
+            "wideLayout": True,
+        }
+    else:
+        panel["fieldConfig"]["defaults"]["custom"] = timeseries_custom_options()
+        panel["options"] = timeseries_options()
+    return panel
+
+
+def health_panels(kind, first_panel_id, y):
+    labels = health_selector(kind)
+    role_instance = "{{role}} / {{instance}}"
+    panels = [
+        {
+            "collapsed": False,
+            "gridPos": {"h": 1, "w": 24, "x": 0, "y": y},
+            "id": first_panel_id,
+            "panels": [],
+            "title": "采集健康 (Scrape Health)",
+            "type": "row",
+            "x-panelKind": "scrape-health",
+        },
+        health_panel(
+            "采集目标状态（1 为 UP，0 为 DOWN）",
+            "Prometheus `up` 指标。值为 0 表示目标存在但抓取失败；目标完全消失时，请结合“采集目标缺失状态”判断配置或服务发现异常。",
+            "max by (role, instance) (up{{{0}}})".format(labels),
+            role_instance,
+            first_panel_id + 1, 0, y + 1, 6, panel_type="stat", instant=True,
+            thresholds=[{"color": "red", "value": None}, {"color": "green", "value": 1}],
+            mappings=[{"options": {
+                "0": {"color": "red", "index": 0, "text": "DOWN"},
+                "1": {"color": "green", "index": 1, "text": "UP"},
+            }, "type": "value"}],
+        ),
+        health_panel(
+            "采集目标缺失状态（1 为缺失，0 为已发现）",
+            "使用 `absent(up)` 判断所选 Role/Instance 是否完全没有匹配目标。值为 1 时应检查 target 文件、标签和变量选择。",
+            "clamp_max(absent(up{{{0}}}), 1) or on() (count(up{{{0}}}) * 0)".format(labels),
+            "目标缺失状态",
+            first_panel_id + 2, 6, y + 1, 6, panel_type="stat", instant=True,
+            thresholds=[{"color": "green", "value": None}, {"color": "red", "value": 1}],
+            mappings=[{"options": {
+                "0": {"color": "green", "index": 0, "text": "已发现"},
+                "1": {"color": "red", "index": 1, "text": "缺失"},
+            }, "type": "value"}],
+        ),
+        health_panel(
+            "最近成功采集距今时间（24 小时内最后一次 UP 距今秒数）",
+            "根据最近 24 小时 `up == 1` 的样本计算。持续增大表示成功采集中断；No data 表示最近 24 小时没有成功样本。",
+            "time() - max_over_time(timestamp((up{{{0}}} == 1))[24h:])".format(labels),
+            role_instance,
+            first_panel_id + 3, 12, y + 1, 12, unit="s", panel_type="stat", instant=True,
+        ),
+        health_panel(
+            "每次采集样本数（Prometheus 单次抓取接收的样本数量）",
+            "Prometheus `scrape_samples_scraped` 指标。突然降为 0 或明显下降可能表示 exporter 异常、指标注册变化或角色/版本变化。",
+            "max by (role, instance) (scrape_samples_scraped{{{0}}})".format(labels),
+            role_instance,
+            first_panel_id + 4, 0, y + 9, 12,
+        ),
+        health_panel(
+            "采集耗时（Prometheus 完成单次抓取所需秒数）",
+            "Prometheus `scrape_duration_seconds` 指标。用于识别 exporter 响应变慢或抓取接近超时。",
+            "max by (role, instance) (scrape_duration_seconds{{{0}}})".format(labels),
+            role_instance,
+            first_panel_id + 5, 12, y + 9, 12, unit="s",
+        ),
+    ]
+    return panels
+
+
 def info_panel(title, role_text, metric_count, panel_id, y):
     translation = TRANSLATIONS["dashboards"][title]
     display_title = bilingual(translation["title"], title)
@@ -808,8 +920,8 @@ def info_panel(title, role_text, metric_count, panel_id, y):
         "# {0}\n\n"
         "本看板覆盖 **{1} 个指标族**。{2} "
         "看板使用共享 Prometheus 数据源 `{3}`，并通过 SGLang `role` 标签选择采集目标。"
-        "占位目标在对应进程启动前可以是 DOWN；指标按功能或事件延迟注册时，No data 属于正常现象。"
-        "PD 分离与 Router 看板会把 Role 直接加入每条 PromQL；不匹配所选 Role 的面板显示 No data。"
+        "面板显示 No data 时，必须先查看“采集健康”分组：它既可能表示角色不适用或功能未启用，也可能表示抓取失败、目标消失、标签变化或实例退出。"
+        "PD 分离与 Router 看板会把 Role 直接加入每条 PromQL；不匹配所选 Role 的指标面板会显示 No data。"
     ).format(display_title, metric_count, translation["description"], DATASOURCE_UID)
     return {
         "gridPos": {"h": 5, "w": 24, "x": 0, "y": y},
@@ -879,6 +991,11 @@ def build_dashboard(kind, title, uid, groups, role_text):
     panels.append(info_panel(title, role_text, len(catalog), panel_id, y))
     panel_id += 1
     y += 5
+
+    scrape_health_panels = health_panels(kind, panel_id, y)
+    panels.extend(scrape_health_panels)
+    panel_id += len(scrape_health_panels)
+    y += 17
 
     for group_title, items in groups.items():
         panels.append(row_panel(group_title, panel_id, y))

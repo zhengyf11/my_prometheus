@@ -19,7 +19,7 @@
       },
       "id": 1,
       "options": {
-        "content": "# SGLang PD \u5206\u79bb\u4e0e Router \u6307\u6807 (SGLang PD Disaggregated and Router Metrics)\n\n\u672c\u770b\u677f\u8986\u76d6 **183 \u4e2a\u6307\u6807\u65cf**\u3002\u901a\u8fc7 Role \u4e0b\u62c9\u6846\u5355\u9009\u3001\u591a\u9009\u6216\u9009\u62e9 All \u67e5\u770b Prefill\u3001Decode \u548c Router\uff0c\u5171\u8986\u76d6 183 \u4e2a\u6307\u6807\u65cf\u3002 \u770b\u677f\u4f7f\u7528\u5171\u4eab Prometheus \u6570\u636e\u6e90 `Prometheus`\uff0c\u5e76\u901a\u8fc7 SGLang `role` \u6807\u7b7e\u9009\u62e9\u91c7\u96c6\u76ee\u6807\u3002\u5360\u4f4d\u76ee\u6807\u5728\u5bf9\u5e94\u8fdb\u7a0b\u542f\u52a8\u524d\u53ef\u4ee5\u662f DOWN\uff1b\u6307\u6807\u6309\u529f\u80fd\u6216\u4e8b\u4ef6\u5ef6\u8fdf\u6ce8\u518c\u65f6\uff0cNo data \u5c5e\u4e8e\u6b63\u5e38\u73b0\u8c61\u3002PD \u5206\u79bb\u4e0e Router \u770b\u677f\u4f1a\u628a Role \u76f4\u63a5\u52a0\u5165\u6bcf\u6761 PromQL\uff1b\u4e0d\u5339\u914d\u6240\u9009 Role \u7684\u9762\u677f\u663e\u793a No data\u3002",
+        "content": "# SGLang PD \u5206\u79bb\u4e0e Router \u6307\u6807 (SGLang PD Disaggregated and Router Metrics)\n\n\u672c\u770b\u677f\u8986\u76d6 **183 \u4e2a\u6307\u6807\u65cf**\u3002\u901a\u8fc7 Role \u4e0b\u62c9\u6846\u5355\u9009\u3001\u591a\u9009\u6216\u9009\u62e9 All \u67e5\u770b Prefill\u3001Decode \u548c Router\uff0c\u5171\u8986\u76d6 183 \u4e2a\u6307\u6807\u65cf\u3002 \u770b\u677f\u4f7f\u7528\u5171\u4eab Prometheus \u6570\u636e\u6e90 `Prometheus`\uff0c\u5e76\u901a\u8fc7 SGLang `role` \u6807\u7b7e\u9009\u62e9\u91c7\u96c6\u76ee\u6807\u3002\u9762\u677f\u663e\u793a No data \u65f6\uff0c\u5fc5\u987b\u5148\u67e5\u770b\u201c\u91c7\u96c6\u5065\u5eb7\u201d\u5206\u7ec4\uff1a\u5b83\u65e2\u53ef\u80fd\u8868\u793a\u89d2\u8272\u4e0d\u9002\u7528\u6216\u529f\u80fd\u672a\u542f\u7528\uff0c\u4e5f\u53ef\u80fd\u8868\u793a\u6293\u53d6\u5931\u8d25\u3001\u76ee\u6807\u6d88\u5931\u3001\u6807\u7b7e\u53d8\u5316\u6216\u5b9e\u4f8b\u9000\u51fa\u3002PD \u5206\u79bb\u4e0e Router \u770b\u677f\u4f1a\u628a Role \u76f4\u63a5\u52a0\u5165\u6bcf\u6761 PromQL\uff1b\u4e0d\u5339\u914d\u6240\u9009 Role \u7684\u6307\u6807\u9762\u677f\u4f1a\u663e\u793a No data\u3002",
         "mode": "markdown"
       },
       "title": "\u770b\u677f\u8303\u56f4 (Dashboard Scope)",
@@ -34,6 +34,357 @@
         "y": 5
       },
       "id": 2,
+      "panels": [],
+      "title": "\u91c7\u96c6\u5065\u5eb7 (Scrape Health)",
+      "type": "row",
+      "x-panelKind": "scrape-health"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Prometheus `up` \u6307\u6807\u3002\u503c\u4e3a 0 \u8868\u793a\u76ee\u6807\u5b58\u5728\u4f46\u6293\u53d6\u5931\u8d25\uff1b\u76ee\u6807\u5b8c\u5168\u6d88\u5931\u65f6\uff0c\u8bf7\u7ed3\u5408\u201c\u91c7\u96c6\u76ee\u6807\u7f3a\u5931\u72b6\u6001\u201d\u5224\u65ad\u914d\u7f6e\u6216\u670d\u52a1\u53d1\u73b0\u5f02\u5e38\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "DOWN"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "UP"
+                }
+              },
+              "type": "value"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 6
+      },
+      "id": 3,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (role, instance) (up{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"})",
+          "legendFormat": "{{role}} / {{instance}}",
+          "refId": "Q01",
+          "instant": true
+        }
+      ],
+      "title": "\u91c7\u96c6\u76ee\u6807\u72b6\u6001\uff081 \u4e3a UP\uff0c0 \u4e3a DOWN\uff09",
+      "type": "stat",
+      "x-panelKind": "scrape-health",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "\u4f7f\u7528 `absent(up)` \u5224\u65ad\u6240\u9009 Role/Instance \u662f\u5426\u5b8c\u5168\u6ca1\u6709\u5339\u914d\u76ee\u6807\u3002\u503c\u4e3a 1 \u65f6\u5e94\u68c0\u67e5 target \u6587\u4ef6\u3001\u6807\u7b7e\u548c\u53d8\u91cf\u9009\u62e9\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "\u5df2\u53d1\u73b0"
+                },
+                "1": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "\u7f3a\u5931"
+                }
+              },
+              "type": "value"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 6
+      },
+      "id": 4,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "clamp_max(absent(up{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"}), 1) or on() (count(up{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"}) * 0)",
+          "legendFormat": "\u76ee\u6807\u7f3a\u5931\u72b6\u6001",
+          "refId": "Q01",
+          "instant": true
+        }
+      ],
+      "title": "\u91c7\u96c6\u76ee\u6807\u7f3a\u5931\u72b6\u6001\uff081 \u4e3a\u7f3a\u5931\uff0c0 \u4e3a\u5df2\u53d1\u73b0\uff09",
+      "type": "stat",
+      "x-panelKind": "scrape-health",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "\u6839\u636e\u6700\u8fd1 24 \u5c0f\u65f6 `up == 1` \u7684\u6837\u672c\u8ba1\u7b97\u3002\u6301\u7eed\u589e\u5927\u8868\u793a\u6210\u529f\u91c7\u96c6\u4e2d\u65ad\uff1bNo data \u8868\u793a\u6700\u8fd1 24 \u5c0f\u65f6\u6ca1\u6709\u6210\u529f\u6837\u672c\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 6
+      },
+      "id": 5,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "time() - max_over_time(timestamp((up{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"} == 1))[24h:])",
+          "legendFormat": "{{role}} / {{instance}}",
+          "refId": "Q01",
+          "instant": true
+        }
+      ],
+      "title": "\u6700\u8fd1\u6210\u529f\u91c7\u96c6\u8ddd\u4eca\u65f6\u95f4\uff0824 \u5c0f\u65f6\u5185\u6700\u540e\u4e00\u6b21 UP \u8ddd\u4eca\u79d2\u6570\uff09",
+      "type": "stat",
+      "x-panelKind": "scrape-health",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Prometheus `scrape_samples_scraped` \u6307\u6807\u3002\u7a81\u7136\u964d\u4e3a 0 \u6216\u660e\u663e\u4e0b\u964d\u53ef\u80fd\u8868\u793a exporter \u5f02\u5e38\u3001\u6307\u6807\u6ce8\u518c\u53d8\u5316\u6216\u89d2\u8272/\u7248\u672c\u53d8\u5316\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "id": 6,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (role, instance) (scrape_samples_scraped{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"})",
+          "legendFormat": "{{role}} / {{instance}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "\u6bcf\u6b21\u91c7\u96c6\u6837\u672c\u6570\uff08Prometheus \u5355\u6b21\u6293\u53d6\u63a5\u6536\u7684\u6837\u672c\u6570\u91cf\uff09",
+      "type": "timeseries",
+      "x-panelKind": "scrape-health",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Prometheus `scrape_duration_seconds` \u6307\u6807\u3002\u7528\u4e8e\u8bc6\u522b exporter \u54cd\u5e94\u53d8\u6162\u6216\u6293\u53d6\u63a5\u8fd1\u8d85\u65f6\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "id": 7,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (role, instance) (scrape_duration_seconds{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"})",
+          "legendFormat": "{{role}} / {{instance}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "\u91c7\u96c6\u8017\u65f6\uff08Prometheus \u5b8c\u6210\u5355\u6b21\u6293\u53d6\u6240\u9700\u79d2\u6570\uff09",
+      "type": "timeseries",
+      "x-panelKind": "scrape-health",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 8,
       "panels": [],
       "title": "\u5173\u952e\u5f15\u64ce\u6307\u6807 (Key Engine Metrics)",
       "type": "row"
@@ -55,7 +406,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -64,9 +415,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 6
+        "y": 23
       },
-      "id": 3,
+      "id": 9,
       "targets": [
         {
           "datasource": {
@@ -113,7 +464,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -122,9 +473,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 6
+        "y": 23
       },
-      "id": 4,
+      "id": 10,
       "targets": [
         {
           "datasource": {
@@ -171,7 +522,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -180,9 +531,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 14
+        "y": 31
       },
-      "id": 5,
+      "id": 11,
       "targets": [
         {
           "datasource": {
@@ -229,7 +580,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -238,9 +589,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 31
       },
-      "id": 6,
+      "id": 12,
       "targets": [
         {
           "datasource": {
@@ -287,7 +638,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -296,9 +647,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 39
       },
-      "id": 7,
+      "id": 13,
       "targets": [
         {
           "datasource": {
@@ -345,7 +696,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -354,9 +705,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 39
       },
-      "id": 8,
+      "id": 14,
       "targets": [
         {
           "datasource": {
@@ -403,7 +754,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -412,9 +763,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 30
+        "y": 47
       },
-      "id": 9,
+      "id": 15,
       "targets": [
         {
           "datasource": {
@@ -461,7 +812,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -470,9 +821,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 30
+        "y": 47
       },
-      "id": 10,
+      "id": 16,
       "targets": [
         {
           "datasource": {
@@ -519,7 +870,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -528,9 +879,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 38
+        "y": 55
       },
-      "id": 11,
+      "id": 17,
       "targets": [
         {
           "datasource": {
@@ -566,9 +917,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 46
+        "y": 63
       },
-      "id": 12,
+      "id": 18,
       "panels": [],
       "title": "\u8bf7\u6c42\u5168\u94fe\u8def\u65f6\u5ef6 (Request Latency Pipeline)",
       "type": "row"
@@ -590,7 +941,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -599,9 +950,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 47
+        "y": 64
       },
-      "id": 13,
+      "id": 19,
       "targets": [
         {
           "datasource": {
@@ -657,7 +1008,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -666,9 +1017,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 47
+        "y": 64
       },
-      "id": 14,
+      "id": 20,
       "targets": [
         {
           "datasource": {
@@ -724,7 +1075,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -733,9 +1084,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 55
+        "y": 72
       },
-      "id": 15,
+      "id": 21,
       "targets": [
         {
           "datasource": {
@@ -791,7 +1142,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -800,9 +1151,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 55
+        "y": 72
       },
-      "id": 16,
+      "id": 22,
       "targets": [
         {
           "datasource": {
@@ -858,7 +1209,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -867,9 +1218,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 63
+        "y": 80
       },
-      "id": 17,
+      "id": 23,
       "targets": [
         {
           "datasource": {
@@ -925,7 +1276,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -934,9 +1285,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 63
+        "y": 80
       },
-      "id": 18,
+      "id": 24,
       "targets": [
         {
           "datasource": {
@@ -992,7 +1343,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1001,9 +1352,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 71
+        "y": 88
       },
-      "id": 19,
+      "id": 25,
       "targets": [
         {
           "datasource": {
@@ -1059,7 +1410,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1068,9 +1419,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 71
+        "y": 88
       },
-      "id": 20,
+      "id": 26,
       "targets": [
         {
           "datasource": {
@@ -1126,7 +1477,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1135,9 +1486,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 79
+        "y": 96
       },
-      "id": 21,
+      "id": 27,
       "targets": [
         {
           "datasource": {
@@ -1182,9 +1533,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 87
+        "y": 104
       },
-      "id": 22,
+      "id": 28,
       "panels": [],
       "title": "HTTP\u3001\u8fdb\u7a0b\u4e0e\u51fd\u6570 (HTTP, Process and Functions)",
       "type": "row"
@@ -1206,7 +1557,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1215,9 +1566,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 88
+        "y": 105
       },
-      "id": 23,
+      "id": 29,
       "targets": [
         {
           "datasource": {
@@ -1264,7 +1615,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1273,9 +1624,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 88
+        "y": 105
       },
-      "id": 24,
+      "id": 30,
       "targets": [
         {
           "datasource": {
@@ -1322,7 +1673,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1331,9 +1682,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 96
+        "y": 113
       },
-      "id": 25,
+      "id": 31,
       "targets": [
         {
           "datasource": {
@@ -1380,7 +1731,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1389,9 +1740,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 96
+        "y": 113
       },
-      "id": 26,
+      "id": 32,
       "targets": [
         {
           "datasource": {
@@ -1438,7 +1789,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1447,9 +1798,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 104
+        "y": 121
       },
-      "id": 27,
+      "id": 33,
       "targets": [
         {
           "datasource": {
@@ -1496,7 +1847,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1505,9 +1856,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 104
+        "y": 121
       },
-      "id": 28,
+      "id": 34,
       "targets": [
         {
           "datasource": {
@@ -1552,9 +1903,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 112
+        "y": 129
       },
-      "id": 29,
+      "id": 35,
       "panels": [],
       "title": "\u8bf7\u6c42\u3001Token \u4e0e\u7528\u6237\u5ef6\u8fdf (Requests, Tokens and User Latency)",
       "type": "row"
@@ -1576,7 +1927,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1585,9 +1936,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 113
+        "y": 130
       },
-      "id": 30,
+      "id": 36,
       "targets": [
         {
           "datasource": {
@@ -1636,9 +1987,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 113
+        "y": 130
       },
-      "id": 31,
+      "id": 37,
       "targets": [
         {
           "datasource": {
@@ -1735,7 +2086,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1744,9 +2095,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 121
+        "y": 138
       },
-      "id": 32,
+      "id": 38,
       "targets": [
         {
           "datasource": {
@@ -1795,9 +2146,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 121
+        "y": 138
       },
-      "id": 33,
+      "id": 39,
       "targets": [
         {
           "datasource": {
@@ -1894,7 +2245,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1903,9 +2254,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 129
+        "y": 146
       },
-      "id": 34,
+      "id": 40,
       "targets": [
         {
           "datasource": {
@@ -1952,7 +2303,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -1961,9 +2312,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 129
+        "y": 146
       },
-      "id": 35,
+      "id": 41,
       "targets": [
         {
           "datasource": {
@@ -2019,7 +2370,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2028,9 +2379,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 137
+        "y": 154
       },
-      "id": 36,
+      "id": 42,
       "targets": [
         {
           "datasource": {
@@ -2077,7 +2428,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2086,9 +2437,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 137
+        "y": 154
       },
-      "id": 37,
+      "id": 43,
       "targets": [
         {
           "datasource": {
@@ -2124,9 +2475,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 145
+        "y": 162
       },
-      "id": 38,
+      "id": 44,
       "panels": [],
       "title": "\u8c03\u5ea6\u5668\u72b6\u6001 (Scheduler State)",
       "type": "row"
@@ -2148,7 +2499,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2157,9 +2508,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 146
+        "y": 163
       },
-      "id": 39,
+      "id": 45,
       "targets": [
         {
           "datasource": {
@@ -2206,7 +2557,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2215,9 +2566,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 146
+        "y": 163
       },
-      "id": 40,
+      "id": 46,
       "targets": [
         {
           "datasource": {
@@ -2264,7 +2615,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2273,9 +2624,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 154
+        "y": 171
       },
-      "id": 41,
+      "id": 47,
       "targets": [
         {
           "datasource": {
@@ -2322,7 +2673,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2331,9 +2682,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 154
+        "y": 171
       },
-      "id": 42,
+      "id": 48,
       "targets": [
         {
           "datasource": {
@@ -2380,7 +2731,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2389,9 +2740,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 162
+        "y": 179
       },
-      "id": 43,
+      "id": 49,
       "targets": [
         {
           "datasource": {
@@ -2427,9 +2778,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 170
+        "y": 187
       },
-      "id": 44,
+      "id": 50,
       "panels": [],
       "title": "KV\u3001SWA \u4e0e Mamba \u8d44\u6e90\u6c60 (KV, SWA and Mamba Pools)",
       "type": "row"
@@ -2451,7 +2802,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2460,9 +2811,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 171
+        "y": 188
       },
-      "id": 45,
+      "id": 51,
       "targets": [
         {
           "datasource": {
@@ -2509,7 +2860,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2518,9 +2869,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 171
+        "y": 188
       },
-      "id": 46,
+      "id": 52,
       "targets": [
         {
           "datasource": {
@@ -2567,7 +2918,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2576,9 +2927,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 179
+        "y": 196
       },
-      "id": 47,
+      "id": 53,
       "targets": [
         {
           "datasource": {
@@ -2625,7 +2976,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2634,9 +2985,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 179
+        "y": 196
       },
-      "id": 48,
+      "id": 54,
       "targets": [
         {
           "datasource": {
@@ -2683,7 +3034,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2692,9 +3043,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 187
+        "y": 204
       },
-      "id": 49,
+      "id": 55,
       "targets": [
         {
           "datasource": {
@@ -2741,7 +3092,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2750,9 +3101,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 187
+        "y": 204
       },
-      "id": 50,
+      "id": 56,
       "targets": [
         {
           "datasource": {
@@ -2799,7 +3150,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2808,9 +3159,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 195
+        "y": 212
       },
-      "id": 51,
+      "id": 57,
       "targets": [
         {
           "datasource": {
@@ -2857,7 +3208,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2866,9 +3217,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 195
+        "y": 212
       },
-      "id": 52,
+      "id": 58,
       "targets": [
         {
           "datasource": {
@@ -2915,7 +3266,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2924,9 +3275,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 203
+        "y": 220
       },
-      "id": 53,
+      "id": 59,
       "targets": [
         {
           "datasource": {
@@ -2973,7 +3324,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -2982,9 +3333,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 203
+        "y": 220
       },
-      "id": 54,
+      "id": 60,
       "targets": [
         {
           "datasource": {
@@ -3031,7 +3382,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3040,9 +3391,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 211
+        "y": 228
       },
-      "id": 55,
+      "id": 61,
       "targets": [
         {
           "datasource": {
@@ -3089,7 +3440,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3098,9 +3449,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 211
+        "y": 228
       },
-      "id": 56,
+      "id": 62,
       "targets": [
         {
           "datasource": {
@@ -3147,7 +3498,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3156,9 +3507,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 219
+        "y": 236
       },
-      "id": 57,
+      "id": 63,
       "targets": [
         {
           "datasource": {
@@ -3194,9 +3545,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 227
+        "y": 244
       },
-      "id": 58,
+      "id": 64,
       "panels": [],
       "title": "CUDA\u3001Token \u4e0e MFU \u8fd0\u884c\u65f6 (CUDA, Tokens and MFU Runtime)",
       "type": "row"
@@ -3218,7 +3569,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3227,9 +3578,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 228
+        "y": 245
       },
-      "id": 59,
+      "id": 65,
       "targets": [
         {
           "datasource": {
@@ -3276,7 +3627,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3285,9 +3636,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 228
+        "y": 245
       },
-      "id": 60,
+      "id": 66,
       "targets": [
         {
           "datasource": {
@@ -3334,7 +3685,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3343,9 +3694,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 236
+        "y": 253
       },
-      "id": 61,
+      "id": 67,
       "targets": [
         {
           "datasource": {
@@ -3392,7 +3743,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3401,9 +3752,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 236
+        "y": 253
       },
-      "id": 62,
+      "id": 68,
       "targets": [
         {
           "datasource": {
@@ -3450,7 +3801,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3459,9 +3810,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 244
+        "y": 261
       },
-      "id": 63,
+      "id": 69,
       "targets": [
         {
           "datasource": {
@@ -3508,7 +3859,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3517,9 +3868,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 244
+        "y": 261
       },
-      "id": 64,
+      "id": 70,
       "targets": [
         {
           "datasource": {
@@ -3566,7 +3917,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3575,9 +3926,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 252
+        "y": 269
       },
-      "id": 65,
+      "id": 71,
       "targets": [
         {
           "datasource": {
@@ -3624,7 +3975,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -3633,9 +3984,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 252
+        "y": 269
       },
-      "id": 66,
+      "id": 72,
       "targets": [
         {
           "datasource": {
@@ -3671,9 +4022,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 260
+        "y": 277
       },
-      "id": 67,
+      "id": 73,
       "panels": [],
       "title": "\u5f15\u64ce\u5bb9\u91cf\u4e0e\u542f\u52a8 (Engine Capacity and Startup)",
       "type": "row"
@@ -3697,9 +4048,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 261
+        "y": 278
       },
-      "id": 68,
+      "id": 74,
       "targets": [
         {
           "datasource": {
@@ -3749,9 +4100,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 261
+        "y": 278
       },
-      "id": 69,
+      "id": 75,
       "targets": [
         {
           "datasource": {
@@ -3801,9 +4152,9 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 261
+        "y": 278
       },
-      "id": 70,
+      "id": 76,
       "targets": [
         {
           "datasource": {
@@ -3853,9 +4204,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 261
+        "y": 278
       },
-      "id": 71,
+      "id": 77,
       "targets": [
         {
           "datasource": {
@@ -3905,9 +4256,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 269
+        "y": 286
       },
-      "id": 72,
+      "id": 78,
       "targets": [
         {
           "datasource": {
@@ -3957,9 +4308,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 269
+        "y": 286
       },
-      "id": 73,
+      "id": 79,
       "targets": [
         {
           "datasource": {
@@ -4009,9 +4360,9 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 269
+        "y": 286
       },
-      "id": 74,
+      "id": 80,
       "targets": [
         {
           "datasource": {
@@ -4061,9 +4412,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 269
+        "y": 286
       },
-      "id": 75,
+      "id": 81,
       "targets": [
         {
           "datasource": {
@@ -4111,7 +4462,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4120,9 +4471,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 277
+        "y": 294
       },
-      "id": 76,
+      "id": 82,
       "targets": [
         {
           "datasource": {
@@ -4158,9 +4509,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 285
+        "y": 302
       },
-      "id": 77,
+      "id": 83,
       "panels": [],
       "title": "\u56de\u9000\u3001\u961f\u5217\u4e0e\u9636\u6bb5\u5ef6\u8fdf (Retraction, Queue and Stage Latency)",
       "type": "row"
@@ -4182,7 +4533,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4191,9 +4542,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 286
+        "y": 303
       },
-      "id": 78,
+      "id": 84,
       "targets": [
         {
           "datasource": {
@@ -4240,7 +4591,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4249,9 +4600,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 286
+        "y": 303
       },
-      "id": 79,
+      "id": 85,
       "targets": [
         {
           "datasource": {
@@ -4298,7 +4649,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4307,9 +4658,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 294
+        "y": 311
       },
-      "id": 80,
+      "id": 86,
       "targets": [
         {
           "datasource": {
@@ -4356,7 +4707,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4365,9 +4716,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 294
+        "y": 311
       },
-      "id": 81,
+      "id": 87,
       "targets": [
         {
           "datasource": {
@@ -4414,7 +4765,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4423,9 +4774,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 302
+        "y": 319
       },
-      "id": 82,
+      "id": 88,
       "targets": [
         {
           "datasource": {
@@ -4461,9 +4812,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 310
+        "y": 327
       },
-      "id": 83,
+      "id": 89,
       "panels": [],
       "title": "Grammar \u7ed3\u6784\u5316\u8f93\u51fa (Grammar)",
       "type": "row"
@@ -4485,7 +4836,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4494,9 +4845,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 311
+        "y": 328
       },
-      "id": 84,
+      "id": 90,
       "targets": [
         {
           "datasource": {
@@ -4552,7 +4903,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4561,9 +4912,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 311
+        "y": 328
       },
-      "id": 85,
+      "id": 91,
       "targets": [
         {
           "datasource": {
@@ -4610,7 +4961,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4619,9 +4970,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 319
+        "y": 336
       },
-      "id": 86,
+      "id": 92,
       "targets": [
         {
           "datasource": {
@@ -4668,7 +5019,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4677,9 +5028,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 319
+        "y": 336
       },
-      "id": 87,
+      "id": 93,
       "targets": [
         {
           "datasource": {
@@ -4726,7 +5077,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4735,9 +5086,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 327
+        "y": 344
       },
-      "id": 88,
+      "id": 94,
       "targets": [
         {
           "datasource": {
@@ -4784,7 +5135,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4793,9 +5144,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 327
+        "y": 344
       },
-      "id": 89,
+      "id": 95,
       "targets": [
         {
           "datasource": {
@@ -4851,7 +5202,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4860,9 +5211,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 335
+        "y": 352
       },
-      "id": 90,
+      "id": 96,
       "targets": [
         {
           "datasource": {
@@ -4918,7 +5269,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4927,9 +5278,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 335
+        "y": 352
       },
-      "id": 91,
+      "id": 97,
       "targets": [
         {
           "datasource": {
@@ -4985,7 +5336,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -4994,9 +5345,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 343
+        "y": 360
       },
-      "id": 92,
+      "id": 98,
       "targets": [
         {
           "datasource": {
@@ -5041,9 +5392,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 351
+        "y": 368
       },
-      "id": 93,
+      "id": 99,
       "panels": [],
       "title": "\u6295\u673a\u89e3\u7801\u4e0e Prefill \u5ef6\u8fdf\u5668 (Speculative Decoding and Prefill Delayer)",
       "type": "row"
@@ -5065,7 +5416,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5074,9 +5425,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 352
+        "y": 369
       },
-      "id": 94,
+      "id": 100,
       "targets": [
         {
           "datasource": {
@@ -5123,7 +5474,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5132,9 +5483,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 352
+        "y": 369
       },
-      "id": 95,
+      "id": 101,
       "targets": [
         {
           "datasource": {
@@ -5181,7 +5532,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5190,9 +5541,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 360
+        "y": 377
       },
-      "id": 96,
+      "id": 102,
       "targets": [
         {
           "datasource": {
@@ -5239,7 +5590,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5248,9 +5599,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 360
+        "y": 377
       },
-      "id": 97,
+      "id": 103,
       "targets": [
         {
           "datasource": {
@@ -5299,9 +5650,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 368
+        "y": 385
       },
-      "id": 98,
+      "id": 104,
       "targets": [
         {
           "datasource": {
@@ -5351,9 +5702,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 368
+        "y": 385
       },
-      "id": 99,
+      "id": 105,
       "targets": [
         {
           "datasource": {
@@ -5401,7 +5752,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5410,9 +5761,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 368
+        "y": 385
       },
-      "id": 100,
+      "id": 106,
       "targets": [
         {
           "datasource": {
@@ -5468,7 +5819,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5477,9 +5828,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 376
+        "y": 393
       },
-      "id": 101,
+      "id": 107,
       "targets": [
         {
           "datasource": {
@@ -5515,9 +5866,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 384
+        "y": 401
       },
-      "id": 102,
+      "id": 108,
       "panels": [],
       "title": "PD \u961f\u5217\u4e0e KV \u4f20\u8f93 (PD Queues and KV Transfer)",
       "type": "row"
@@ -5539,7 +5890,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5548,9 +5899,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 385
+        "y": 402
       },
-      "id": 103,
+      "id": 109,
       "targets": [
         {
           "datasource": {
@@ -5597,7 +5948,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5606,9 +5957,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 385
+        "y": 402
       },
-      "id": 104,
+      "id": 110,
       "targets": [
         {
           "datasource": {
@@ -5655,7 +6006,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5664,9 +6015,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 393
+        "y": 410
       },
-      "id": 105,
+      "id": 111,
       "targets": [
         {
           "datasource": {
@@ -5713,7 +6064,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5722,9 +6073,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 393
+        "y": 410
       },
-      "id": 106,
+      "id": 112,
       "targets": [
         {
           "datasource": {
@@ -5771,7 +6122,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5780,9 +6131,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 401
+        "y": 418
       },
-      "id": 107,
+      "id": 113,
       "targets": [
         {
           "datasource": {
@@ -5829,7 +6180,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5838,9 +6189,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 401
+        "y": 418
       },
-      "id": 108,
+      "id": 114,
       "targets": [
         {
           "datasource": {
@@ -5896,7 +6247,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5905,9 +6256,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 409
+        "y": 426
       },
-      "id": 109,
+      "id": 115,
       "targets": [
         {
           "datasource": {
@@ -5963,7 +6314,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -5972,9 +6323,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 409
+        "y": 426
       },
-      "id": 110,
+      "id": 116,
       "targets": [
         {
           "datasource": {
@@ -6021,7 +6372,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6030,9 +6381,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 417
+        "y": 434
       },
-      "id": 111,
+      "id": 117,
       "targets": [
         {
           "datasource": {
@@ -6079,7 +6430,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6088,9 +6439,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 417
+        "y": 434
       },
-      "id": 112,
+      "id": 118,
       "targets": [
         {
           "datasource": {
@@ -6126,9 +6477,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 425
+        "y": 442
       },
-      "id": 113,
+      "id": 119,
       "panels": [],
       "title": "Prefix Cache \u4e0e\u8def\u7531\u952e (Prefix Cache and Routing Keys)",
       "type": "row"
@@ -6150,7 +6501,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6159,9 +6510,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 426
+        "y": 443
       },
-      "id": 114,
+      "id": 120,
       "targets": [
         {
           "datasource": {
@@ -6217,7 +6568,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6226,9 +6577,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 426
+        "y": 443
       },
-      "id": 115,
+      "id": 121,
       "targets": [
         {
           "datasource": {
@@ -6275,7 +6626,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6284,9 +6635,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 434
+        "y": 451
       },
-      "id": 116,
+      "id": 122,
       "targets": [
         {
           "datasource": {
@@ -6342,7 +6693,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6351,9 +6702,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 434
+        "y": 451
       },
-      "id": 117,
+      "id": 123,
       "targets": [
         {
           "datasource": {
@@ -6400,7 +6751,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6409,9 +6760,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 442
+        "y": 459
       },
-      "id": 118,
+      "id": 124,
       "targets": [
         {
           "datasource": {
@@ -6458,7 +6809,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6467,9 +6818,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 442
+        "y": 459
       },
-      "id": 119,
+      "id": 125,
       "targets": [
         {
           "datasource": {
@@ -6516,7 +6867,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6525,9 +6876,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 450
+        "y": 467
       },
-      "id": 120,
+      "id": 126,
       "targets": [
         {
           "datasource": {
@@ -6563,9 +6914,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 458
+        "y": 475
       },
-      "id": 121,
+      "id": 127,
       "panels": [],
       "title": "\u53ef\u9009 LoRA\u3001HiCache\u3001\u6d41\u5f0f\u4f1a\u8bdd\u4e0e EPLB (Optional LoRA, HiCache, Streaming and EPLB)",
       "type": "row"
@@ -6587,7 +6938,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6596,9 +6947,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 459
+        "y": 476
       },
-      "id": 122,
+      "id": 128,
       "targets": [
         {
           "datasource": {
@@ -6647,9 +6998,9 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 459
+        "y": 476
       },
-      "id": 123,
+      "id": 129,
       "targets": [
         {
           "datasource": {
@@ -6697,7 +7048,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6706,9 +7057,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 467
+        "y": 484
       },
-      "id": 124,
+      "id": 130,
       "targets": [
         {
           "datasource": {
@@ -6755,7 +7106,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6764,9 +7115,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 467
+        "y": 484
       },
-      "id": 125,
+      "id": 131,
       "targets": [
         {
           "datasource": {
@@ -6815,9 +7166,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 475
+        "y": 492
       },
-      "id": 126,
+      "id": 132,
       "targets": [
         {
           "datasource": {
@@ -6865,7 +7216,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6874,9 +7225,9 @@
         "h": 8,
         "w": 12,
         "x": 6,
-        "y": 475
+        "y": 492
       },
-      "id": 127,
+      "id": 133,
       "targets": [
         {
           "datasource": {
@@ -6923,7 +7274,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6932,9 +7283,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 483
+        "y": 500
       },
-      "id": 128,
+      "id": 134,
       "targets": [
         {
           "datasource": {
@@ -6981,7 +7332,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -6990,9 +7341,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 483
+        "y": 500
       },
-      "id": 129,
+      "id": 135,
       "targets": [
         {
           "datasource": {
@@ -7039,7 +7390,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7048,9 +7399,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 491
+        "y": 508
       },
-      "id": 130,
+      "id": 136,
       "targets": [
         {
           "datasource": {
@@ -7097,7 +7448,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7106,9 +7457,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 491
+        "y": 508
       },
-      "id": 131,
+      "id": 137,
       "targets": [
         {
           "datasource": {
@@ -7164,7 +7515,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7173,9 +7524,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 499
+        "y": 516
       },
-      "id": 132,
+      "id": 138,
       "targets": [
         {
           "datasource": {
@@ -7231,7 +7582,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7240,9 +7591,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 499
+        "y": 516
       },
-      "id": 133,
+      "id": 139,
       "targets": [
         {
           "datasource": {
@@ -7298,7 +7649,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7307,9 +7658,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 507
+        "y": 524
       },
-      "id": 134,
+      "id": 140,
       "targets": [
         {
           "datasource": {
@@ -7365,7 +7716,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7374,9 +7725,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 507
+        "y": 524
       },
-      "id": 135,
+      "id": 141,
       "targets": [
         {
           "datasource": {
@@ -7432,7 +7783,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7441,9 +7792,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 515
+        "y": 532
       },
-      "id": 136,
+      "id": 142,
       "targets": [
         {
           "datasource": {
@@ -7490,7 +7841,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7499,9 +7850,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 515
+        "y": 532
       },
-      "id": 137,
+      "id": 143,
       "targets": [
         {
           "datasource": {
@@ -7537,9 +7888,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 523
+        "y": 540
       },
-      "id": 138,
+      "id": 144,
       "panels": [],
       "title": "\u5173\u952e Router \u6307\u6807 (Key Router Metrics)",
       "type": "row"
@@ -7561,7 +7912,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7570,9 +7921,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 524
+        "y": 541
       },
-      "id": 139,
+      "id": 145,
       "targets": [
         {
           "datasource": {
@@ -7619,7 +7970,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7628,9 +7979,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 524
+        "y": 541
       },
-      "id": 140,
+      "id": 146,
       "targets": [
         {
           "datasource": {
@@ -7677,7 +8028,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7686,9 +8037,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 532
+        "y": 549
       },
-      "id": 141,
+      "id": 147,
       "targets": [
         {
           "datasource": {
@@ -7735,7 +8086,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7744,9 +8095,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 532
+        "y": 549
       },
-      "id": 142,
+      "id": 148,
       "targets": [
         {
           "datasource": {
@@ -7793,7 +8144,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7802,9 +8153,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 540
+        "y": 557
       },
-      "id": 143,
+      "id": 149,
       "targets": [
         {
           "datasource": {
@@ -7851,7 +8202,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7860,9 +8211,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 540
+        "y": 557
       },
-      "id": 144,
+      "id": 150,
       "targets": [
         {
           "datasource": {
@@ -7909,7 +8260,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7918,9 +8269,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 548
+        "y": 565
       },
-      "id": 145,
+      "id": 151,
       "targets": [
         {
           "datasource": {
@@ -7956,9 +8307,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 556
+        "y": 573
       },
-      "id": 146,
+      "id": 152,
       "panels": [],
       "title": "Router \u8bf7\u6c42\u5168\u94fe\u8def\u65f6\u5ef6 (Router Request Latency Pipeline)",
       "type": "row"
@@ -7980,7 +8331,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -7989,9 +8340,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 557
+        "y": 574
       },
-      "id": 147,
+      "id": 153,
       "targets": [
         {
           "datasource": {
@@ -8047,7 +8398,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8056,9 +8407,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 557
+        "y": 574
       },
-      "id": 148,
+      "id": 154,
       "targets": [
         {
           "datasource": {
@@ -8114,7 +8465,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8123,9 +8474,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 565
+        "y": 582
       },
-      "id": 149,
+      "id": 155,
       "targets": [
         {
           "datasource": {
@@ -8181,7 +8532,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8190,9 +8541,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 565
+        "y": 582
       },
-      "id": 150,
+      "id": 156,
       "targets": [
         {
           "datasource": {
@@ -8248,7 +8599,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8257,9 +8608,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 573
+        "y": 590
       },
-      "id": 151,
+      "id": 157,
       "targets": [
         {
           "datasource": {
@@ -8315,7 +8666,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8324,9 +8675,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 573
+        "y": 590
       },
-      "id": 152,
+      "id": 158,
       "targets": [
         {
           "datasource": {
@@ -8371,9 +8722,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 581
+        "y": 598
       },
-      "id": 153,
+      "id": 159,
       "panels": [],
       "title": "HTTP \u4e0e Router \u8bf7\u6c42 (HTTP and Router Requests)",
       "type": "row"
@@ -8395,7 +8746,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8404,9 +8755,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 582
+        "y": 599
       },
-      "id": 154,
+      "id": 160,
       "targets": [
         {
           "datasource": {
@@ -8453,7 +8804,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8462,9 +8813,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 582
+        "y": 599
       },
-      "id": 155,
+      "id": 161,
       "targets": [
         {
           "datasource": {
@@ -8511,7 +8862,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8520,9 +8871,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 590
+        "y": 607
       },
-      "id": 156,
+      "id": 162,
       "targets": [
         {
           "datasource": {
@@ -8569,7 +8920,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8578,9 +8929,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 590
+        "y": 607
       },
-      "id": 157,
+      "id": 163,
       "targets": [
         {
           "datasource": {
@@ -8627,7 +8978,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8636,9 +8987,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 598
+        "y": 615
       },
-      "id": 158,
+      "id": 164,
       "targets": [
         {
           "datasource": {
@@ -8674,9 +9025,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 606
+        "y": 623
       },
-      "id": 159,
+      "id": 165,
       "panels": [],
       "title": "Worker \u6c60\u4e0e\u5065\u5eb7\u72b6\u6001 (Worker Pool and Health)",
       "type": "row"
@@ -8698,7 +9049,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8707,9 +9058,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 607
+        "y": 624
       },
-      "id": 160,
+      "id": 166,
       "targets": [
         {
           "datasource": {
@@ -8756,7 +9107,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8765,9 +9116,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 607
+        "y": 624
       },
-      "id": 161,
+      "id": 167,
       "targets": [
         {
           "datasource": {
@@ -8814,7 +9165,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8823,9 +9174,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 615
+        "y": 632
       },
-      "id": 162,
+      "id": 168,
       "targets": [
         {
           "datasource": {
@@ -8872,7 +9223,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8881,9 +9232,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 615
+        "y": 632
       },
-      "id": 163,
+      "id": 169,
       "targets": [
         {
           "datasource": {
@@ -8930,7 +9281,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -8939,9 +9290,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 623
+        "y": 640
       },
-      "id": 164,
+      "id": 170,
       "targets": [
         {
           "datasource": {
@@ -8977,9 +9328,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 631
+        "y": 648
       },
-      "id": 165,
+      "id": 171,
       "panels": [],
       "title": "\u8def\u7531\u7b56\u7565\u3001\u7194\u65ad\u4e0e\u91cd\u8bd5 (Policies, Circuit Breaker and Retries)",
       "type": "row"
@@ -9001,7 +9352,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9010,9 +9361,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 632
+        "y": 649
       },
-      "id": 166,
+      "id": 172,
       "targets": [
         {
           "datasource": {
@@ -9059,7 +9410,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9068,9 +9419,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 632
+        "y": 649
       },
-      "id": 167,
+      "id": 173,
       "targets": [
         {
           "datasource": {
@@ -9117,7 +9468,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9126,9 +9477,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 640
+        "y": 657
       },
-      "id": 168,
+      "id": 174,
       "targets": [
         {
           "datasource": {
@@ -9175,7 +9526,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9184,9 +9535,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 640
+        "y": 657
       },
-      "id": 169,
+      "id": 175,
       "targets": [
         {
           "datasource": {
@@ -9233,7 +9584,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9242,9 +9593,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 648
+        "y": 665
       },
-      "id": 170,
+      "id": 176,
       "targets": [
         {
           "datasource": {
@@ -9291,7 +9642,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9300,9 +9651,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 648
+        "y": 665
       },
-      "id": 171,
+      "id": 177,
       "targets": [
         {
           "datasource": {
@@ -9349,7 +9700,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9358,9 +9709,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 656
+        "y": 673
       },
-      "id": 172,
+      "id": 178,
       "targets": [
         {
           "datasource": {
@@ -9407,7 +9758,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9416,9 +9767,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 656
+        "y": 673
       },
-      "id": 173,
+      "id": 179,
       "targets": [
         {
           "datasource": {
@@ -9465,7 +9816,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9474,9 +9825,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 664
+        "y": 681
       },
-      "id": 174,
+      "id": 180,
       "targets": [
         {
           "datasource": {
@@ -9523,7 +9874,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9532,9 +9883,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 664
+        "y": 681
       },
-      "id": 175,
+      "id": 181,
       "targets": [
         {
           "datasource": {
@@ -9581,7 +9932,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9590,9 +9941,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 672
+        "y": 689
       },
-      "id": 176,
+      "id": 182,
       "targets": [
         {
           "datasource": {
@@ -9639,7 +9990,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9648,9 +9999,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 672
+        "y": 689
       },
-      "id": 177,
+      "id": 183,
       "targets": [
         {
           "datasource": {
@@ -9695,9 +10046,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 680
+        "y": 697
       },
-      "id": 178,
+      "id": 184,
       "panels": [],
       "title": "\u670d\u52a1\u53d1\u73b0\u3001MCP \u4e0e\u6301\u4e45\u5316 (Discovery, MCP and Persistence)",
       "type": "row"
@@ -9719,7 +10070,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9728,9 +10079,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 681
+        "y": 698
       },
-      "id": 179,
+      "id": 185,
       "targets": [
         {
           "datasource": {
@@ -9777,7 +10128,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9786,9 +10137,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 681
+        "y": 698
       },
-      "id": 180,
+      "id": 186,
       "targets": [
         {
           "datasource": {
@@ -9835,7 +10186,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9844,9 +10195,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 689
+        "y": 706
       },
-      "id": 181,
+      "id": 187,
       "targets": [
         {
           "datasource": {
@@ -9902,7 +10253,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9911,9 +10262,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 689
+        "y": 706
       },
-      "id": 182,
+      "id": 188,
       "targets": [
         {
           "datasource": {
@@ -9960,7 +10311,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -9969,9 +10320,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 697
+        "y": 714
       },
-      "id": 183,
+      "id": 189,
       "targets": [
         {
           "datasource": {
@@ -10018,7 +10369,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10027,9 +10378,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 697
+        "y": 714
       },
-      "id": 184,
+      "id": 190,
       "targets": [
         {
           "datasource": {
@@ -10085,7 +10436,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10094,9 +10445,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 705
+        "y": 722
       },
-      "id": 185,
+      "id": 191,
       "targets": [
         {
           "datasource": {
@@ -10143,7 +10494,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10152,9 +10503,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 705
+        "y": 722
       },
-      "id": 186,
+      "id": 192,
       "targets": [
         {
           "datasource": {
@@ -10201,7 +10552,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10210,9 +10561,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 713
+        "y": 730
       },
-      "id": 187,
+      "id": 193,
       "targets": [
         {
           "datasource": {
@@ -10259,7 +10610,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10268,9 +10619,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 713
+        "y": 730
       },
-      "id": 188,
+      "id": 194,
       "targets": [
         {
           "datasource": {
@@ -10326,7 +10677,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10335,9 +10686,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 721
+        "y": 738
       },
-      "id": 189,
+      "id": 195,
       "targets": [
         {
           "datasource": {
@@ -10384,7 +10735,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10393,9 +10744,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 721
+        "y": 738
       },
-      "id": 190,
+      "id": 196,
       "targets": [
         {
           "datasource": {
@@ -10431,9 +10782,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 729
+        "y": 746
       },
-      "id": 191,
+      "id": 197,
       "panels": [],
       "title": "Router Mesh \u96c6\u7fa4 (Router Mesh)",
       "type": "row"
@@ -10455,7 +10806,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10464,9 +10815,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 730
+        "y": 747
       },
-      "id": 192,
+      "id": 198,
       "targets": [
         {
           "datasource": {
@@ -10522,7 +10873,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10531,9 +10882,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 730
+        "y": 747
       },
-      "id": 193,
+      "id": 199,
       "targets": [
         {
           "datasource": {
@@ -10580,7 +10931,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10589,9 +10940,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 738
+        "y": 755
       },
-      "id": 194,
+      "id": 200,
       "targets": [
         {
           "datasource": {
@@ -10638,7 +10989,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10647,9 +10998,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 738
+        "y": 755
       },
-      "id": 195,
+      "id": 201,
       "targets": [
         {
           "datasource": {
@@ -10696,7 +11047,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10705,9 +11056,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 746
+        "y": 763
       },
-      "id": 196,
+      "id": 202,
       "targets": [
         {
           "datasource": {
@@ -10763,7 +11114,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10772,9 +11123,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 746
+        "y": 763
       },
-      "id": 197,
+      "id": 203,
       "targets": [
         {
           "datasource": {
@@ -10821,7 +11172,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10830,9 +11181,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 754
+        "y": 771
       },
-      "id": 198,
+      "id": 204,
       "targets": [
         {
           "datasource": {
@@ -10879,7 +11230,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10888,9 +11239,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 754
+        "y": 771
       },
-      "id": 199,
+      "id": 205,
       "targets": [
         {
           "datasource": {
@@ -10937,7 +11288,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -10946,9 +11297,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 762
+        "y": 779
       },
-      "id": 200,
+      "id": 206,
       "targets": [
         {
           "datasource": {
@@ -10995,7 +11346,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -11004,9 +11355,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 762
+        "y": 779
       },
-      "id": 201,
+      "id": 207,
       "targets": [
         {
           "datasource": {
@@ -11053,7 +11404,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -11062,9 +11413,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 770
+        "y": 787
       },
-      "id": 202,
+      "id": 208,
       "targets": [
         {
           "datasource": {
@@ -11111,7 +11462,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -11120,9 +11471,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 770
+        "y": 787
       },
-      "id": 203,
+      "id": 209,
       "targets": [
         {
           "datasource": {
@@ -11169,7 +11520,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -11178,9 +11529,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 778
+        "y": 795
       },
-      "id": 204,
+      "id": 210,
       "targets": [
         {
           "datasource": {
@@ -11227,7 +11578,7 @@
             "fillOpacity": 10,
             "lineWidth": 1,
             "showPoints": "never",
-            "spanNulls": true
+            "spanNulls": false
           }
         },
         "overrides": []
@@ -11236,9 +11587,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 778
+        "y": 795
       },
-      "id": 205,
+      "id": 211,
       "targets": [
         {
           "datasource": {

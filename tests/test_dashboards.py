@@ -26,6 +26,12 @@ class DashboardTests(unittest.TestCase):
             if panel["type"] not in ("row", "text")
         ]
 
+    def metric_panels(self, dashboard):
+        return [
+            panel for panel in self.data_panels(dashboard)
+            if panel.get("x-panelKind") != "scrape-health"
+        ]
+
     def panels_for_metric(self, dashboard, metric_name):
         marker = "`{0}`".format(metric_name)
         return [
@@ -72,7 +78,7 @@ class DashboardTests(unittest.TestCase):
             panel["title"].rsplit(" (", 1)[-1].rstrip(")")
             for dashboard in self.dashboards.values()
             for panel in dashboard["panels"]
-            if panel["type"] == "row"
+            if panel["type"] == "row" and panel.get("x-panelKind") != "scrape-health"
         }
         self.assertEqual(set(self.translations["metrics"]), metric_names)
         self.assertEqual(set(self.translations["categories"]), category_names)
@@ -176,7 +182,7 @@ class DashboardTests(unittest.TestCase):
                     )
 
         for dashboard in self.dashboards.values():
-            for panel in self.data_panels(dashboard):
+            for panel in self.metric_panels(dashboard):
                 for target in panel["targets"]:
                     self.assertIn("{{role}}", target["legendFormat"])
                     self.assertIn("{{instance}}", target["legendFormat"])
@@ -201,12 +207,12 @@ class DashboardTests(unittest.TestCase):
         unified_sections = {
             panel["title"]
             for panel in self.dashboards["unified"]["panels"]
-            if panel["type"] == "row"
+            if panel["type"] == "row" and panel.get("x-panelKind") != "scrape-health"
         }
         split_sections = {
             panel["title"]
             for panel in self.dashboards["split"]["panels"]
-            if panel["type"] == "row"
+            if panel["type"] == "row" and panel.get("x-panelKind") != "scrape-health"
         }
         expected = {
             "{0} ({1})".format(self.translations["categories"][name], name)
@@ -259,7 +265,7 @@ class DashboardTests(unittest.TestCase):
         }
         for dashboard in self.dashboards.values():
             metric_names = [item["name"] for item in dashboard["x-metricsCatalog"]]
-            for panel in self.data_panels(dashboard):
+            for panel in self.metric_panels(dashboard):
                 expressions = "\n".join(target["expr"] for target in panel["targets"])
                 matching = {
                     metric for metric in metric_names
@@ -270,6 +276,46 @@ class DashboardTests(unittest.TestCase):
                     len(matching) == 1 or matching == allowed_calculated_sources,
                     "{0}: {1}".format(panel["title"], sorted(matching)),
                 )
+
+    def test_dashboards_expose_scrape_health_and_do_not_hide_gaps(self):
+        for dashboard in self.dashboards.values():
+            health_panels = [
+                panel for panel in dashboard["panels"]
+                if panel.get("x-panelKind") == "scrape-health"
+            ]
+            self.assertEqual(len(health_panels), 6)
+            expressions = "\n".join(
+                target["expr"]
+                for panel in health_panels
+                for target in panel.get("targets", [])
+            )
+            self.assertIn("up{", expressions)
+            self.assertIn("absent(up{", expressions)
+            self.assertIn("count(up{", expressions)
+            self.assertIn("max_over_time(timestamp((up{", expressions)
+            self.assertIn("scrape_samples_scraped{", expressions)
+            self.assertIn("scrape_duration_seconds{", expressions)
+
+            status_panels = [panel for panel in health_panels if panel["type"] == "stat"]
+            self.assertEqual(len(status_panels), 3)
+            self.assertEqual(
+                status_panels[0]["fieldConfig"]["defaults"]["mappings"][0]["options"]["0"]["text"],
+                "DOWN",
+            )
+            self.assertEqual(
+                status_panels[1]["fieldConfig"]["defaults"]["mappings"][0]["options"]["1"]["text"],
+                "缺失",
+            )
+            self.assertNotIn("thresholds", status_panels[2]["fieldConfig"]["defaults"])
+
+            info = next(panel for panel in dashboard["panels"] if panel["type"] == "text")
+            self.assertIn("抓取失败", info["options"]["content"])
+            self.assertIn("目标消失", info["options"]["content"])
+
+            for panel in self.data_panels(dashboard):
+                if panel["type"] == "timeseries":
+                    custom = panel["fieldConfig"]["defaults"]["custom"]
+                    self.assertFalse(custom["spanNulls"])
 
     def test_counter_panels_are_named_and_documented_as_rates(self):
         expected_titles = {
