@@ -1,243 +1,446 @@
 # my_prometheus
 
-Python 一键安装部署 Prometheus、Node Exporter 和 Grafana 的工具，面向 Ubuntu、Debian、CentOS/RHEL 系 systemd 服务器。
+`my_prometheus` 是一个面向 systemd Linux 服务器的监控栈安装器，用于安装和配置：
 
-## 快速开始
+- Prometheus `3.12.0`
+- Node Exporter `1.11.1`
+- Grafana OSS
+- 可选的 Alertmanager `0.32.1`
+- Linux 主机 Dashboard
+- SGLang PD 合部、PD 分离及 Router Dashboard
+
+本文用于完成新节点部署、SGLang 指标接入、网页查看和卸载。部署后的目录、配置流、数据流和 Dashboard 维护方式见 [OPERATIONS.md](OPERATIONS.md)。
+
+## 1. 部署前准备
+
+### 1.1 支持环境
+
+- Ubuntu 20.04/22.04/24.04、Debian 11/12
+- CentOS Stream 8/9、RHEL 8/9、Rocky Linux、AlmaLinux 等兼容系统
+- systemd
+- Python 3.6+
+- `x86_64` 或 `aarch64`
+- root 权限
+- 可访问 GitHub Release 和 Grafana 官方软件源
+
+精简系统先安装引导依赖。
+
+Ubuntu/Debian：
+
+```bash
+sudo apt-get update
+sudo apt-get install -y git python3 ca-certificates
+```
+
+RHEL/CentOS 系：
+
+```bash
+sudo dnf install -y git python3 ca-certificates
+```
+
+如果使用 `yum`，将上面的 `dnf` 替换为 `yum`。
+
+### 1.2 部署前确认
+
+默认端口如下：
+
+| 服务 | 端口 | 默认监听地址 | 说明 |
+|---|---:|---|---|
+| Prometheus | 9090 | `0.0.0.0` | 无内置登录认证 |
+| Grafana | 3000 | `0.0.0.0` | 使用 Grafana 用户登录 |
+| Node Exporter | 9100 | `127.0.0.1` | 仅供本机 Prometheus 采集 |
+| Alertmanager | 9093 | `0.0.0.0` | 默认不安装 |
+
+执行安装前确认端口未被其他程序占用：
+
+```bash
+sudo ss -lntp | grep -E ':(3000|9090|9093|9100)\b' || true
+```
+
+默认配置会让 Prometheus 和 Grafana 对所有网卡监听，并在已启用的 UFW 或 firewalld 中开放端口。生产环境应先选择一种访问方式：
+
+- 推荐：只监听 `127.0.0.1`，通过 SSH 隧道或反向代理访问。
+- 内网直连：监听内网地址，并在安全组、防火墙中仅允许管理网段。
+- 不建议：把未配置 TLS 和访问控制的 `9090`、`3000` 直接暴露到公网。
+
+## 2. 下载与安装
+
+### 2.1 下载代码
+
+本文统一使用 `/opt/my_prometheus-installer` 作为源码目录：
+
+```bash
+sudo mkdir -p /opt/my_prometheus-installer
+sudo chown "$(id -u):$(id -g)" /opt/my_prometheus-installer
+git clone --branch ubuntu \
+  https://github.com/Lamron-Karl/my_prometheus.git \
+  /opt/my_prometheus-installer
+cd /opt/my_prometheus-installer
+```
+
+部署前应确认当前 commit 是计划发布的版本：
+
+```bash
+git status --short --branch
+git log -1 --oneline
+```
+
+源码必须先推送或合并到新节点可访问的远端分支。只存在于开发机本地的提交无法通过上述命令部署。
+
+### 2.2 演练安装
+
+演练会打印操作，但不修改系统：
+
+```bash
+sudo python3 install.py --yes --dry-run
+```
+
+### 2.3 推荐安装方式
+
+推荐仅监听本机，再通过 SSH 隧道访问：
+
+```bash
+sudo python3 install.py \
+  --yes \
+  --prometheus-listen-address 127.0.0.1 \
+  --grafana-listen-address 127.0.0.1 \
+  --skip-firewall
+```
+
+需要在可信内网中直接访问时，可以执行默认安装：
 
 ```bash
 sudo python3 install.py --yes
 ```
 
-首次安装 Grafana 时，如果没有传入 `--grafana-admin-password`，安装器会自动生成 Grafana `admin` 密码并在安装结束时输出，同时写入 root-only 的 `/var/lib/my_prometheus/grafana-admin-credentials.json` 以便后续健康检查复用。重复执行默认不会重置 Grafana 管理员密码。
+需要 Alertmanager 时增加：
 
-## 支持环境
+```bash
+sudo python3 install.py --yes --install-alertmanager
+```
 
-- CentOS Stream 8/9、RHEL 8/9 兼容发行版
-- Rocky Linux、AlmaLinux、TencentOS 等 `ID_LIKE` 包含 `rhel`、`centos` 或 `fedora` 的系统
-- Ubuntu 20.04/22.04/24.04、Debian 11/12 等使用 APT 和 systemd 的发行版
-- systemd
-- Python 3.6+
-- x86_64，预留 aarch64 支持
+Alertmanager 的默认配置没有邮件或 webhook 接收方。安装完成只代表服务可用，发送实际通知还需要配置 `/etc/alertmanager/alertmanager.yml`。
 
-CentOS 7 需要先确保系统存在可用的 `python3`。
-
-## 默认组件
-
-- Prometheus `3.12.0`
-- Node Exporter `1.11.1`
-- Grafana OSS，默认通过 Grafana 官方 RPM 或 APT 仓库安装最新版
-- Grafana dashboards：Linux Node Overview，以及独立 `SGLang` 目录中的 PD 合部、PD 分离与 Router 两套完整指标看板
-- Alertmanager 可选，默认不安装
-
-## 常用参数
+常用可选参数：
 
 ```bash
 sudo python3 install.py \
   --yes \
-  --prometheus-version 3.12.0 \
-  --node-exporter-version 1.11.1 \
-  --grafana-version latest \
-  --grafana-admin-user admin \
-  --grafana-admin-password 'change-me' \
-  --prometheus-listen-address 0.0.0.0 \
-  --node-exporter-listen-address 127.0.0.1 \
-  --grafana-listen-address 0.0.0.0 \
+  --grafana-version '<固定版本>' \
   --retention-time 15d \
   --download-timeout 300 \
   --download-retries 3 \
-  --command-timeout 600 \
-  --install-alertmanager \
-  --skip-firewall \
   --proxy http://proxy.example:8080
 ```
 
-查看安装器版本：
+正式环境建议固定 Grafana 版本，避免重复部署时自动安装不同的 `latest` 版本。
+
+## 3. 安装结果检查
+
+### 3.1 查看服务
 
 ```bash
-python3 install.py --version
+systemctl is-active prometheus node_exporter grafana-server
+systemctl is-enabled prometheus node_exporter grafana-server
 ```
 
-上面的安装命令展示常用参数形态，实际安装时按需选择。
-
-支持环境变量，例如：
+启用了 Alertmanager 时再检查：
 
 ```bash
-export GRAFANA_ADMIN_PASSWORD='change-me'
+systemctl is-active alertmanager
+```
+
+### 3.2 查看 HTTP 健康状态
+
+```bash
+curl -fsS http://127.0.0.1:9090/-/ready
+curl -fsS http://127.0.0.1:9100/metrics >/dev/null
+curl -fsS http://127.0.0.1:3000/api/health
+curl -fsS http://127.0.0.1:9090/api/v1/targets
+```
+
+安装器会自动检查 Prometheus、Node Exporter、Grafana 和本机基础 target。SGLang 默认还是占位 target，因此在接入真实地址前显示 `DOWN` 是预期现象。
+
+### 3.3 Grafana 密码
+
+首次安装时，如果没有传入密码，安装器会生成 `admin` 密码并保存到仅 root 可读的文件：
+
+```bash
+sudo cat /var/lib/my_prometheus/grafana-admin-credentials.json
+```
+
+也可以在首次安装时通过环境变量指定，避免把密码直接写进 shell 历史：
+
+```bash
+export GRAFANA_ADMIN_PASSWORD='<强密码>'
 sudo -E python3 install.py --yes
+unset GRAFANA_ADMIN_PASSWORD
 ```
 
-## 默认端口
-
-- Prometheus: `9090`
-- Grafana: `3000`
-- Node Exporter: `9100`，默认只监听 `127.0.0.1`
-- Alertmanager: `9093`，仅启用 `--with-alertmanager true` 或 `--install-alertmanager` 时安装
-
-如果 firewalld 或 UFW 正在运行，安装器会默认开放 `9090/tcp` 和 `3000/tcp`。Node Exporter 默认只给本机 Prometheus 抓取，不对外开放。
-
-## 监听地址
-
-- `--listen-address` 是兼容参数，作为 Prometheus、Grafana、Alertmanager 的默认监听地址。
-- `--prometheus-listen-address` 单独控制 Prometheus。
-- `--node-exporter-listen-address` 单独控制 Node Exporter，默认 `127.0.0.1`。
-- `--grafana-listen-address` 单独控制 Grafana。
-- `--alertmanager-listen-address` 单独控制 Alertmanager。
-
-出于安全默认，Node Exporter 不跟随 `--listen-address` 对外监听；需要远程抓取时显式传入 `--node-exporter-listen-address 0.0.0.0`。
-
-## 校验和代理
-
-Prometheus、Node Exporter、Alertmanager 的 release tarball 默认会校验官方 `sha256sums.txt`。Grafana RPM 会使用官方 RPM metadata 中的 checksum 校验缓存或下载后的 RPM。
-
-离线或受限网络环境可以提供 checksum 文件：
+需要重置密码时：
 
 ```bash
-sudo python3 install.py --yes --checksum-file /path/to/sha256sums.txt
+export GRAFANA_ADMIN_PASSWORD='<新密码>'
+sudo -E python3 install.py \
+  --yes \
+  --reset-grafana-admin-password
+unset GRAFANA_ADMIN_PASSWORD
 ```
 
-如果同时安装 Prometheus、Node Exporter 和 Alertmanager，checksum 文件需要包含所有相关 release asset 的 sha256 行；可以把各组件官方 `sha256sums.txt` 合并到同一个文件。
+## 4. 配置 SGLang IP 和端口
 
-不建议跳过校验；确需跳过时显式指定：
+### 4.1 先验证指标接口
+
+必须从 Prometheus 所在节点验证网络连通性：
 
 ```bash
-sudo python3 install.py --yes --no-verify-checksum
+curl -fsS http://<SGLang-IP>:<端口>/metrics | head
 ```
 
-HTTP/HTTPS 代理：
+target 文件只填写 `IP:端口`。当前 Prometheus job 默认使用 HTTP，并自动请求 `/metrics`。如果接口使用其他路径、HTTPS 或认证，需要在 `/etc/prometheus/prometheus.yml` 中增加独立的 `scrape_config`，不能只修改 target 文件。
+
+### 4.2 替换占位 target
+
+编辑安装后文件：
 
 ```bash
-sudo python3 install.py --yes --proxy http://proxy.example:8080
+sudo vi /etc/prometheus/targets/sglang-dashboards.yml
 ```
 
-`--proxy` 会作用于 Python 下载、Grafana repo metadata 获取，并通过环境变量传给外部命令。若系统包管理器仓库还需要专门的 proxy 配置，请同步配置 yum/dnf/apt。
+编辑时保留文件第一行的 managed 标记，安装器依靠它识别文件归属：
 
-## Grafana 密码策略
-
-- 首次安装：如果未传 `--grafana-admin-password`，自动生成密码并输出。
-- 重复执行：默认不重置 Grafana 管理员密码。
-- 显式重置：传入 `--reset-grafana-admin-password`。
-- `--grafana-admin-user` 当前只支持 `admin`，传入其他用户名会直接报错。
-
-示例：
-
-```bash
-sudo python3 install.py --yes --reset-grafana-admin-password --grafana-admin-password 'new-secret'
+```text
+# Managed by my_prometheus install.py
 ```
 
-## 安装后的路径
-
-- Prometheus 配置：`/etc/prometheus/prometheus.yml`
-- Prometheus file_sd 目标：`/etc/prometheus/targets/nodes.yml`
-- SGLang Dashboard 占位目标：`/etc/prometheus/targets/sglang-dashboards.yml`
-- Prometheus 规则：`/etc/prometheus/rules/default.yml`
-- Prometheus 数据：`/var/lib/prometheus`
-- Grafana Node dashboard：`/var/lib/grafana/dashboards/linux/node-overview.json`
-- Grafana PD 合部 dashboard：`/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json`
-- Grafana PD 分离与 Router dashboard：`/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json`
-- Grafana dashboard provider：`/etc/grafana/provisioning/dashboards/dashboards.yml`
-- Grafana 数据源 provisioning：`/etc/grafana/provisioning/datasources/prometheus.yml`；Linux 与 SGLang 看板统一使用 UID `Prometheus`
-- 安装状态：`/var/lib/my_prometheus/install-state.json`
-- 自动生成的 Grafana 凭据：`/var/lib/my_prometheus/grafana-admin-credentials.json`
-
-两套 SGLang Dashboard 由 `tools/generate_sglang_dashboards.py` 中的分类指标清单生成，并从 `grafana/sglang-translations.json` 读取中文名称和简介。PD 分离看板的 `Role` 下拉框支持单选、多选和 All，可组合查看 Prefill、Decode 与 Router。修改指标、分类、翻译或看板结构后执行：
-
-```bash
-python3 tools/generate_sglang_dashboards.py
-python3 tools/generate_sglang_translation_catalog.py
-```
-
-生成后应同时提交脚本和两个 JSON。测试会校验 PD 合部的 122 个 Engine 指标族，以及 PD 分离与 Router 合并看板的 183 个指标族均被 PromQL 覆盖；Histogram 指标统一展示 P80、P95 和平均值。
-
-SGLang 看板采用“中文名称 (英文原文/Prometheus 原指标名)”格式。结构化翻译源是 `grafana/sglang-translations.json`，`docs/SGLang_Dashboard_中文翻译候选.md` 是由它生成的评审视图。只有需要将人工编辑过的 Markdown 重新导入时，才执行 `python3 tools/import_sglang_translation_catalog.py`；正常维护应直接编辑 JSON，避免双向修改冲突。
-
-安装器会创建四个默认不可达的 SGLang 占位目标，分别使用 `sglang-unified`、`sglang-prefill`、`sglang-decode` 和 `sglang-router` 角色。它们与 Linux 指标共用 Prometheus 数据源，但会显示为 `DOWN`；接入实际进程时，编辑 `/etc/prometheus/targets/sglang-dashboards.yml`，把占位地址替换为真实 metrics 地址即可。
-
-## 配置保护
-
-安装器生成的文本配置会带有 `Managed by my_prometheus install.py` 标记。重复执行时：
-
-- 文件不存在：创建。
-- 文件存在且带 managed 标记：允许更新并备份。
-- 文件存在但不带 managed 标记：默认拒绝覆盖，使用 `--force` 才会备份后替换。
-- `/etc/prometheus/targets/nodes.yml` 和 `/etc/prometheus/targets/sglang-dashboards.yml` 默认只首次创建，后续保留用户编辑；需要从模板重新生成时使用 `--force`。
-
-## 添加更多主机
-
-在其他 Linux 主机安装 Node Exporter 后，编辑：
-
-```bash
-sudo vi /etc/prometheus/targets/nodes.yml
-```
-
-示例：
+PD 合部示例：
 
 ```yaml
+# Managed by my_prometheus install.py
 - targets:
-    - localhost:9100
-    - 10.0.0.11:9100
-    - 10.0.0.12:9100
+    - 10.30.0.3:30000
+  labels:
+    role: sglang-unified
+    node: gpu-003
+    endpoint: unified_30000
+```
+
+PD 分离和 Router 示例：
+
+```yaml
+# Managed by my_prometheus install.py
+- targets:
+    - 10.30.0.3:30001
+  labels:
+    role: sglang-prefill
+    node: gpu-003
+    endpoint: prefill_30001
+
+- targets:
+    - 10.30.0.3:30002
+  labels:
+    role: sglang-decode
+    node: gpu-003
+    endpoint: decode_30002
+
+- targets:
+    - 10.30.0.3:30003
+  labels:
+    role: sglang-router
+    node: gpu-003
+    endpoint: router_30003
+```
+
+`role` 必须使用下列值，否则对应 Dashboard 的下拉框不会发现实例：
+
+| 部署角色 | `role` 标签 |
+|---|---|
+| PD 合部 | `sglang-unified` |
+| Prefill | `sglang-prefill` |
+| Decode | `sglang-decode` |
+| Router | `sglang-router` |
+
+注意事项：
+
+- 删除未使用的占位条目，不要让 `127.0.0.1:39000-39003` 长期保留为 `DOWN`。
+- `targets` 决定实际网络地址；`node` 和 `endpoint` 是便于识别的附加标签。
+- Prometheus 必须能访问该 IP 和端口。SGLang 与 Prometheus 在同一台机器时才使用 `127.0.0.1`。
+- file_sd 默认每 30 秒重新读取 target 文件，正常情况下不需要重启 Prometheus。
+
+检查发现结果：
+
+```bash
+curl -fsS http://127.0.0.1:9090/api/v1/targets \
+  | python3 -m json.tool
+```
+
+也可以在 Prometheus 页面打开 `Status -> Target health`，确认真实 target 为 `UP`。
+
+### 4.3 配置额外 Linux 节点
+
+本机 Node Exporter 已由 `node_exporter` 静态 job 采集。`/etc/prometheus/targets/nodes.yml` 只配置额外的远端 Node Exporter，避免重复采集本机并造成求和类指标偏大。
+
+没有远端节点时：
+
+```yaml
+# Managed by my_prometheus install.py
+[]
+```
+
+存在远端节点时：
+
+```yaml
+# Managed by my_prometheus install.py
+- targets:
+    - 10.20.0.11:9100
+    - 10.20.0.12:9100
   labels:
     role: linux
 ```
 
-然后重载 Prometheus：
+## 5. 在网页中查看
+
+### 5.1 SSH 隧道访问
+
+如果服务只监听 `127.0.0.1`，或节点只开放 SSH，在本地电脑执行：
 
 ```bash
-curl -X POST http://localhost:9090/-/reload
+ssh \
+  -L 3000:127.0.0.1:3000 \
+  -L 9090:127.0.0.1:9090 \
+  -p <SSH端口> \
+  <用户>@<服务器地址>
 ```
 
-如果 reload 失败，可以重启服务：
+保持 SSH 会话运行，然后在本机浏览器打开：
+
+- Grafana：`http://127.0.0.1:3000`
+- Prometheus：`http://127.0.0.1:9090`
+
+Grafana 使用用户名 `admin` 和凭据文件中的密码登录。
+
+如果本机端口已占用，可以换成本地端口，例如：
 
 ```bash
-sudo systemctl restart prometheus
+ssh -L 13000:127.0.0.1:3000 -L 19090:127.0.0.1:9090 \
+  -p <SSH端口> <用户>@<服务器地址>
 ```
 
-## 查看状态和日志
+此时访问 `http://127.0.0.1:13000` 和 `http://127.0.0.1:19090`。
+
+### 5.2 内网直连
+
+只有服务监听可达地址且安全组、防火墙允许访问时，才能直接打开：
+
+- `http://<节点IP>:3000`
+- `http://<节点IP>:9090`
+
+### 5.3 查找 Dashboard
+
+登录 Grafana 后进入 `Dashboards`：
+
+- `Linux Hosts/Linux Node Overview`：Linux CPU、内存、磁盘和网络。
+- `SGLang/SGLang PD 合部指标 (SGLang PD Unified Metrics)`：PD 合部指标。
+- `SGLang/SGLang PD 分离与 Router 指标 (SGLang PD Disaggregated and Router Metrics)`：Prefill、Decode 和 Router 指标。
+
+PD 分离看板顶部的 `角色 (Role)` 支持单选、多选和 All；`实例 (Instance)`、`模型 (Model)` 也支持多选。
+
+如果 target 已经 `UP` 但面板仍为 `No data`：
+
+1. 直接检查 `/metrics` 中是否存在面板查询的指标名。
+2. 在 Prometheus 中查询 `up` 和具体 `sglang:*` 指标。
+3. 检查 target 的 `role` 是否正确。
+4. 触发一次真实请求；部分指标只有执行过对应功能后才注册或产生数据。
+
+## 6. 停止、启动与日志
+
+停止默认服务：
 
 ```bash
-systemctl status prometheus node_exporter grafana-server
-journalctl -u prometheus -u node_exporter -u grafana-server -f
+sudo systemctl stop prometheus node_exporter grafana-server
 ```
 
-Prometheus targets：
+停止并取消开机自启：
 
 ```bash
-curl http://localhost:9090/api/v1/targets
+sudo systemctl disable --now prometheus node_exporter grafana-server
 ```
 
-Grafana health：
+重新启用：
 
 ```bash
-curl http://localhost:3000/api/health
+sudo systemctl enable --now prometheus node_exporter grafana-server
 ```
 
-## 卸载说明
-
-先演练卸载过程：
+查看日志：
 
 ```bash
+journalctl -u prometheus -u node_exporter -u grafana-server \
+  -n 200 --no-pager
+```
+
+启用了 Alertmanager 时，在命令中增加 `alertmanager`。
+
+## 7. 卸载
+
+先演练卸载：
+
+```bash
+cd /opt/my_prometheus-installer
 sudo python3 uninstall.py --yes --dry-run
 ```
 
-默认卸载服务、程序和 managed 配置，但保留监控数据：
+默认卸载服务、二进制和本项目管理的配置，保留监控数据：
 
 ```bash
 sudo python3 uninstall.py --yes
 ```
 
-确认不再需要历史数据时再执行彻底清理：
+Grafana 在安装前已经存在时默认保留 Grafana 软件包；确认也要删除时：
+
+```bash
+sudo python3 uninstall.py --yes --remove-grafana
+```
+
+确认不再需要 Prometheus、Grafana 和 Alertmanager 历史数据时：
 
 ```bash
 sudo python3 uninstall.py --yes --purge-data
 ```
 
-完整的安装、访问、停服、卸载和 03-gpu 运维命令见 [OPERATIONS.md](OPERATIONS.md)。
+同时删除安装器添加的防火墙端口规则：
 
-## 排障
+```bash
+sudo python3 uninstall.py \
+  --yes \
+  --purge-data \
+  --remove-firewall-rules
+```
 
-- Python 版本过低：安装 Python 3.6+ 后执行 `python3 install.py`。
-- 端口占用：安装器会检查 `9090`、`9100`、`3000`，已有非本项目进程占用时会退出。
-- 外网下载失败：确认服务器能访问 GitHub release 和 `https://rpm.grafana.com`。
-- 大文件下载不稳定：可手动把 Prometheus、Node Exporter tar 包或 Grafana RPM 放到 `/opt/my_prometheus/downloads` 后重新执行安装器；默认仍会校验 checksum。
-- Grafana 密码遗失：执行 `sudo grafana-cli admin reset-admin-password '<new-password>'`。
-- SELinux：安装器不会关闭 SELinux；如遇策略拦截，请结合审计日志单独处理。
+`--purge-data` 不可恢复，执行前应备份需要保留的数据。卸载器不会删除源码目录 `/opt/my_prometheus-installer`。
+
+## 8. 更新与测试
+
+先更新源码并运行测试：
+
+```bash
+cd /opt/my_prometheus-installer
+git pull --ff-only
+python3 -m unittest discover -s tests -v
+```
+
+如果本次只更新 Dashboard，定向发布运行时文件更安全：
+
+```bash
+sudo install -o grafana -g grafana -m 0644 \
+  grafana/dashboards/node-overview.json \
+  /var/lib/grafana/dashboards/linux/node-overview.json
+sudo install -o grafana -g grafana -m 0644 \
+  grafana/dashboards/sglang-pd-unified.json \
+  /var/lib/grafana/dashboards/sglang/sglang-pd-unified.json
+sudo install -o grafana -g grafana -m 0644 \
+  grafana/dashboards/sglang-pd-disaggregated.json \
+  /var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json
+```
+
+Grafana provider 会在约 30 秒内重新读取文件。不要为发布 Dashboard 直接使用全局 `--force`：它不仅替换 Dashboard，还会重新生成 `nodes.yml` 和 `sglang-dashboards.yml`，可能覆盖真实 target。需要更新安装器管理的其他系统配置时，先执行 `--dry-run` 并逐项确认影响。
