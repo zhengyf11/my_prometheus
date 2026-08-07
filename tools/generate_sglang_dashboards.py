@@ -317,6 +317,54 @@ PERCENT_METRICS = {
     "router_lb_drift_ratio",
 }
 
+ENGINE_INSTANCE_METRICS = {
+    "sglang:http_requests_total",
+    "sglang:http_responses_total",
+    "sglang:http_requests_active",
+    "sglang:routing_keys_active",
+    "sglang:process_cpu_seconds_total",
+    "sglang:func_latency_seconds",
+}
+
+RATE_DISPLAY_OVERRIDES = {
+    "sglang:num_requests_total": (
+        "请求完成速率",
+        "每秒完成的推理请求数",
+    ),
+    "sglang:prompt_tokens_total": (
+        "Prefill 吞吐",
+        "每秒处理的输入 Token 数",
+    ),
+    "sglang:generation_tokens_total": (
+        "Decode 吞吐",
+        "每秒生成的输出 Token 数",
+    ),
+    "sglang:process_cpu_seconds_total": (
+        "进程 CPU 使用量",
+        "进程每秒消耗的 CPU 秒数",
+    ),
+    "sglang:forward_execution_seconds_total": (
+        "前向计算时间占比",
+        "每秒累计的前向计算秒数",
+    ),
+    "sglang:dp_cooperation_forward_execution_seconds_total": (
+        "DP 协同前向时间占比",
+        "每秒累计的 DP 协同前向计算秒数",
+    ),
+    "sglang:estimated_flops_per_gpu_total": (
+        "单 GPU 估算计算吞吐",
+        "每个 GPU 每秒估算的浮点运算量",
+    ),
+    "sglang:estimated_read_bytes_per_gpu_total": (
+        "单 GPU 估算显存读取带宽",
+        "每个 GPU 每秒估算的显存读取字节数",
+    ),
+    "sglang:estimated_write_bytes_per_gpu_total": (
+        "单 GPU 估算显存写入带宽",
+        "每个 GPU 每秒估算的显存写入字节数",
+    ),
+}
+
 INPUT_TOKEN_BUCKETS = (
     ("0-4k", None, ("4000", "4000[.]0")),
     ("4k-15k", ("4000", "4000[.]0"), ("15000", "15000[.]0")),
@@ -399,19 +447,46 @@ def short_explanation(item):
     return description
 
 
+def rate_display(item):
+    name = item["name"]
+    if name in RATE_DISPLAY_OVERRIDES:
+        return RATE_DISPLAY_OVERRIDES[name]
+    title = metric_translation(item)["title"]
+    replaced = False
+    for suffix in ("总数", "总量"):
+        if title.endswith(suffix):
+            title = title[:-len(suffix)] + "速率"
+            replaced = True
+            break
+    if not replaced and title.endswith("次数"):
+        title = title[:-2] + "频率"
+        replaced = True
+    if not replaced:
+        title += "速率"
+    return title, "原始累计指标每秒增加的数量"
+
+
 def metric_title(item):
+    if item["type"] == "counter":
+        title, explanation = rate_display(item)
+        return "{0}（{1}）".format(title, explanation)
     translation = metric_translation(item)
     return "{0}（{1}）".format(translation["title"], short_explanation(item))
 
 
 def metric_mapping(item):
     translation = metric_translation(item)
-    return "\n".join([
+    lines = [
         "- 中文名称：{0}".format(translation["title"]),
         "- Prometheus 原指标：`{0}`".format(item["name"]),
         "- 指标类型：`{0}`".format(item["type"]),
         "- 说明：{0}".format(translation["description"]),
-    ])
+    ]
+    if item["type"] == "counter":
+        lines.append("- 面板口径：使用 `rate()` 展示每秒速率，不是累计总数。")
+    if metric_scope(item) == "engine-instance":
+        lines.append("- 筛选口径：实例级指标，不受模型 (Model) 变量影响。")
+    return "\n".join(lines)
 
 
 def metric_unit(item):
@@ -427,6 +502,8 @@ def metric_unit(item):
         return "suffix: MB"
     if name == "sglang:gen_throughput":
         return "suffix: Token/s"
+    if name == "sglang:estimated_flops_per_gpu_total":
+        return "suffix: FLOP/s"
     if name in (
         "sglang:engine_startup_time",
         "sglang:engine_load_weights_time",
@@ -447,15 +524,44 @@ def metric_unit(item):
     return "short"
 
 
+def metric_scope(item):
+    name = item["name"]
+    if name.startswith(("smg_", "router_")):
+        return "router-instance"
+    if name in ENGINE_INSTANCE_METRICS:
+        return "engine-instance"
+    return "engine-model"
+
+
 def selector(item, kind):
     labels = ['instance=~"$instance"']
     if kind == "unified":
         labels.append('role="sglang-unified"')
     elif kind == "split-router":
         labels.append('role=~"$role"')
-    if not item["name"].startswith(("smg_", "router_")):
-        labels.append('model_name=~"$model|^$"')
+    if metric_scope(item) == "engine-model":
+        labels.append('model_name=~"$model"')
     return ",".join(labels)
+
+
+def aggregation_labels(item, include_le=False, include_quantile=False):
+    labels = ["role", "instance"]
+    if metric_scope(item) == "engine-model":
+        labels.append("model_name")
+    if include_le:
+        labels.append("le")
+    if include_quantile:
+        labels.append("quantile")
+    return ", ".join(labels)
+
+
+def legend_format(item, suffix=None):
+    labels = ["{{role}}", "{{instance}}"]
+    if metric_scope(item) == "engine-model":
+        labels.append("{{model_name}}")
+    if suffix:
+        labels.append(suffix)
+    return " / ".join(labels)
 
 
 def expression(item, kind):
@@ -463,37 +569,48 @@ def expression(item, kind):
     metric_type = item["type"]
     labels = selector(item, kind)
     if metric_type == "counter":
-        return "sum by (instance) (rate({0}{{{1}}}[$__rate_interval]))".format(name, labels)
+        return "sum by ({0}) (rate({1}{{{2}}}[$__rate_interval]))".format(
+            aggregation_labels(item), name, labels
+        )
     if metric_type == "summary":
-        return "max by (instance, quantile) ({0}{{{1}}})".format(name, labels)
-    return "max by (instance) ({0}{{{1}}})".format(name, labels)
+        return "max by ({0}) ({1}{{{2}}})".format(
+            aggregation_labels(item, include_quantile=True), name, labels
+        )
+    return "max by ({0}) ({1}{{{2}}})".format(
+        aggregation_labels(item), name, labels
+    )
 
 
 def histogram_quantile_expression(item, kind, quantile):
     return (
-        "histogram_quantile({0}, sum by (instance, le) "
-        "(rate({1}_bucket{{{2}}}[$__rate_interval])))"
-    ).format(quantile, item["name"], selector(item, kind))
+        "histogram_quantile({0}, sum by ({1}) "
+        "(rate({2}_bucket{{{3}}}[$__rate_interval])))"
+    ).format(
+        quantile,
+        aggregation_labels(item, include_le=True),
+        item["name"],
+        selector(item, kind),
+    )
 
 
 def histogram_mean_expression(item, kind):
     name = item["name"]
     labels = selector(item, kind)
     return (
-        "sum by (instance) (rate({0}_sum{{{1}}}[$__rate_interval])) / "
-        "clamp_min(sum by (instance) (rate({0}_count{{{1}}}[$__rate_interval])), 1e-9)"
-    ).format(name, labels)
+        "sum by ({0}) (rate({1}_sum{{{2}}}[$__rate_interval])) / "
+        "clamp_min(sum by ({0}) (rate({1}_count{{{2}}}[$__rate_interval])), 1e-9)"
+    ).format(aggregation_labels(item), name, labels)
 
 
 def cumulative_bucket_expression(item, kind, bounds):
     labels = selector(item, kind)
     if bounds is None:
-        return "sum by (instance) (increase({0}_count{{{1}}}[$__range]))".format(
-            item["name"], labels
+        return "sum by ({0}) (increase({1}_count{{{2}}}[$__range]))".format(
+            aggregation_labels(item), item["name"], labels
         )
     return (
-        'sum by (instance) (increase({0}_bucket{{{1},le=~"{2}"}}[$__range]))'
-    ).format(item["name"], labels, "|".join(bounds))
+        'sum by ({0}) (increase({1}_bucket{{{2},le=~"{3}"}}[$__range]))'
+    ).format(aggregation_labels(item), item["name"], labels, "|".join(bounds))
 
 
 def bucket_range_expression(item, kind, lower, upper):
@@ -509,13 +626,13 @@ def bucket_range_expression(item, kind, lower, upper):
 def cache_hit_expression(item, kind):
     labels = selector(item, kind)
     total = (
-        "sum by (instance) (rate(sglang:prompt_tokens_histogram_sum{{{0}}}"
+        "sum by ({0}) (rate(sglang:prompt_tokens_histogram_sum{{{1}}}"
         "[$__rate_interval]))"
-    ).format(labels)
+    ).format(aggregation_labels(item), labels)
     uncached = (
-        "sum by (instance) (rate(sglang:uncached_prompt_tokens_histogram_sum{{{0}}}"
+        "sum by ({0}) (rate(sglang:uncached_prompt_tokens_histogram_sum{{{1}}}"
         "[$__rate_interval]))"
-    ).format(labels)
+    ).format(aggregation_labels(item), labels)
     return "clamp_max(clamp_min(1 - ({0}) / clamp_min(({1}), 1e-9), 0), 1)".format(
         uncached, total
     )
@@ -576,7 +693,7 @@ def token_distribution_panel(item, panel_id, x, y, width, kind, buckets):
     panel["targets"] = [
         target(
             bucket_range_expression(item, kind, lower, upper),
-            "{{{{instance}}}} {0}".format(label),
+            legend_format(item, label),
             index,
             instant=True,
         )
@@ -612,7 +729,7 @@ def cache_hit_panel(item, panel_id, x, y, width, kind):
         "spanNulls": True,
     }
     panel["options"] = timeseries_options()
-    panel["targets"] = [target(cache_hit_expression(item, kind), "{{instance}}", 0)]
+    panel["targets"] = [target(cache_hit_expression(item, kind), legend_format(item), 0)]
     panel["type"] = "timeseries"
     return panel
 
@@ -629,11 +746,23 @@ def metric_panel(item, panel_id, x, y, width, kind):
     panel = panel_base(item, panel_id, x, y, width, metric_unit(item))
     if item["type"] == "histogram":
         panel["targets"] = [
-            target(histogram_quantile_expression(item, kind, "0.95"), "{{instance}} P95", 0),
-            target(histogram_mean_expression(item, kind), "{{instance}} 平均值 (Mean)", 1),
+            target(
+                histogram_quantile_expression(item, kind, "0.95"),
+                legend_format(item, "P95"),
+                0,
+            ),
+            target(
+                histogram_mean_expression(item, kind),
+                legend_format(item, "平均值 (Mean)"),
+                1,
+            ),
         ]
     else:
-        legend = "{{instance}} {{quantile}}" if item["type"] == "summary" else "{{instance}}"
+        legend = (
+            legend_format(item, "{{quantile}}")
+            if item["type"] == "summary"
+            else legend_format(item)
+        )
         panel["targets"] = [target(expression(item, kind), legend, 0, name in STATIC_METRICS)]
 
     if name in STATIC_METRICS:

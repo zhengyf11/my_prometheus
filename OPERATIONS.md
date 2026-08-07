@@ -359,14 +359,24 @@ panels[].targets[].expr
 例如速率类指标：
 
 ```promql
-sum by (instance) (
+sum by (role, instance, model_name) (
   rate(sglang:prompt_tokens_total{
     instance=~"$instance",
     role="sglang-unified",
-    model_name=~"$model|^$"
+    model_name=~"$model"
   }[$__rate_interval])
 )
 ```
+
+Counter 原指标表示进程启动以来的累计值，但趋势面板统一使用 `rate()`，因此标题和单位必须表达每秒速率。例如：
+
+| 原始指标 | 面板标题 | 查询口径 |
+|---|---|---|
+| `sglang:num_requests_total` | 请求完成速率 | request/s |
+| `sglang:prompt_tokens_total` | Prefill 吞吐 | Token/s |
+| `sglang:generation_tokens_total` | Decode 吞吐 | Token/s |
+
+模型级 Engine 指标严格使用 `model_name=~"$model"`，并按 `role, instance, model_name` 聚合。HTTP、进程等实例级指标没有 `model_name` 标签，查询不添加模型过滤，只按 `role, instance` 聚合；这些面板不受模型 (Model) 下拉框影响。Router 当前至少保留 `role, instance`，更细的 `model`、`worker`、`endpoint` 和错误类型维度由对应专项面板处理。
 
 普通 Histogram 面板只使用两类查询：
 
@@ -404,6 +414,8 @@ sum by (instance) (
 
 - `grafana/sglang-translations.json`：中文名称、原指标名和说明的结构化来源。
 - `panels[].description`：Grafana 面板信息中显示中文名称、Prometheus 原指标、类型和完整说明。
+
+对于 Counter，结构化翻译仍描述原始累计指标，面板标题则根据 `rate()` 查询派生为速率语义；Panel description 会明确写出“每秒速率，不是累计总数”。
 
 生成器将高频观察项放在 `关键引擎指标`、`关键 Router 指标` 分组，将请求路径中的各阶段耗时集中放在 `请求全链路时延`、`Router 请求全链路时延` 分组。指标只从原分类移动到这些优先分组，不会重复生成。
 

@@ -347,6 +347,9 @@ PD 分离看板顶部的 `角色 (Role)` 支持单选、多选和 All；`实例 
 
 SGLang 面板标题采用 `中文名称（大致解释）`，Prometheus 原始指标名不占用标题或图例，可在面板信息（Panel description）中查看。看板的展示约定如下：
 
+- Counter 原指标虽然以 `_total` 表示累计值，趋势面板统一使用 `rate()` 展示每秒速率，并使用“请求完成速率”“Prefill 吞吐”“Decode 吞吐”等速率名称，不把速率误称为总数。
+- Engine 模型级指标严格匹配模型 (Model) 变量，并按 Role、Instance、Model 分组；HTTP、进程等实例级指标不带 `model_name`，不受 Model 变量影响。
+- 图例至少显示 Role 和 Instance，模型级 Engine 指标同时显示 Model，选择 All 时可以区分 Prefill、Decode 和不同模型。
 - 启动后通常不变化的容量、页大小、上下文长度等配置类指标使用 Stat 数字面板。
 - 普通 Histogram 只展示 P95 和平均值，不展示 P80。
 - 输入和生成 Token 长度使用分段数量展示；统计窗口是当前选择的 Dashboard 时间范围。

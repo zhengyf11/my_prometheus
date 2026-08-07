@@ -131,6 +131,56 @@ class DashboardTests(unittest.TestCase):
             for target in panel["targets"]:
                 self.assertIn('role="sglang-unified"', target["expr"])
 
+    def test_engine_model_filters_and_dimensions_are_strict(self):
+        instance_metrics = {
+            "sglang:http_requests_total",
+            "sglang:http_responses_total",
+            "sglang:http_requests_active",
+            "sglang:routing_keys_active",
+            "sglang:process_cpu_seconds_total",
+            "sglang:func_latency_seconds",
+        }
+        for dashboard in self.dashboards.values():
+            all_expressions = "\n".join(
+                target["expr"]
+                for panel in self.data_panels(dashboard)
+                for target in panel["targets"]
+            )
+            self.assertNotIn('$model|^$', all_expressions)
+
+            for item in dashboard["x-metricsCatalog"]:
+                metric_name = item["name"]
+                if metric_name.startswith(("smg_", "router_")):
+                    continue
+                panels = self.panels_for_metric(dashboard, metric_name)
+                expressions = "\n".join(
+                    target["expr"] for panel in panels for target in panel["targets"]
+                )
+                legends = [
+                    target["legendFormat"]
+                    for panel in panels
+                    for target in panel["targets"]
+                ]
+                if metric_name in instance_metrics:
+                    self.assertNotIn("model_name", expressions, metric_name)
+                    self.assertTrue(
+                        all("{{model_name}}" not in legend for legend in legends),
+                        metric_name,
+                    )
+                else:
+                    self.assertIn('model_name=~"$model"', expressions, metric_name)
+                    self.assertIn("by (role, instance, model_name", expressions, metric_name)
+                    self.assertTrue(
+                        all("{{model_name}}" in legend for legend in legends),
+                        metric_name,
+                    )
+
+        for dashboard in self.dashboards.values():
+            for panel in self.data_panels(dashboard):
+                for target in panel["targets"]:
+                    self.assertIn("{{role}}", target["legendFormat"])
+                    self.assertIn("{{instance}}", target["legendFormat"])
+
     def test_engine_dashboards_have_expected_sections(self):
         original_sections = {
             "Key Engine Metrics",
@@ -221,6 +271,26 @@ class DashboardTests(unittest.TestCase):
                     "{0}: {1}".format(panel["title"], sorted(matching)),
                 )
 
+    def test_counter_panels_are_named_and_documented_as_rates(self):
+        expected_titles = {
+            "sglang:num_requests_total": "请求完成速率（每秒完成的推理请求数）",
+            "sglang:prompt_tokens_total": "Prefill 吞吐（每秒处理的输入 Token 数）",
+            "sglang:generation_tokens_total": "Decode 吞吐（每秒生成的输出 Token 数）",
+        }
+        for dashboard in self.dashboards.values():
+            for item in dashboard["x-metricsCatalog"]:
+                if item["type"] != "counter":
+                    continue
+                panel = self.panels_for_metric(dashboard, item["name"])[0]
+                self.assertNotIn("总数", panel["title"])
+                self.assertNotIn("总量", panel["title"])
+                self.assertIn("使用 `rate()` 展示每秒速率", panel["description"])
+                self.assertTrue(
+                    all("rate(" in target["expr"] for target in panel["targets"])
+                )
+                if item["name"] in expected_titles:
+                    self.assertEqual(panel["title"], expected_titles[item["name"]])
+
     def test_histograms_show_only_p95_and_mean(self):
         special_histograms = {
             "sglang:prompt_tokens_histogram",
@@ -265,7 +335,10 @@ class DashboardTests(unittest.TestCase):
                 self.assertEqual(panel["type"], "bargauge")
                 self.assertEqual(len(panel["targets"]), len(definition["ranges"]))
                 self.assertEqual(
-                    [target["legendFormat"].split(" ", 1)[1] for target in panel["targets"]],
+                    [
+                        target["legendFormat"].rsplit(" / ", 1)[1]
+                        for target in panel["targets"]
+                    ],
                     definition["ranges"],
                 )
                 expressions = "\n".join(target["expr"] for target in panel["targets"])
