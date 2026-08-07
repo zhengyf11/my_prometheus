@@ -159,7 +159,7 @@ class GrafanaTests(unittest.TestCase):
         self.assertIn("folder: SGLang", provider)
         self.assertIn("path: /var/lib/grafana/dashboards/sglang", provider)
 
-    def test_provisions_placeholder_sglang_datasource(self):
+    def test_provisions_only_shared_prometheus_datasource(self):
         ctx = Context()
         ctx.prometheus_url = "http://localhost:9090"
         ctx.grafana_provisioning_dir = Path("/etc/grafana/provisioning")
@@ -167,8 +167,25 @@ class GrafanaTests(unittest.TestCase):
             grafana.provision_datasource(ctx)
 
         content = write.call_args[0][2]
-        self.assertIn("uid: SGLangPlaceholder", content)
-        self.assertIn("url: http://127.0.0.1:19090", content)
+        self.assertIn("uid: Prometheus", content)
+        self.assertIn("url: http://localhost:9090", content)
+        self.assertNotIn("SGLangPlaceholder", content)
+        self.assertNotIn("19090", content)
+
+
+class SGLangTargetTemplateTests(unittest.TestCase):
+    def test_defines_placeholder_target_for_each_dashboard_role(self):
+        path = Path(__file__).resolve().parent.parent / "templates/sglang-targets.yml.tpl"
+        content = path.read_text()
+
+        for role in (
+            "sglang-unified",
+            "sglang-prefill",
+            "sglang-decode",
+            "sglang-router",
+        ):
+            self.assertEqual(content.count("role: {0}".format(role)), 1)
+        self.assertEqual(content.count("127.0.0.1:3900"), 4)
 
 
 if __name__ == "__main__":

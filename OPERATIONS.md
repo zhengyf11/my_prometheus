@@ -66,7 +66,7 @@ Grafana 使用 `admin` 和上面凭据文件中的密码登录。安装器会创
 - `Linux Hosts`：包含 `Linux Node Overview`，使用真实的本机 Prometheus 数据源。
 - `SGLang`：包含 `SGLang PD Unified Metrics`、`SGLang PD Disaggregated Metrics`、`SGLang Router Metrics` 三套看板。
 
-SGLang 三套看板当前统一使用占位数据源 `SGLangPlaceholder`，地址为 `http://127.0.0.1:19090`。该端口默认没有服务，因此部署后看板结构、分类和 PromQL 可见，但暂时不会显示实时数据。接入真实数据时只需要修改数据源 URL，不需要修改三个 Dashboard JSON。
+Linux 与 SGLang 看板统一使用 Grafana 数据源 `Prometheus`，地址为 `http://localhost:9090`。SGLang 三套看板通过 Prometheus target 的 `role` 标签区分 PD 合部、Prefill、Decode 和 Router。安装器默认写入四个不可达的占位 target，因此看板结构和 Instance 下拉项可见，但 target 会显示 `DOWN`，业务指标暂时显示 No data。
 
 Dashboard JSON 分为仓库源文件和安装后的运行时文件：
 
@@ -256,8 +256,9 @@ ssh -p 33003 root@117.187.188.18
 | Prometheus 进程入口 | `/etc/systemd/system/prometheus.service` | `--config.file=/etc/prometheus/prometheus.yml`、数据目录 `/var/lib/prometheus`、监听 `0.0.0.0:9090` |
 | Prometheus 主配置 | `/etc/prometheus/prometheus.yml` | 每 15 秒抓取一次；`file_sd_nodes` job 每 30 秒读取 `/etc/prometheus/targets/*.yml` |
 | 本机 Node Exporter 目标 | `/etc/prometheus/targets/nodes.yml` | `127.0.0.1:9100`，附加 `role: local` |
+| SGLang 看板占位目标 | `/etc/prometheus/targets/sglang-dashboards.yml` | 四个默认不可达地址，分别附加合部、Prefill、Decode、Router 角色 |
 | SGLang 目标 | `/etc/prometheus/targets/03-sglang.yml` | 指定 SGLang 服务的 IP、端口以及 `role`、`node`、`endpoint` 标签 |
-| Grafana 数据源 | `/etc/grafana/provisioning/datasources/prometheus.yml` | Linux 使用真实 `Prometheus`；SGLang 使用占位 `SGLangPlaceholder` |
+| Grafana 数据源 | `/etc/grafana/provisioning/datasources/prometheus.yml` | Linux 与 SGLang 统一使用 `Prometheus`，指向本机 `http://localhost:9090` |
 | Dashboard provider | `/etc/grafana/provisioning/dashboards/dashboards.yml` | 分别把 `linux` 运行时目录加载到 `Linux Hosts`，把 `sglang` 运行时目录加载到 `SGLang` |
 | Node Dashboard | `/var/lib/grafana/dashboards/linux/node-overview.json` | 定义 Linux Node Overview 的面板和 PromQL |
 | SGLang Dashboards | `/var/lib/grafana/dashboards/sglang/*.json` | 定义 PD 合部、PD 分离和 Router 三套面板及 PromQL |
@@ -268,6 +269,7 @@ ssh -p 33003 root@117.187.188.18
 |---|---|---|
 | `templates/prometheus.yml.tpl` | `my_prometheus/prometheus.py` 渲染模板 | `/etc/prometheus/prometheus.yml` |
 | `templates/nodes.yml.tpl` | `my_prometheus/prometheus.py` 首次创建并保留后续人工修改 | `/etc/prometheus/targets/nodes.yml` |
+| `templates/sglang-targets.yml.tpl` | `my_prometheus/prometheus.py` 首次创建四类占位 target，并保留后续人工修改 | `/etc/prometheus/targets/sglang-dashboards.yml` |
 | 无仓库模板，由运维人员维护 | Prometheus 的 file SD 自动发现 | `/etc/prometheus/targets/03-sglang.yml` |
 | `my_prometheus/grafana.py` 中的 `provision_datasource` | 安装器生成数据源配置 | `/etc/grafana/provisioning/datasources/prometheus.yml` |
 | `my_prometheus/grafana.py` 中的 `provision_dashboards` | 安装器生成 provider 配置 | `/etc/grafana/provisioning/dashboards/dashboards.yml` |
@@ -302,8 +304,7 @@ Prometheus :9090
               | PromQL 查询
               v
 Grafana datasource
-  Linux: UID Prometheus
-  SGLang: UID SGLangPlaceholder（当前为占位地址）
+  Linux 与 SGLang: UID Prometheus -> http://localhost:9090
               |
               v
 Dashboard JSON 中的变量和 panel targets
@@ -316,10 +317,10 @@ Dashboard JSON 中的变量和 panel targets
 
 1. `/etc/prometheus/targets/03-sglang.yml` 指定采集源，目前配置了 `10.30.0.3:30000` 和 `10.30.0.2:31001`。
 2. `/etc/prometheus/prometheus.yml` 中的 `file_sd_nodes` job 发现该文件。target 中没有配置 `metrics_path` 时，Prometheus 默认请求 `http://<IP>:<端口>/metrics`。
-3. Prometheus 将目标地址写入 `instance` 标签，将 job 写为 `file_sd_nodes`，并保留 target 文件声明的 `role="sglang"`、`node`、`endpoint` 标签。
-4. Linux Dashboard 通过真实 `Prometheus` 数据源查询本机 `http://localhost:9090`；三套 SGLang Dashboard 当前改用独立占位数据源。
-5. 三套 SGLang JSON 当前使用数据源 UID `SGLangPlaceholder`，它暂时指向无服务的 `http://127.0.0.1:19090`，所以不会读取本机真实 Prometheus。
-6. 接入真实数据源后，各看板通过各自的 `role` 筛选 Instance，再使用 `$instance` 等变量查询 `sglang:*`、`smg_*` 或 `router_*` 指标。
+3. Prometheus 将目标地址写入 `instance` 标签，将 job 写为 `file_sd_nodes`，并保留 target 文件声明的 `role`、`node`、`endpoint` 标签。
+4. Linux 和三套 SGLang Dashboard 都通过 UID `Prometheus` 查询本机 `http://localhost:9090`。
+5. SGLang 看板通过 `role` 筛选 Instance，再使用 `$instance` 等变量查询 `sglang:*`、`smg_*` 或 `router_*` 指标；区别在 target 标签，不在数据源。
+6. `/etc/prometheus/targets/sglang-dashboards.yml` 中的占位 target 即使抓取失败也会生成值为 0 的 `up` 序列，因此 Instance 下拉项存在，但业务指标没有数据。
 
 当前 `/etc/prometheus/targets/03-sglang.yml` 的生效内容是：
 
@@ -340,6 +341,21 @@ Dashboard JSON 中的变量和 panel targets
 ```
 
 这里的 `node` 和 `endpoint` 是人工附加的展示标签，不决定网络访问地址；真正的采集地址由 `targets` 中的 `IP:端口` 决定。
+
+安装器还会根据仓库中的 `templates/sglang-targets.yml.tpl` 首次创建 `/etc/prometheus/targets/sglang-dashboards.yml`：
+
+```yaml
+- targets: [127.0.0.1:39000]
+  labels: {role: sglang-unified, node: placeholder, endpoint: placeholder_unified}
+- targets: [127.0.0.1:39001]
+  labels: {role: sglang-prefill, node: placeholder, endpoint: placeholder_prefill}
+- targets: [127.0.0.1:39002]
+  labels: {role: sglang-decode, node: placeholder, endpoint: placeholder_decode}
+- targets: [127.0.0.1:39003]
+  labels: {role: sglang-router, node: placeholder, endpoint: placeholder_router}
+```
+
+这些地址只用于预置四类 target，不要求端口上有进程。接入真实服务时编辑此文件，把对应 `targets`、`node` 和 `endpoint` 替换成实际值并保留正确的 `role`；不使用的角色可以删除整个条目。file SD 会在约 30 秒内自动发现修改，无需新建 Grafana 数据源，也无需重启 Prometheus。
 
 ### 2.3 Dashboard 中展示哪些数据
 
@@ -388,21 +404,21 @@ templating.list[]
 ```json
 "datasource": {
   "type": "prometheus",
-  "uid": "SGLangPlaceholder"
+  "uid": "Prometheus"
 }
 ```
 
-这里的 `uid: SGLangPlaceholder` 对应 `/etc/grafana/provisioning/datasources/prometheus.yml` 中的：
+这里的 `uid: Prometheus` 对应 `/etc/grafana/provisioning/datasources/prometheus.yml` 中的：
 
 ```yaml
 datasources:
-  - name: SGLang Placeholder
-    uid: SGLangPlaceholder
+  - name: Prometheus
+    uid: Prometheus
     type: prometheus
-    url: http://127.0.0.1:19090
+    url: http://localhost:9090
 ```
 
-所以 Dashboard 不直接连接 SGLang，而是把 PromQL 发给这个占位地址。后续把该 URL 改成真实 Prometheus 地址并重启 Grafana，三个 Dashboard 即可保持原 UID 和 PromQL 不变。
+Dashboard 不直接连接 SGLang，而是把 PromQL 发给本机 Prometheus。Prometheus 再按 `/etc/prometheus/targets/*.yml` 抓取不同的 SGLang 地址；因此新增或替换实例时修改 target 地址和 `role`，不需要创建新的 Grafana 数据源。
 
 #### 2.3.2 面板查询哪些指标
 
@@ -476,7 +492,7 @@ PD 合部 Dashboard 的关键配置是：
   "type": "query",
   "datasource": {
     "type": "prometheus",
-    "uid": "SGLangPlaceholder"
+    "uid": "Prometheus"
   },
   "definition": "label_values(up{job=\"file_sd_nodes\",role=\"sglang-unified\"}, instance)",
   "query": {
@@ -531,7 +547,7 @@ Instance 下拉列表出现 10.30.0.3:30000
 | PD 分离 | 先选择 `role=sglang-prefill|sglang-decode`，再用 `label_values(up{job="file_sd_nodes",role=~"$role"}, instance)` |
 | Router | `label_values(up{job="file_sd_nodes",role="sglang-router"}, instance)` |
 
-当前 03 节点旧 target 使用的是 `role: sglang`，与三套新 Dashboard 的角色条件不同；同时新 Dashboard 暂时连接占位数据源。后续接入真实 Prometheus 时，需要把 target 角色按上表标记。
+当前 03 节点旧 target 使用的是 `role: sglang`，与三套新 Dashboard 的角色条件不同。所有看板使用同一个 Prometheus，但实际 SGLang target 必须按上表标记角色，才能进入对应看板的 Instance 下拉列表。
 
 #### 2.3.4 Model 下拉列表
 
@@ -581,7 +597,7 @@ http://127.0.0.1:8000/metrics   返回 404，8000 是业务 API 端口
 http://127.0.0.1:29000/metrics  返回 200，29000 是 Router metrics 端口
 ```
 
-当前 `/etc/prometheus/targets/03-sglang.yml` 尚未配置 `10.30.0.3:29000`，并且 SGLang Router Dashboard 当前连接占位数据源，因此暂时不会显示 Router 实时指标。后续接入真实 Prometheus 时，应给 Router 使用独立的 `role`：
+当前 `/etc/prometheus/targets/03-sglang.yml` 尚未配置 `10.30.0.3:29000`，因此 Router Dashboard 不会显示该进程的实时指标。接入时应给 Router target 使用独立的 `role`：
 
 ```yaml
 - targets:

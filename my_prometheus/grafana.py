@@ -157,13 +157,6 @@ datasources:
     url: {prometheus_url}
     isDefault: true
     editable: true
-  - name: SGLang Placeholder
-    uid: SGLangPlaceholder
-    type: prometheus
-    access: proxy
-    url: http://127.0.0.1:19090
-    isDefault: false
-    editable: true
 """.format(prometheus_url=ctx.prometheus_url)
     write_managed_file(
         ctx,

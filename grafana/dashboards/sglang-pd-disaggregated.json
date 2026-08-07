@@ -19,7 +19,7 @@
       },
       "id": 1,
       "options": {
-        "content": "# SGLang PD Disaggregated Metrics\n\nThis dashboard covers **122 metric families** for separate prefill and decode engines. It currently uses the placeholder Prometheus data source `SGLangPlaceholder`, so no live values are expected until that data source URL is replaced. Metrics are lazily registered; feature-gated metrics may still show no data after a real source is connected.",
+        "content": "# SGLang PD Disaggregated Metrics\n\nThis dashboard covers **122 metric families** for separate prefill and decode engines. It uses the shared Prometheus data source `Prometheus` and selects scrape targets by their SGLang role label. Placeholder targets can be DOWN until the corresponding process is started. Metrics are lazily registered, so feature-gated metrics may show no data.",
         "mode": "markdown"
       },
       "title": "Dashboard Scope",
@@ -41,7 +41,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -86,7 +86,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:http_requests_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:http_requests_total",
@@ -95,7 +95,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:http_responses_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:http_responses_total",
@@ -104,7 +104,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:process_cpu_seconds_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:process_cpu_seconds_total",
@@ -117,7 +117,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -162,7 +162,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:http_requests_active{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:http_requests_active",
@@ -171,7 +171,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:routing_keys_active{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:routing_keys_active",
@@ -184,7 +184,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -229,7 +229,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:func_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:func_latency_seconds",
@@ -255,7 +255,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -300,7 +300,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:prompt_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:prompt_tokens_total",
@@ -309,7 +309,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:generation_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:generation_tokens_total",
@@ -318,7 +318,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:spec_verify_calls_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:spec_verify_calls_total",
@@ -327,7 +327,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:cached_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:cached_tokens_total",
@@ -336,7 +336,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_requests_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_requests_total",
@@ -345,7 +345,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_so_requests_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_so_requests_total",
@@ -354,7 +354,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_aborted_requests_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_aborted_requests_total",
@@ -367,7 +367,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -412,7 +412,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:prompt_tokens_histogram",
@@ -421,7 +421,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:uncached_prompt_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:uncached_prompt_tokens_histogram",
@@ -430,7 +430,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:generation_tokens_histogram",
@@ -439,7 +439,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:get_loads_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:get_loads_duration_seconds",
@@ -448,7 +448,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:time_to_first_token_seconds",
@@ -457,7 +457,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:inter_token_latency_seconds",
@@ -466,7 +466,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:e2e_request_latency_seconds",
@@ -492,7 +492,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -537,7 +537,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_running_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_running_reqs",
@@ -546,7 +546,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_queue_reqs",
@@ -555,7 +555,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_grammar_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_grammar_queue_reqs",
@@ -564,7 +564,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:gen_throughput{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:gen_throughput",
@@ -573,7 +573,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:cache_hit_rate{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:cache_hit_rate",
@@ -582,7 +582,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:decode_sum_seq_lens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:decode_sum_seq_lens",
@@ -591,7 +591,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:utilization{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:utilization",
@@ -600,7 +600,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:fwd_occupancy{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:fwd_occupancy",
@@ -609,7 +609,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:new_token_ratio{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:new_token_ratio",
@@ -618,7 +618,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:is_cuda_graph{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:is_cuda_graph",
@@ -644,7 +644,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -689,7 +689,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:token_usage{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:token_usage",
@@ -698,7 +698,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:full_token_usage{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:full_token_usage",
@@ -707,7 +707,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:swa_token_usage{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:swa_token_usage",
@@ -716,7 +716,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:mamba_usage{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:mamba_usage",
@@ -725,7 +725,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_used_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_used_tokens",
@@ -734,7 +734,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:kv_available_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:kv_available_tokens",
@@ -743,7 +743,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:kv_evictable_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:kv_evictable_tokens",
@@ -752,7 +752,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:kv_used_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:kv_used_tokens",
@@ -761,7 +761,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:swa_available_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:swa_available_tokens",
@@ -770,7 +770,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:swa_evictable_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:swa_evictable_tokens",
@@ -779,7 +779,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:swa_used_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:swa_used_tokens",
@@ -788,7 +788,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:mamba_available_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:mamba_available_tokens",
@@ -797,7 +797,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:mamba_evictable_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:mamba_evictable_tokens",
@@ -806,7 +806,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:mamba_used_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:mamba_used_tokens",
@@ -832,7 +832,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -877,7 +877,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:cuda_graph_passes_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:cuda_graph_passes_total",
@@ -886,7 +886,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:realtime_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:realtime_tokens_total",
@@ -895,7 +895,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:forward_execution_seconds_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:forward_execution_seconds_total",
@@ -904,7 +904,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:estimated_flops_per_gpu_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:estimated_flops_per_gpu_total",
@@ -913,7 +913,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:estimated_read_bytes_per_gpu_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:estimated_read_bytes_per_gpu_total",
@@ -922,7 +922,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:estimated_write_bytes_per_gpu_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:estimated_write_bytes_per_gpu_total",
@@ -931,7 +931,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:dp_cooperation_realtime_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:dp_cooperation_realtime_tokens_total",
@@ -940,7 +940,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:dp_cooperation_forward_execution_seconds_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:dp_cooperation_forward_execution_seconds_total",
@@ -966,7 +966,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1011,7 +1011,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:max_total_num_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:max_total_num_tokens",
@@ -1020,7 +1020,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:max_running_requests_under_SLO{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:max_running_requests_under_SLO",
@@ -1029,7 +1029,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:engine_startup_time{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:engine_startup_time",
@@ -1038,7 +1038,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:engine_load_weights_time{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:engine_load_weights_time",
@@ -1047,7 +1047,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:page_size{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:page_size",
@@ -1056,7 +1056,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_pages{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_pages",
@@ -1065,7 +1065,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:context_len{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:context_len",
@@ -1074,7 +1074,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:startup_available_gpu_memory_gb{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:startup_available_gpu_memory_gb",
@@ -1083,7 +1083,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:weight_load_duration_seconds{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:weight_load_duration_seconds",
@@ -1109,7 +1109,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1154,7 +1154,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_retracted_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_retracted_reqs",
@@ -1163,7 +1163,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_paused_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_paused_reqs",
@@ -1176,7 +1176,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1221,7 +1221,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_retracted_requests_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_retracted_requests_total",
@@ -1230,7 +1230,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_retracted_input_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_retracted_input_tokens_total",
@@ -1239,7 +1239,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_retracted_output_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_retracted_output_tokens_total",
@@ -1252,7 +1252,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1297,7 +1297,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:queue_time_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:queue_time_seconds",
@@ -1306,7 +1306,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:per_stage_req_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:per_stage_req_latency_seconds",
@@ -1332,7 +1332,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1377,7 +1377,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_compilation_time_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:grammar_compilation_time_seconds",
@@ -1386,7 +1386,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_schema_count_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:grammar_schema_count",
@@ -1395,7 +1395,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_ebnf_size_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:grammar_ebnf_size",
@@ -1404,7 +1404,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_tree_traversal_time_avg_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_avg",
@@ -1413,7 +1413,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_tree_traversal_time_max_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_max",
@@ -1426,7 +1426,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1471,7 +1471,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_grammar_cache_hit_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_grammar_cache_hit_total",
@@ -1480,7 +1480,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_grammar_aborted_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_grammar_aborted_total",
@@ -1489,7 +1489,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_grammar_timeout_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_grammar_timeout_total",
@@ -1498,7 +1498,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_grammar_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_grammar_total",
@@ -1524,7 +1524,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1569,7 +1569,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:spec_accept_length{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:spec_accept_length",
@@ -1578,7 +1578,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:spec_accept_rate{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:spec_accept_rate",
@@ -1587,7 +1587,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:spec_cap_length{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:spec_cap_length",
@@ -1596,7 +1596,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:spec_block_accept_length{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:spec_block_accept_length",
@@ -1605,7 +1605,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:spec_num_steps{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:spec_num_steps",
@@ -1614,7 +1614,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:spec_num_draft_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:spec_num_draft_tokens",
@@ -1627,7 +1627,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1672,7 +1672,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefill_delayer_wait_forward_passes_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:prefill_delayer_wait_forward_passes",
@@ -1681,7 +1681,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefill_delayer_wait_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:prefill_delayer_wait_seconds",
@@ -1694,7 +1694,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1739,7 +1739,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:prefill_delayer_outcomes_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:prefill_delayer_outcomes_total",
@@ -1765,7 +1765,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1810,7 +1810,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_prefill_bootstrap_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_prefill_bootstrap_queue_reqs",
@@ -1819,7 +1819,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_prefill_inflight_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_prefill_inflight_queue_reqs",
@@ -1828,7 +1828,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_decode_prealloc_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_decode_prealloc_queue_reqs",
@@ -1837,7 +1837,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_decode_transfer_queue_reqs{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_decode_transfer_queue_reqs",
@@ -1846,7 +1846,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:pending_prealloc_token_usage{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:pending_prealloc_token_usage",
@@ -1859,7 +1859,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1904,7 +1904,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_speed_gb_s_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:kv_transfer_speed_gb_s",
@@ -1913,7 +1913,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:kv_transfer_latency_ms",
@@ -1922,7 +1922,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_total_mb_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:kv_transfer_total_mb",
@@ -1931,7 +1931,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_bootstrap_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:kv_transfer_bootstrap_ms",
@@ -1940,7 +1940,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_alloc_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:kv_transfer_alloc_ms",
@@ -1953,7 +1953,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -1998,7 +1998,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_bootstrap_failed_reqs_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_bootstrap_failed_reqs_total",
@@ -2007,7 +2007,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_transfer_failed_reqs_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_transfer_failed_reqs_total",
@@ -2016,7 +2016,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:num_prefill_retries_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:num_prefill_retries_total",
@@ -2042,7 +2042,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -2087,7 +2087,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:eviction_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:eviction_duration_seconds",
@@ -2096,7 +2096,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:load_back_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:load_back_duration_seconds",
@@ -2109,7 +2109,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -2154,7 +2154,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:evicted_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:evicted_tokens_total",
@@ -2163,7 +2163,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:load_back_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:load_back_tokens_total",
@@ -2176,7 +2176,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -2221,7 +2221,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_unique_running_routing_keys{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_unique_running_routing_keys",
@@ -2230,7 +2230,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:routing_key_running_req_count{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:routing_key_running_req_count",
@@ -2239,7 +2239,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:routing_key_all_req_count{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:routing_key_all_req_count",
@@ -2265,7 +2265,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -2310,7 +2310,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:lora_pool_slots_used{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:lora_pool_slots_used",
@@ -2319,7 +2319,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:lora_pool_slots_total{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:lora_pool_slots_total",
@@ -2328,7 +2328,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:lora_pool_utilization{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:lora_pool_utilization",
@@ -2337,7 +2337,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:hicache_host_used_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:hicache_host_used_tokens",
@@ -2346,7 +2346,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:hicache_host_total_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:hicache_host_total_tokens",
@@ -2355,7 +2355,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:num_streaming_sessions{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:num_streaming_sessions",
@@ -2364,7 +2364,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:streaming_session_held_tokens{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:streaming_session_held_tokens",
@@ -2377,7 +2377,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -2422,7 +2422,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:prefetched_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:prefetched_tokens_total",
@@ -2431,7 +2431,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:backuped_tokens_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:backuped_tokens_total",
@@ -2440,7 +2440,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "sum by (instance) (rate(sglang:failed_session_recoveries_total{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval]))",
           "legendFormat": "{{instance}} sglang:failed_session_recoveries_total",
@@ -2453,7 +2453,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -2498,7 +2498,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefetch_pgs_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:prefetch_pgs",
@@ -2507,7 +2507,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:backup_pgs_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:backup_pgs",
@@ -2516,7 +2516,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefetch_bandwidth_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:prefetch_bandwidth",
@@ -2525,7 +2525,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:backup_bandwidth_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:backup_bandwidth",
@@ -2534,7 +2534,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:eplb_gpu_physical_count_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
           "legendFormat": "{{instance}} sglang:eplb_gpu_physical_count",
@@ -2547,7 +2547,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "SGLangPlaceholder"
+        "uid": "Prometheus"
       },
       "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
@@ -2592,7 +2592,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "SGLangPlaceholder"
+            "uid": "Prometheus"
           },
           "expr": "max by (instance) (sglang:eplb_balancedness{instance=~\"$instance\",model_name=~\"$model|^$\"})",
           "legendFormat": "{{instance}} sglang:eplb_balancedness",
@@ -2618,7 +2618,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "SGLangPlaceholder"
+          "uid": "Prometheus"
         },
         "definition": "label_values(up{job=\"file_sd_nodes\",role=~\"sglang-prefill|sglang-decode\"}, role)",
         "hide": 0,
@@ -2642,7 +2642,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "SGLangPlaceholder"
+          "uid": "Prometheus"
         },
         "definition": "label_values(up{job=\"file_sd_nodes\",role=~\"$role\"}, instance)",
         "hide": 0,
@@ -2666,7 +2666,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "SGLangPlaceholder"
+          "uid": "Prometheus"
         },
         "definition": "label_values(sglang:num_requests_total{instance=~\"$instance\",engine_type=~\"prefill|decode\"}, model_name)",
         "hide": 0,

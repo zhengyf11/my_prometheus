@@ -128,6 +128,7 @@ sudo python3 install.py --yes --reset-grafana-admin-password --grafana-admin-pas
 
 - Prometheus 配置：`/etc/prometheus/prometheus.yml`
 - Prometheus file_sd 目标：`/etc/prometheus/targets/nodes.yml`
+- SGLang Dashboard 占位目标：`/etc/prometheus/targets/sglang-dashboards.yml`
 - Prometheus 规则：`/etc/prometheus/rules/default.yml`
 - Prometheus 数据：`/var/lib/prometheus`
 - Grafana Node dashboard：`/var/lib/grafana/dashboards/linux/node-overview.json`
@@ -135,7 +136,7 @@ sudo python3 install.py --yes --reset-grafana-admin-password --grafana-admin-pas
 - Grafana PD 分离 dashboard：`/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json`
 - Grafana Router dashboard：`/var/lib/grafana/dashboards/sglang/sglang-router.json`
 - Grafana dashboard provider：`/etc/grafana/provisioning/dashboards/dashboards.yml`
-- Grafana 数据源 provisioning：`/etc/grafana/provisioning/datasources/prometheus.yml`；SGLang 看板当前使用占位数据源 `SGLangPlaceholder`
+- Grafana 数据源 provisioning：`/etc/grafana/provisioning/datasources/prometheus.yml`；Linux 与 SGLang 看板统一使用 UID `Prometheus`
 - 安装状态：`/var/lib/my_prometheus/install-state.json`
 - 自动生成的 Grafana 凭据：`/var/lib/my_prometheus/grafana-admin-credentials.json`
 
@@ -147,6 +148,8 @@ python3 tools/generate_sglang_dashboards.py
 
 生成后应同时提交脚本和三个 JSON，测试会校验 122 个 Engine 指标族与 61 个 Router 指标族均被 PromQL 覆盖。
 
+安装器会创建四个默认不可达的 SGLang 占位目标，分别使用 `sglang-unified`、`sglang-prefill`、`sglang-decode` 和 `sglang-router` 角色。它们与 Linux 指标共用 Prometheus 数据源，但会显示为 `DOWN`；接入实际进程时，编辑 `/etc/prometheus/targets/sglang-dashboards.yml`，把占位地址替换为真实 metrics 地址即可。
+
 ## 配置保护
 
 安装器生成的文本配置会带有 `Managed by my_prometheus install.py` 标记。重复执行时：
@@ -154,7 +157,7 @@ python3 tools/generate_sglang_dashboards.py
 - 文件不存在：创建。
 - 文件存在且带 managed 标记：允许更新并备份。
 - 文件存在但不带 managed 标记：默认拒绝覆盖，使用 `--force` 才会备份后替换。
-- `/etc/prometheus/targets/nodes.yml` 默认只首次创建，后续保留用户编辑；需要重新生成时使用 `--force`。
+- `/etc/prometheus/targets/nodes.yml` 和 `/etc/prometheus/targets/sglang-dashboards.yml` 默认只首次创建，后续保留用户编辑；需要从模板重新生成时使用 `--force`。
 
 ## 添加更多主机
 

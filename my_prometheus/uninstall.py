@@ -187,6 +187,7 @@ def remove_prometheus_config(ctx):
     remove_managed_file(ctx, ctx.config_dir / "prometheus.yml")
     remove_managed_file(ctx, ctx.config_dir / "rules/default.yml")
     remove_managed_file(ctx, ctx.config_dir / "targets/nodes.yml")
+    remove_managed_file(ctx, ctx.config_dir / "targets/sglang-dashboards.yml")
     remove_path(ctx, ctx.config_dir / "rules")
     remove_path(ctx, ctx.config_dir / "targets")
     remove_path(ctx, ctx.config_dir)

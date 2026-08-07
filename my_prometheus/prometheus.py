@@ -82,6 +82,15 @@ def install_prometheus(ctx):
         group="prometheus",
         preserve_existing=True,
     )
+    sglang_targets = render_template(ctx, "sglang-targets.yml.tpl", {})
+    write_managed_file(
+        ctx,
+        ctx.targets_dir / "sglang-dashboards.yml",
+        sglang_targets,
+        owner="prometheus",
+        group="prometheus",
+        preserve_existing=True,
+    )
     rules = render_template(ctx, "rules.yml.tpl", {})
     write_managed_file(ctx, ctx.rules_dir / "default.yml", rules, owner="prometheus", group="prometheus")
 

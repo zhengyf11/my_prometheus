@@ -6,7 +6,7 @@ from collections import OrderedDict
 from pathlib import Path
 
 
-DATASOURCE_UID = "SGLangPlaceholder"
+DATASOURCE_UID = "Prometheus"
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT_DIR = ROOT / "grafana" / "dashboards"
 
@@ -341,9 +341,9 @@ def info_panel(title, role_text, metric_count, panel_id, y):
     content = (
         "# {0}\n\n"
         "This dashboard covers **{1} metric families** for {2}. "
-        "It currently uses the placeholder Prometheus data source `{3}`, so no live values "
-        "are expected until that data source URL is replaced. Metrics are lazily registered; "
-        "feature-gated metrics may still show no data after a real source is connected."
+        "It uses the shared Prometheus data source `{3}` and selects scrape targets by their "
+        "SGLang role label. Placeholder targets can be DOWN until the corresponding process "
+        "is started. Metrics are lazily registered, so feature-gated metrics may show no data."
     ).format(title, metric_count, role_text, DATASOURCE_UID)
     return {
         "gridPos": {"h": 5, "w": 24, "x": 0, "y": y},

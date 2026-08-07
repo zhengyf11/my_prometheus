@@ -52,15 +52,15 @@ class DashboardTests(unittest.TestCase):
                     "{0} is not queried by {1}".format(item["name"], name),
                 )
 
-    def test_dashboards_use_placeholder_datasource(self):
+    def test_dashboards_use_shared_prometheus_datasource(self):
         for dashboard in self.dashboards.values():
             for variable in dashboard["templating"]["list"]:
-                self.assertEqual(variable["datasource"]["uid"], "SGLangPlaceholder")
+                self.assertEqual(variable["datasource"]["uid"], "Prometheus")
             for panel in dashboard["panels"]:
                 if "datasource" in panel:
-                    self.assertEqual(panel["datasource"]["uid"], "SGLangPlaceholder")
+                    self.assertEqual(panel["datasource"]["uid"], "Prometheus")
                 for target in panel.get("targets", []):
-                    self.assertEqual(target["datasource"]["uid"], "SGLangPlaceholder")
+                    self.assertEqual(target["datasource"]["uid"], "Prometheus")
 
     def test_dashboards_have_role_specific_instance_variables(self):
         definitions = {}
