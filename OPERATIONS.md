@@ -319,6 +319,7 @@ Dashboard JSON 中通过固定 UID 引用：
 | `panels[]` | Row、说明面板和指标面板 |
 | `panels[].targets[].expr` | 真正决定展示哪些指标的 PromQL |
 | `panels[].targets[].legendFormat` | 图例名称 |
+| `panels[].description` | 中文名称、Prometheus 原指标、类型、完整解释和特殊统计口径 |
 | `panels[].fieldConfig` | 单位、阈值和颜色等展示配置 |
 | `panels[].gridPos` | Dashboard 布局位置和尺寸 |
 
@@ -338,12 +339,14 @@ PD 分离与 Router 看板变量：
 ```promql
 label_values(up{job="file_sd_nodes",role=~"sglang-prefill|sglang-decode|sglang-router"}, role)
 label_values(up{job="file_sd_nodes",role=~"$role"}, instance)
-label_values(sglang:num_requests_total{instance=~"$instance",engine_type=~"prefill|decode"}, model_name)
+label_values(sglang:num_requests_total{instance=~"$instance",role=~"$role",engine_type=~"prefill|decode"}, model_name)
 ```
 
 变量内部名称保持为 `$role`、`$instance`、`$model`。界面标签显示为 `角色 (Role)`、`实例 (Instance)`、`模型 (Model)`。这些变量都支持多选和 All。
 
 Role 下拉项不是在 Grafana 中写死的，而是来自 Prometheus 中 `up` 序列的 `role` 标签。因此 role 拼写不正确时，Dashboard 不会出现对应实例。
+
+PD 分离与 Router 看板的每条 Panel PromQL 都直接包含 `role=~"$role"`，PD 合部看板的每条查询则固定包含 `role="sglang-unified"`。这避免不同角色使用相同 `instance` 或指标名时发生串数据。Grafana 的静态 Dashboard JSON 不能根据变量动态隐藏任意面板，因此选择 Router 后，PD 专属面板仍会保留布局，但只会显示 `No data`，不会继续展示 PD 样本。
 
 ### 6.4 面板查询
 
@@ -359,20 +362,52 @@ panels[].targets[].expr
 sum by (instance) (
   rate(sglang:prompt_tokens_total{
     instance=~"$instance",
+    role="sglang-unified",
     model_name=~"$model|^$"
   }[$__rate_interval])
 )
 ```
 
-Histogram 面板使用三类查询：
+普通 Histogram 面板只使用两类查询：
 
-- P80：`histogram_quantile(0.80, ...)`
 - P95：`histogram_quantile(0.95, ...)`
 - 平均值：`rate(<metric>_sum) / rate(<metric>_count)`
 
+所有 P80 查询已删除。每个普通指标独占一个面板，避免把语义或单位不同的指标画在同一纵轴上。生成器根据指标语义设置 Grafana 单位，例如延迟使用 `s` 或 `ms`、KV 传输量使用 `MB`、带宽使用 `GB/s`、比例使用 `0-100%`、Token 吞吐使用 `Token/s`。启动容量、页大小、上下文长度和其他启动后通常不变化的指标使用 Stat 数字面板，并通过 instant query 读取当前值。
+
+输入 Token 长度分段为：
+
+```text
+0-4k, 4k-16k, 16k-64k, 64k-256k, 256k-1M, 1M+
+```
+
+生成 Token 长度分段为：
+
+```text
+0-512, 512-2k, 2k-8k, 8k-32k, 32k-128k, 128k+
+```
+
+分段面板使用 `increase(<metric>_bucket[$__range])` 计算当前 Dashboard 时间范围内的请求数，并用相邻累计 bucket 相减得到各区间。SGLang 必须精确导出边界 `4096/16384/65536/262144/1048576` 和 `512/2048/8192/32768/131072`；Prometheus Histogram 不能从其他 bucket 边界无损推导这些区间，缺少边界时面板会显示 `No data`。
+
+未缓存输入 Token Histogram 不单独展示。缓存命中率使用以下口径并限制在 `[0, 1]`：
+
+```promql
+1 - rate(sglang:uncached_prompt_tokens_histogram_sum)
+    / rate(sglang:prompt_tokens_histogram_sum)
+```
+
 `$__rate_interval` 由 Grafana 根据时间范围、面板宽度和数据源采集周期动态计算，不是固定的 15 秒。
 
-### 6.5 翻译和重新生成
+### 6.5 面板名称、映射和分类
+
+指标面板标题采用 `中文名称（大致解释）`，不再在标题或图例中显示原始指标名。完整映射保留在两个位置：
+
+- `grafana/sglang-translations.json`：中文名称、原指标名和说明的结构化来源。
+- `panels[].description`：Grafana 面板信息中显示中文名称、Prometheus 原指标、类型和完整说明。
+
+生成器将高频观察项放在 `关键引擎指标`、`关键 Router 指标` 分组，将请求路径中的各阶段耗时集中放在 `请求全链路时延`、`Router 请求全链路时延` 分组。指标只从原分类移动到这些优先分组，不会重复生成。
+
+### 6.6 翻译和重新生成
 
 SGLang Dashboard 由生成器维护，不建议直接大规模手改生成后的 JSON：
 

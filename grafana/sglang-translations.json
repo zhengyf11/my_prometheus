@@ -6,6 +6,8 @@
     "Grammar": "Grammar 结构化输出",
     "HTTP and Router Requests": "HTTP 与 Router 请求",
     "HTTP, Process and Functions": "HTTP、进程与函数",
+    "Key Engine Metrics": "关键引擎指标",
+    "Key Router Metrics": "关键 Router 指标",
     "KV, SWA and Mamba Pools": "KV、SWA 与 Mamba 资源池",
     "Optional LoRA, HiCache, Streaming and EPLB": "可选 LoRA、HiCache、流式会话与 EPLB",
     "PD Queues and KV Transfer": "PD 队列与 KV 传输",
@@ -13,7 +15,9 @@
     "Prefix Cache and Routing Keys": "Prefix Cache 与路由键",
     "Requests, Tokens and User Latency": "请求、Token 与用户延迟",
     "Retraction, Queue and Stage Latency": "回退、队列与阶段延迟",
+    "Request Latency Pipeline": "请求全链路时延",
     "Router Mesh": "Router Mesh 集群",
+    "Router Request Latency Pipeline": "Router 请求全链路时延",
     "Scheduler State": "调度器状态",
     "Speculative Decoding and Prefill Delayer": "投机解码与 Prefill 延迟器",
     "Worker Pool and Health": "Worker 池与健康状态"

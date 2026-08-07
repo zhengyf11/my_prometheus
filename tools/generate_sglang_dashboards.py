@@ -243,6 +243,138 @@ ROUTER_GROUPS = OrderedDict([
 ])
 
 
+KEY_ENGINE_METRICS = (
+    "sglang:num_requests_total",
+    "sglang:prompt_tokens_total",
+    "sglang:generation_tokens_total",
+    "sglang:num_running_reqs",
+    "sglang:num_queue_reqs",
+    "sglang:gen_throughput",
+    "sglang:cache_hit_rate",
+    "sglang:token_usage",
+    "sglang:utilization",
+)
+
+ENGINE_LATENCY_METRICS = (
+    "sglang:queue_time_seconds",
+    "sglang:prefill_delayer_wait_seconds",
+    "sglang:kv_transfer_bootstrap_ms",
+    "sglang:kv_transfer_alloc_ms",
+    "sglang:kv_transfer_latency_ms",
+    "sglang:per_stage_req_latency_seconds",
+    "sglang:time_to_first_token_seconds",
+    "sglang:inter_token_latency_seconds",
+    "sglang:e2e_request_latency_seconds",
+)
+
+KEY_ROUTER_METRICS = (
+    "smg_http_requests_total",
+    "smg_http_connections_active",
+    "smg_router_requests_total",
+    "smg_router_request_errors_total",
+    "smg_worker_pool_size",
+    "smg_worker_requests_active",
+    "smg_worker_health",
+)
+
+ROUTER_LATENCY_METRICS = (
+    "smg_http_request_duration_seconds",
+    "smg_router_request_duration_seconds",
+    "smg_router_stage_duration_seconds",
+    "smg_router_ttft_seconds",
+    "smg_router_tpot_seconds",
+    "smg_router_generation_duration_seconds",
+)
+
+STATIC_METRICS = {
+    "sglang:max_total_num_tokens",
+    "sglang:max_running_requests_under_SLO",
+    "sglang:engine_startup_time",
+    "sglang:engine_load_weights_time",
+    "sglang:page_size",
+    "sglang:num_pages",
+    "sglang:context_len",
+    "sglang:startup_available_gpu_memory_gb",
+    "sglang:spec_num_steps",
+    "sglang:spec_num_draft_tokens",
+    "sglang:lora_pool_slots_total",
+    "sglang:hicache_host_total_tokens",
+}
+
+PERCENT_METRICS = {
+    "sglang:cache_hit_rate",
+    "sglang:token_usage",
+    "sglang:full_token_usage",
+    "sglang:swa_token_usage",
+    "sglang:mamba_usage",
+    "sglang:utilization",
+    "sglang:fwd_occupancy",
+    "sglang:new_token_ratio",
+    "sglang:lora_pool_utilization",
+    "sglang:spec_accept_rate",
+    "sglang:eplb_balancedness",
+    "router_rl_drift_ratio",
+    "router_lb_drift_ratio",
+}
+
+INPUT_TOKEN_BUCKETS = (
+    ("0-4k", None, ("4096", "4096.0")),
+    ("4k-16k", ("4096", "4096.0"), ("16384", "16384.0")),
+    ("16k-64k", ("16384", "16384.0"), ("65536", "65536.0")),
+    ("64k-256k", ("65536", "65536.0"), ("262144", "262144.0")),
+    (
+        "256k-1M",
+        ("262144", "262144.0"),
+        ("1048576", "1048576.0", "1.048576e\\+06"),
+    ),
+    ("1M+", ("1048576", "1048576.0", "1.048576e\\+06"), None),
+)
+
+GENERATION_TOKEN_BUCKETS = (
+    ("0-512", None, ("512", "512.0")),
+    ("512-2k", ("512", "512.0"), ("2048", "2048.0")),
+    ("2k-8k", ("2048", "2048.0"), ("8192", "8192.0")),
+    ("8k-32k", ("8192", "8192.0"), ("32768", "32768.0")),
+    ("32k-128k", ("32768", "32768.0"), ("131072", "131072.0")),
+    ("128k+", ("131072", "131072.0"), None),
+)
+
+
+def prioritize_groups(groups, prioritized):
+    """Move selected metrics into ordered overview groups without duplicating them."""
+    lookup = {
+        item["name"]: item
+        for items in groups.values()
+        for item in items
+    }
+    selected_names = set(name for _, names in prioritized for name in names)
+    output = OrderedDict()
+    for title, names in prioritized:
+        output[title] = [lookup[name] for name in names]
+    for title, items in groups.items():
+        remaining = [item for item in items if item["name"] not in selected_names]
+        if remaining:
+            output[title] = remaining
+    return output
+
+
+ENGINE_GROUPS = prioritize_groups(
+    ENGINE_GROUPS,
+    (
+        ("Key Engine Metrics", KEY_ENGINE_METRICS),
+        ("Request Latency Pipeline", ENGINE_LATENCY_METRICS),
+    ),
+)
+
+ROUTER_GROUPS = prioritize_groups(
+    ROUTER_GROUPS,
+    (
+        ("Key Router Metrics", KEY_ROUTER_METRICS),
+        ("Router Request Latency Pipeline", ROUTER_LATENCY_METRICS),
+    ),
+)
+
+
 def flatten(groups):
     return [item for items in groups.values() for item in items]
 
@@ -255,15 +387,75 @@ def category_title(original):
     return bilingual(TRANSLATIONS["categories"][original], original)
 
 
+def metric_translation(item):
+    return TRANSLATIONS["metrics"][item["name"]]
+
+
+def short_explanation(item):
+    description = metric_translation(item)["description"].strip().rstrip("。")
+    for separator in ("；", "，单位", "，按"):
+        if separator in description:
+            description = description.split(separator, 1)[0]
+    return description
+
+
 def metric_title(item):
-    translation = TRANSLATIONS["metrics"][item["name"]]
-    return bilingual(translation["title"], item["name"])
+    translation = metric_translation(item)
+    return "{0}（{1}）".format(translation["title"], short_explanation(item))
+
+
+def metric_mapping(item):
+    translation = metric_translation(item)
+    return "\n".join([
+        "- 中文名称：{0}".format(translation["title"]),
+        "- Prometheus 原指标：`{0}`".format(item["name"]),
+        "- 指标类型：`{0}`".format(item["type"]),
+        "- 说明：{0}".format(translation["description"]),
+    ])
+
+
+def metric_unit(item):
+    name = item["name"]
+    metric_type = item["type"]
+    if name in PERCENT_METRICS:
+        return "percentunit"
+    if name == "sglang:startup_available_gpu_memory_gb":
+        return "suffix: GB"
+    if name in ("sglang:kv_transfer_speed_gb_s", "sglang:prefetch_bandwidth", "sglang:backup_bandwidth"):
+        return "suffix: GB/s"
+    if name == "sglang:kv_transfer_total_mb":
+        return "suffix: MB"
+    if name == "sglang:gen_throughput":
+        return "suffix: Token/s"
+    if name in (
+        "sglang:engine_startup_time",
+        "sglang:engine_load_weights_time",
+        "sglang:grammar_tree_traversal_time_avg",
+        "sglang:grammar_tree_traversal_time_max",
+    ):
+        return "s"
+    if name.endswith("_ms"):
+        return "ms"
+    if name.endswith("_seconds") or "_seconds_" in name:
+        return "suffix: s/s" if metric_type == "counter" else "s"
+    if metric_type == "counter":
+        if "bytes" in name:
+            return "Bps"
+        if "token" in name:
+            return "suffix: Token/s"
+        return "ops"
+    return "short"
 
 
 def selector(item, kind):
-    if item["name"].startswith(("smg_", "router_")):
-        return 'instance=~"$instance"'
-    return 'instance=~"$instance",model_name=~"$model|^$"'
+    labels = ['instance=~"$instance"']
+    if kind == "unified":
+        labels.append('role="sglang-unified"')
+    elif kind == "split-router":
+        labels.append('role=~"$role"')
+    if not item["name"].startswith(("smg_", "router_")):
+        labels.append('model_name=~"$model|^$"')
+    return ",".join(labels)
 
 
 def expression(item, kind):
@@ -272,6 +464,8 @@ def expression(item, kind):
     labels = selector(item, kind)
     if metric_type == "counter":
         return "sum by (instance) (rate({0}{{{1}}}[$__rate_interval]))".format(name, labels)
+    if metric_type == "summary":
+        return "max by (instance, quantile) ({0}{{{1}}})".format(name, labels)
     return "max by (instance) ({0}{{{1}}})".format(name, labels)
 
 
@@ -291,8 +485,178 @@ def histogram_mean_expression(item, kind):
     ).format(name, labels)
 
 
+def cumulative_bucket_expression(item, kind, bounds):
+    labels = selector(item, kind)
+    if bounds is None:
+        return "sum by (instance) (increase({0}_count{{{1}}}[$__range]))".format(
+            item["name"], labels
+        )
+    return (
+        'sum by (instance) (increase({0}_bucket{{{1},le=~"{2}"}}[$__range]))'
+    ).format(item["name"], labels, "|".join(bounds))
+
+
+def bucket_range_expression(item, kind, lower, upper):
+    upper_expression = cumulative_bucket_expression(item, kind, upper)
+    if lower is None:
+        return upper_expression
+    lower_expression = cumulative_bucket_expression(item, kind, lower)
+    return "clamp_min(({0}) - ({1}), 0)".format(upper_expression, lower_expression)
+
+
+def cache_hit_expression(item, kind):
+    labels = selector(item, kind)
+    total = (
+        "sum by (instance) (rate(sglang:prompt_tokens_histogram_sum{{{0}}}"
+        "[$__rate_interval]))"
+    ).format(labels)
+    uncached = (
+        "sum by (instance) (rate(sglang:uncached_prompt_tokens_histogram_sum{{{0}}}"
+        "[$__rate_interval]))"
+    ).format(labels)
+    return "clamp_max(clamp_min(1 - ({0}) / clamp_min(({1}), 1e-9), 0), 1)".format(
+        uncached, total
+    )
+
+
 def ref_id(index):
     return "Q{0:02d}".format(index + 1)
+
+
+def target(expression_value, legend, index, instant=False):
+    result = {
+        "datasource": datasource(),
+        "expr": expression_value,
+        "legendFormat": legend,
+        "refId": ref_id(index),
+    }
+    if instant:
+        result["instant"] = True
+    return result
+
+
+def timeseries_options():
+    return {
+        "legend": {
+            "calcs": ["lastNotNull", "mean"],
+            "displayMode": "table",
+            "placement": "bottom",
+            "showLegend": True,
+        },
+        "tooltip": {"mode": "multi", "sort": "desc"},
+    }
+
+
+def panel_base(item, panel_id, x, y, width, unit):
+    return {
+        "datasource": datasource(),
+        "description": metric_mapping(item),
+        "fieldConfig": {
+            "defaults": {
+                "color": {"mode": "palette-classic"},
+                "unit": unit,
+            },
+            "overrides": [],
+        },
+        "gridPos": {"h": 8, "w": width, "x": x, "y": y},
+        "id": panel_id,
+        "targets": [],
+        "title": metric_title(item),
+    }
+
+
+def token_distribution_panel(item, panel_id, x, y, width, kind, buckets):
+    panel = panel_base(item, panel_id, x, y, width, "short")
+    panel["description"] += (
+        "\n- 统计口径：所选 Dashboard 时间范围内完成请求的分段数量。"
+        "\n- 前置条件：SGLang 必须导出本面板使用的精确 Histogram bucket 边界。"
+    )
+    panel["targets"] = [
+        target(
+            bucket_range_expression(item, kind, lower, upper),
+            "{{{{instance}}}} {0}".format(label),
+            index,
+            instant=True,
+        )
+        for index, (label, lower, upper) in enumerate(buckets)
+    ]
+    panel["options"] = {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": False},
+        "showUnfilled": True,
+    }
+    panel["type"] = "bargauge"
+    return panel
+
+
+def cache_hit_panel(item, panel_id, x, y, width, kind):
+    panel = panel_base(item, panel_id, x, y, width, "percentunit")
+    panel["title"] = "输入 Token 缓存命中率（由总输入与未缓存输入 Token 计算）"
+    panel["description"] = "\n".join([
+        "- 计算公式：`1 - 未缓存输入 Token / 总输入 Token`。",
+        "- 被替代的 Prometheus 原指标族：`sglang:uncached_prompt_tokens_histogram`",
+        "- Prometheus 原指标：`sglang:prompt_tokens_histogram_sum`",
+        "- Prometheus 原指标：`sglang:uncached_prompt_tokens_histogram_sum`",
+        "- 原始未缓存输入 Token 长度分布不单独展示。",
+    ])
+    panel["fieldConfig"]["defaults"]["custom"] = {
+        "drawStyle": "line",
+        "fillOpacity": 10,
+        "lineWidth": 1,
+        "showPoints": "never",
+        "spanNulls": True,
+    }
+    panel["options"] = timeseries_options()
+    panel["targets"] = [target(cache_hit_expression(item, kind), "{{instance}}", 0)]
+    panel["type"] = "timeseries"
+    return panel
+
+
+def metric_panel(item, panel_id, x, y, width, kind):
+    name = item["name"]
+    if name == "sglang:prompt_tokens_histogram":
+        return token_distribution_panel(item, panel_id, x, y, width, kind, INPUT_TOKEN_BUCKETS)
+    if name == "sglang:generation_tokens_histogram":
+        return token_distribution_panel(item, panel_id, x, y, width, kind, GENERATION_TOKEN_BUCKETS)
+    if name == "sglang:uncached_prompt_tokens_histogram":
+        return cache_hit_panel(item, panel_id, x, y, width, kind)
+
+    panel = panel_base(item, panel_id, x, y, width, metric_unit(item))
+    if item["type"] == "histogram":
+        panel["targets"] = [
+            target(histogram_quantile_expression(item, kind, "0.95"), "{{instance}} P95", 0),
+            target(histogram_mean_expression(item, kind), "{{instance}} 平均值 (Mean)", 1),
+        ]
+    else:
+        legend = "{{instance}} {{quantile}}" if item["type"] == "summary" else "{{instance}}"
+        panel["targets"] = [target(expression(item, kind), legend, 0, name in STATIC_METRICS)]
+
+    if name in STATIC_METRICS:
+        panel["options"] = {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": False},
+            "textMode": "auto",
+            "wideLayout": True,
+        }
+        panel["type"] = "stat"
+        return panel
+
+    panel["fieldConfig"]["defaults"]["custom"] = {
+        "drawStyle": "line",
+        "fillOpacity": 10,
+        "lineWidth": 1,
+        "showPoints": "never",
+        "spanNulls": True,
+    }
+    panel["options"] = timeseries_options()
+    panel["type"] = "timeseries"
+    return panel
 
 
 def row_panel(title, panel_id, y):
@@ -306,78 +670,6 @@ def row_panel(title, panel_id, y):
     }
 
 
-def chart_panel(title, items, panel_id, x, y, width, kind):
-    metric_type = items[0]["type"]
-    suffix = {
-        "counter": "速率 (Rate)",
-        "gauge": "当前值 (Current State)",
-        "histogram": "P80 / P95 / 平均值 (Mean)",
-        "summary": "分位数 (Quantiles)",
-    }[metric_type]
-    targets = []
-    for item in items:
-        if item["type"] == "histogram":
-            histogram_queries = (
-                ("P80", histogram_quantile_expression(item, kind, "0.80")),
-                ("P95", histogram_quantile_expression(item, kind, "0.95")),
-                ("平均值 (Mean)", histogram_mean_expression(item, kind)),
-            )
-            for label, query in histogram_queries:
-                targets.append({
-                    "datasource": datasource(),
-                    "expr": query,
-                    "legendFormat": "{0} {{{{instance}}}} {1}".format(metric_title(item), label),
-                    "refId": ref_id(len(targets)),
-                })
-        else:
-            targets.append({
-                "datasource": datasource(),
-                "expr": expression(item, kind),
-                "legendFormat": "{0} {{{{instance}}}}".format(metric_title(item)),
-                "refId": ref_id(len(targets)),
-            })
-    return {
-        "datasource": datasource(),
-        "description": "\n".join(
-            ["本面板包含以下指标；功能未启用或事件尚未发生时显示 No data 属于正常现象。", ""]
-            + [
-                "- {0}: {1}".format(
-                    metric_title(item), TRANSLATIONS["metrics"][item["name"]]["description"]
-                )
-                for item in items
-            ]
-        ),
-        "fieldConfig": {
-            "defaults": {
-                "color": {"mode": "palette-classic"},
-                "custom": {
-                    "drawStyle": "line",
-                    "fillOpacity": 10,
-                    "lineWidth": 1,
-                    "showPoints": "never",
-                    "spanNulls": True,
-                },
-                "unit": "short",
-            },
-            "overrides": [],
-        },
-        "gridPos": {"h": 9, "w": width, "x": x, "y": y},
-        "id": panel_id,
-        "options": {
-            "legend": {
-                "calcs": ["lastNotNull", "mean"],
-                "displayMode": "table",
-                "placement": "bottom",
-                "showLegend": True,
-            },
-            "tooltip": {"mode": "multi", "sort": "desc"},
-        },
-        "targets": targets,
-        "title": suffix,
-        "type": "timeseries",
-    }
-
-
 def info_panel(title, role_text, metric_count, panel_id, y):
     translation = TRANSLATIONS["dashboards"][title]
     display_title = bilingual(translation["title"], title)
@@ -386,6 +678,7 @@ def info_panel(title, role_text, metric_count, panel_id, y):
         "本看板覆盖 **{1} 个指标族**。{2} "
         "看板使用共享 Prometheus 数据源 `{3}`，并通过 SGLang `role` 标签选择采集目标。"
         "占位目标在对应进程启动前可以是 DOWN；指标按功能或事件延迟注册时，No data 属于正常现象。"
+        "PD 分离与 Router 看板会把 Role 直接加入每条 PromQL；不匹配所选 Role 的面板显示 No data。"
     ).format(display_title, metric_count, translation["description"], DATASOURCE_UID)
     return {
         "gridPos": {"h": 5, "w": 24, "x": 0, "y": y},
@@ -426,7 +719,7 @@ def variables(kind):
             ),
             query_variable(
                 "model", "Model",
-                'label_values(sglang:num_requests_total{instance=~"$instance",engine_type="unified"}, model_name)',
+                'label_values(sglang:num_requests_total{instance=~"$instance",role="sglang-unified",engine_type="unified"}, model_name)',
             ),
         ]
     if kind == "split-router":
@@ -441,7 +734,7 @@ def variables(kind):
             ),
             query_variable(
                 "model", "Model",
-                'label_values(sglang:num_requests_total{instance=~"$instance",engine_type=~"prefill|decode"}, model_name)',
+                'label_values(sglang:num_requests_total{instance=~"$instance",role=~"$role",engine_type=~"prefill|decode"}, model_name)',
             ),
         ]
     raise ValueError("unsupported dashboard kind: {0}".format(kind))
@@ -460,17 +753,17 @@ def build_dashboard(kind, title, uid, groups, role_text):
         panels.append(row_panel(group_title, panel_id, y))
         panel_id += 1
         y += 1
-        by_type = OrderedDict()
-        for item in items:
-            by_type.setdefault(item["type"], []).append(item)
-        width = 24 // len(by_type)
         x = 0
-        for index, typed_items in enumerate(by_type.values()):
-            panel_width = 24 - x if index == len(by_type) - 1 else width
-            panels.append(chart_panel(group_title, typed_items, panel_id, x, y, panel_width, kind))
+        row_height = 8
+        for item in items:
+            panel_width = 6 if item["name"] in STATIC_METRICS else 12
+            if x + panel_width > 24:
+                x = 0
+                y += row_height
+            panels.append(metric_panel(item, panel_id, x, y, panel_width, kind))
             panel_id += 1
             x += panel_width
-        y += 9
+        y += row_height
 
     return {
         "annotations": {"list": []},

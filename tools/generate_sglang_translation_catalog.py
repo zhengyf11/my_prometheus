@@ -65,7 +65,7 @@ def main():
     lines = [
         "# SGLang Dashboard 中文翻译候选清单",
         "",
-        "本文是 Grafana 中文界面使用的翻译目录评审视图。Prometheus 原始指标标识保持不变；中文名称用于 Dashboard 标题、分类、面板图例和说明文字。",
+        "本文是 Grafana 中文界面使用的翻译目录评审视图。Prometheus 原始指标标识保持不变；面板标题使用“中文名称（大致解释）”，原始指标名及完整映射保留在面板信息和本清单中。",
         "",
         "## 1. Dashboard 名称",
         "",
