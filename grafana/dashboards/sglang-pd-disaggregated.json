@@ -2,7 +2,7 @@
   "annotations": {
     "list": []
   },
-  "description": "Complete SGLang metrics dashboard generated from the PD and Router metric catalogs. The configured data source is intentionally a placeholder.",
+  "description": "Complete SGLang metrics dashboard generated from the PD and Router metric catalogs. It uses the shared Prometheus data source and role-specific scrape targets.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -19,7 +19,7 @@
       },
       "id": 1,
       "options": {
-        "content": "# SGLang PD Disaggregated Metrics\n\nThis dashboard covers **122 metric families** for separate prefill and decode engines. It uses the shared Prometheus data source `Prometheus` and selects scrape targets by their SGLang role label. Placeholder targets can be DOWN until the corresponding process is started. Metrics are lazily registered, so feature-gated metrics may show no data.",
+        "content": "# SGLang PD Disaggregated and Router Metrics\n\nThis dashboard covers **183 metric families** for separate prefill/decode engines, the Router, and Router Mesh; select one role from the Role variable (panels for other roles show no data). It uses the shared Prometheus data source `Prometheus` and selects scrape targets by their SGLang role label. Placeholder targets can be DOWN until the corresponding process is started. Metrics are lazily registered, so feature-gated metrics may show no data.",
         "mode": "markdown"
       },
       "title": "Dashboard Scope",
@@ -43,7 +43,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -119,7 +119,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -186,7 +186,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -231,12 +231,30 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:func_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:func_latency_seconds",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:func_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:func_latency_seconds P80",
           "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:func_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:func_latency_seconds P95",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:func_latency_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:func_latency_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:func_latency_seconds Mean",
+          "refId": "Q03"
         }
       ],
-      "title": "HTTP, Process and Functions - P95",
+      "title": "HTTP, Process and Functions - P80 / P95 / Mean",
       "type": "timeseries"
     },
     {
@@ -257,7 +275,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -369,7 +387,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -414,8 +432,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:prompt_tokens_histogram",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prompt_tokens_histogram P80",
           "refId": "Q01"
         },
         {
@@ -423,8 +441,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:uncached_prompt_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:uncached_prompt_tokens_histogram",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prompt_tokens_histogram P95",
           "refId": "Q02"
         },
         {
@@ -432,8 +450,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:generation_tokens_histogram",
+          "expr": "sum by (instance) (rate(sglang:prompt_tokens_histogram_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:prompt_tokens_histogram_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:prompt_tokens_histogram Mean",
           "refId": "Q03"
         },
         {
@@ -441,8 +459,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:get_loads_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:get_loads_duration_seconds",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:uncached_prompt_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:uncached_prompt_tokens_histogram P80",
           "refId": "Q04"
         },
         {
@@ -450,8 +468,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:time_to_first_token_seconds",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:uncached_prompt_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:uncached_prompt_tokens_histogram P95",
           "refId": "Q05"
         },
         {
@@ -459,8 +477,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:inter_token_latency_seconds",
+          "expr": "sum by (instance) (rate(sglang:uncached_prompt_tokens_histogram_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:uncached_prompt_tokens_histogram_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:uncached_prompt_tokens_histogram Mean",
           "refId": "Q06"
         },
         {
@@ -468,12 +486,138 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:e2e_request_latency_seconds",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:generation_tokens_histogram P80",
           "refId": "Q07"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:generation_tokens_histogram P95",
+          "refId": "Q08"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:generation_tokens_histogram_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:generation_tokens_histogram_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:generation_tokens_histogram Mean",
+          "refId": "Q09"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:get_loads_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:get_loads_duration_seconds P80",
+          "refId": "Q10"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:get_loads_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:get_loads_duration_seconds P95",
+          "refId": "Q11"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:get_loads_duration_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:get_loads_duration_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:get_loads_duration_seconds Mean",
+          "refId": "Q12"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:time_to_first_token_seconds P80",
+          "refId": "Q13"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:time_to_first_token_seconds P95",
+          "refId": "Q14"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:time_to_first_token_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:time_to_first_token_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:time_to_first_token_seconds Mean",
+          "refId": "Q15"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:inter_token_latency_seconds P80",
+          "refId": "Q16"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:inter_token_latency_seconds P95",
+          "refId": "Q17"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:inter_token_latency_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:inter_token_latency_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:inter_token_latency_seconds Mean",
+          "refId": "Q18"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:e2e_request_latency_seconds P80",
+          "refId": "Q19"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:e2e_request_latency_seconds P95",
+          "refId": "Q20"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:e2e_request_latency_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:e2e_request_latency_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:e2e_request_latency_seconds Mean",
+          "refId": "Q21"
         }
       ],
-      "title": "Requests, Tokens and User Latency - P95",
+      "title": "Requests, Tokens and User Latency - P80 / P95 / Mean",
       "type": "timeseries"
     },
     {
@@ -494,7 +638,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -646,7 +790,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -834,7 +978,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -968,7 +1112,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1111,7 +1255,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1178,7 +1322,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1254,7 +1398,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1299,8 +1443,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:queue_time_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:queue_time_seconds",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:queue_time_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:queue_time_seconds P80",
           "refId": "Q01"
         },
         {
@@ -1308,12 +1452,48 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:per_stage_req_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:per_stage_req_latency_seconds",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:queue_time_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:queue_time_seconds P95",
           "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:queue_time_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:queue_time_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:queue_time_seconds Mean",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:per_stage_req_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:per_stage_req_latency_seconds P80",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:per_stage_req_latency_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:per_stage_req_latency_seconds P95",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:per_stage_req_latency_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:per_stage_req_latency_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:per_stage_req_latency_seconds Mean",
+          "refId": "Q06"
         }
       ],
-      "title": "Retraction, Queue and Stage Latency - P95",
+      "title": "Retraction, Queue and Stage Latency - P80 / P95 / Mean",
       "type": "timeseries"
     },
     {
@@ -1334,7 +1514,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1379,8 +1559,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_compilation_time_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:grammar_compilation_time_seconds",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:grammar_compilation_time_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_compilation_time_seconds P80",
           "refId": "Q01"
         },
         {
@@ -1388,8 +1568,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_schema_count_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:grammar_schema_count",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_compilation_time_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_compilation_time_seconds P95",
           "refId": "Q02"
         },
         {
@@ -1397,8 +1577,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_ebnf_size_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:grammar_ebnf_size",
+          "expr": "sum by (instance) (rate(sglang:grammar_compilation_time_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:grammar_compilation_time_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:grammar_compilation_time_seconds Mean",
           "refId": "Q03"
         },
         {
@@ -1406,8 +1586,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_tree_traversal_time_avg_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_avg",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:grammar_schema_count_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_schema_count P80",
           "refId": "Q04"
         },
         {
@@ -1415,12 +1595,102 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_tree_traversal_time_max_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_max",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_schema_count_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_schema_count P95",
           "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:grammar_schema_count_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:grammar_schema_count_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:grammar_schema_count Mean",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:grammar_ebnf_size_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_ebnf_size P80",
+          "refId": "Q07"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_ebnf_size_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_ebnf_size P95",
+          "refId": "Q08"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:grammar_ebnf_size_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:grammar_ebnf_size_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:grammar_ebnf_size Mean",
+          "refId": "Q09"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:grammar_tree_traversal_time_avg_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_avg P80",
+          "refId": "Q10"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_tree_traversal_time_avg_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_avg P95",
+          "refId": "Q11"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:grammar_tree_traversal_time_avg_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:grammar_tree_traversal_time_avg_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_avg Mean",
+          "refId": "Q12"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:grammar_tree_traversal_time_max_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_max P80",
+          "refId": "Q13"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:grammar_tree_traversal_time_max_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_max P95",
+          "refId": "Q14"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:grammar_tree_traversal_time_max_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:grammar_tree_traversal_time_max_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:grammar_tree_traversal_time_max Mean",
+          "refId": "Q15"
         }
       ],
-      "title": "Grammar - P95",
+      "title": "Grammar - P80 / P95 / Mean",
       "type": "timeseries"
     },
     {
@@ -1428,7 +1698,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1526,7 +1796,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1629,7 +1899,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1674,8 +1944,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefill_delayer_wait_forward_passes_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:prefill_delayer_wait_forward_passes",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:prefill_delayer_wait_forward_passes_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefill_delayer_wait_forward_passes P80",
           "refId": "Q01"
         },
         {
@@ -1683,12 +1953,48 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefill_delayer_wait_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:prefill_delayer_wait_seconds",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefill_delayer_wait_forward_passes_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefill_delayer_wait_forward_passes P95",
           "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:prefill_delayer_wait_forward_passes_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:prefill_delayer_wait_forward_passes_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:prefill_delayer_wait_forward_passes Mean",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:prefill_delayer_wait_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefill_delayer_wait_seconds P80",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefill_delayer_wait_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefill_delayer_wait_seconds P95",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:prefill_delayer_wait_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:prefill_delayer_wait_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:prefill_delayer_wait_seconds Mean",
+          "refId": "Q06"
         }
       ],
-      "title": "Speculative Decoding and Prefill Delayer - P95",
+      "title": "Speculative Decoding and Prefill Delayer - P80 / P95 / Mean",
       "type": "timeseries"
     },
     {
@@ -1696,7 +2002,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1767,7 +2073,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1861,7 +2167,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1906,8 +2212,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_speed_gb_s_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:kv_transfer_speed_gb_s",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:kv_transfer_speed_gb_s_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_speed_gb_s P80",
           "refId": "Q01"
         },
         {
@@ -1915,8 +2221,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:kv_transfer_latency_ms",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_speed_gb_s_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_speed_gb_s P95",
           "refId": "Q02"
         },
         {
@@ -1924,8 +2230,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_total_mb_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:kv_transfer_total_mb",
+          "expr": "sum by (instance) (rate(sglang:kv_transfer_speed_gb_s_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:kv_transfer_speed_gb_s_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:kv_transfer_speed_gb_s Mean",
           "refId": "Q03"
         },
         {
@@ -1933,8 +2239,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_bootstrap_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:kv_transfer_bootstrap_ms",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_latency_ms P80",
           "refId": "Q04"
         },
         {
@@ -1942,12 +2248,102 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_alloc_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:kv_transfer_alloc_ms",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_latency_ms P95",
           "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:kv_transfer_latency_ms_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:kv_transfer_latency_ms_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:kv_transfer_latency_ms Mean",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:kv_transfer_total_mb_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_total_mb P80",
+          "refId": "Q07"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_total_mb_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_total_mb P95",
+          "refId": "Q08"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:kv_transfer_total_mb_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:kv_transfer_total_mb_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:kv_transfer_total_mb Mean",
+          "refId": "Q09"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:kv_transfer_bootstrap_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_bootstrap_ms P80",
+          "refId": "Q10"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_bootstrap_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_bootstrap_ms P95",
+          "refId": "Q11"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:kv_transfer_bootstrap_ms_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:kv_transfer_bootstrap_ms_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:kv_transfer_bootstrap_ms Mean",
+          "refId": "Q12"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:kv_transfer_alloc_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_alloc_ms P80",
+          "refId": "Q13"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:kv_transfer_alloc_ms_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:kv_transfer_alloc_ms P95",
+          "refId": "Q14"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:kv_transfer_alloc_ms_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:kv_transfer_alloc_ms_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:kv_transfer_alloc_ms Mean",
+          "refId": "Q15"
         }
       ],
-      "title": "PD Queues and KV Transfer - P95",
+      "title": "PD Queues and KV Transfer - P80 / P95 / Mean",
       "type": "timeseries"
     },
     {
@@ -1955,7 +2351,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2044,7 +2440,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2089,8 +2485,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:eviction_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:eviction_duration_seconds",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:eviction_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:eviction_duration_seconds P80",
           "refId": "Q01"
         },
         {
@@ -2098,12 +2494,48 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:load_back_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:load_back_duration_seconds",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:eviction_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:eviction_duration_seconds P95",
           "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:eviction_duration_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:eviction_duration_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:eviction_duration_seconds Mean",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:load_back_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:load_back_duration_seconds P80",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:load_back_duration_seconds_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:load_back_duration_seconds P95",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:load_back_duration_seconds_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:load_back_duration_seconds_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:load_back_duration_seconds Mean",
+          "refId": "Q06"
         }
       ],
-      "title": "Prefix Cache and Routing Keys - P95",
+      "title": "Prefix Cache and Routing Keys - P80 / P95 / Mean",
       "type": "timeseries"
     },
     {
@@ -2111,7 +2543,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2178,7 +2610,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2267,7 +2699,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2379,7 +2811,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2455,7 +2887,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2500,8 +2932,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefetch_pgs_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:prefetch_pgs",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:prefetch_pgs_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefetch_pgs P80",
           "refId": "Q01"
         },
         {
@@ -2509,8 +2941,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:backup_pgs_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:backup_pgs",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefetch_pgs_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefetch_pgs P95",
           "refId": "Q02"
         },
         {
@@ -2518,8 +2950,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefetch_bandwidth_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:prefetch_bandwidth",
+          "expr": "sum by (instance) (rate(sglang:prefetch_pgs_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:prefetch_pgs_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:prefetch_pgs Mean",
           "refId": "Q03"
         },
         {
@@ -2527,8 +2959,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:backup_bandwidth_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:backup_bandwidth",
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:backup_pgs_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:backup_pgs P80",
           "refId": "Q04"
         },
         {
@@ -2536,12 +2968,102 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:eplb_gpu_physical_count_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
-          "legendFormat": "{{instance}} sglang:eplb_gpu_physical_count",
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:backup_pgs_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:backup_pgs P95",
           "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:backup_pgs_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:backup_pgs_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:backup_pgs Mean",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:prefetch_bandwidth_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefetch_bandwidth P80",
+          "refId": "Q07"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:prefetch_bandwidth_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:prefetch_bandwidth P95",
+          "refId": "Q08"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:prefetch_bandwidth_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:prefetch_bandwidth_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:prefetch_bandwidth Mean",
+          "refId": "Q09"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:backup_bandwidth_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:backup_bandwidth P80",
+          "refId": "Q10"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:backup_bandwidth_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:backup_bandwidth P95",
+          "refId": "Q11"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:backup_bandwidth_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:backup_bandwidth_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:backup_bandwidth Mean",
+          "refId": "Q12"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(sglang:eplb_gpu_physical_count_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:eplb_gpu_physical_count P80",
+          "refId": "Q13"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(sglang:eplb_gpu_physical_count_bucket{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} sglang:eplb_gpu_physical_count P95",
+          "refId": "Q14"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(sglang:eplb_gpu_physical_count_sum{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(sglang:eplb_gpu_physical_count_count{instance=~\"$instance\",model_name=~\"$model|^$\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} sglang:eplb_gpu_physical_count Mean",
+          "refId": "Q15"
         }
       ],
-      "title": "Optional LoRA, HiCache, Streaming and EPLB - P95",
+      "title": "Optional LoRA, HiCache, Streaming and EPLB - P80 / P95 / Mean",
       "type": "timeseries"
     },
     {
@@ -2549,7 +3071,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p95, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2601,34 +3123,1550 @@
       ],
       "title": "Optional LoRA, HiCache, Streaming and EPLB - Quantiles",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 125
+      },
+      "id": 41,
+      "panels": [],
+      "title": "HTTP and Router Requests",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 126
+      },
+      "id": 42,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_http_requests_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_http_requests_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_http_responses_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_http_responses_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_http_rate_limit_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_http_rate_limit_total",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_router_requests_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_router_requests_total",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_router_request_errors_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_router_request_errors_total",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_router_upstream_responses_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_router_upstream_responses_total",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_router_tokens_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_router_tokens_total",
+          "refId": "Q07"
+        }
+      ],
+      "title": "HTTP and Router Requests - Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 126
+      },
+      "id": 43,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(smg_http_request_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_http_request_duration_seconds P80",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(smg_http_request_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_http_request_duration_seconds P95",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_http_request_duration_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(smg_http_request_duration_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} smg_http_request_duration_seconds Mean",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(smg_router_request_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_router_request_duration_seconds P80",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(smg_router_request_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_router_request_duration_seconds P95",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_router_request_duration_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(smg_router_request_duration_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} smg_router_request_duration_seconds Mean",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(smg_router_stage_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_router_stage_duration_seconds P80",
+          "refId": "Q07"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(smg_router_stage_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_router_stage_duration_seconds P95",
+          "refId": "Q08"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_router_stage_duration_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(smg_router_stage_duration_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} smg_router_stage_duration_seconds Mean",
+          "refId": "Q09"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(smg_router_ttft_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_router_ttft_seconds P80",
+          "refId": "Q10"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(smg_router_ttft_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_router_ttft_seconds P95",
+          "refId": "Q11"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_router_ttft_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(smg_router_ttft_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} smg_router_ttft_seconds Mean",
+          "refId": "Q12"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(smg_router_tpot_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_router_tpot_seconds P80",
+          "refId": "Q13"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(smg_router_tpot_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_router_tpot_seconds P95",
+          "refId": "Q14"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_router_tpot_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(smg_router_tpot_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} smg_router_tpot_seconds Mean",
+          "refId": "Q15"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(smg_router_generation_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_router_generation_duration_seconds P80",
+          "refId": "Q16"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(smg_router_generation_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_router_generation_duration_seconds P95",
+          "refId": "Q17"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_router_generation_duration_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(smg_router_generation_duration_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} smg_router_generation_duration_seconds Mean",
+          "refId": "Q18"
+        }
+      ],
+      "title": "HTTP and Router Requests - P80 / P95 / Mean",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 126
+      },
+      "id": 44,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_http_inflight_request_age_count{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_http_inflight_request_age_count",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_http_connections_active{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_http_connections_active",
+          "refId": "Q02"
+        }
+      ],
+      "title": "HTTP and Router Requests - Current State",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 135
+      },
+      "id": 45,
+      "panels": [],
+      "title": "Worker Pool and Health",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 136
+      },
+      "id": 46,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_worker_pool_size{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_worker_pool_size",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_worker_connections_active{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_worker_connections_active",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_worker_requests_active{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_worker_requests_active",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_worker_health{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_worker_health",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_worker_routing_keys_active{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_worker_routing_keys_active",
+          "refId": "Q05"
+        }
+      ],
+      "title": "Worker Pool and Health - Current State",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 136
+      },
+      "id": 47,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_worker_health_checks_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_worker_health_checks_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_worker_selection_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_worker_selection_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_worker_errors_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_worker_errors_total",
+          "refId": "Q03"
+        }
+      ],
+      "title": "Worker Pool and Health - Rate",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 145
+      },
+      "id": 48,
+      "panels": [],
+      "title": "Policies, Circuit Breaker and Retries",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 146
+      },
+      "id": 49,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_manual_policy_cache_entries{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_manual_policy_cache_entries",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_worker_cb_state{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_worker_cb_state",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_worker_cb_consecutive_failures{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_worker_cb_consecutive_failures",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_worker_cb_consecutive_successes{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_worker_cb_consecutive_successes",
+          "refId": "Q04"
+        }
+      ],
+      "title": "Policies, Circuit Breaker and Retries - Current State",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 146
+      },
+      "id": 50,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_manual_policy_branch_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_manual_policy_branch_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_consistent_hashing_policy_branch_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_consistent_hashing_policy_branch_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_prefix_hash_policy_branch_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_prefix_hash_policy_branch_total",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_worker_cb_transitions_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_worker_cb_transitions_total",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_worker_cb_outcomes_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_worker_cb_outcomes_total",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_worker_retries_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_worker_retries_total",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_worker_retries_exhausted_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_worker_retries_exhausted_total",
+          "refId": "Q07"
+        }
+      ],
+      "title": "Policies, Circuit Breaker and Retries - Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 146
+      },
+      "id": 51,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(smg_worker_retry_backoff_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_worker_retry_backoff_seconds P80",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(smg_worker_retry_backoff_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_worker_retry_backoff_seconds P95",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_worker_retry_backoff_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(smg_worker_retry_backoff_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} smg_worker_retry_backoff_seconds Mean",
+          "refId": "Q03"
+        }
+      ],
+      "title": "Policies, Circuit Breaker and Retries - P80 / P95 / Mean",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 155
+      },
+      "id": 52,
+      "panels": [],
+      "title": "Discovery, MCP and Persistence",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 156
+      },
+      "id": 53,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_discovery_registrations_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_discovery_registrations_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_discovery_deregistrations_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_discovery_deregistrations_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_mcp_tool_calls_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_mcp_tool_calls_total",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_mcp_tool_iterations_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_mcp_tool_iterations_total",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_db_operations_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_db_operations_total",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_db_items_stored{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} smg_db_items_stored",
+          "refId": "Q06"
+        }
+      ],
+      "title": "Discovery, MCP and Persistence - Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 156
+      },
+      "id": 54,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(smg_discovery_sync_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_discovery_sync_duration_seconds P80",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(smg_discovery_sync_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_discovery_sync_duration_seconds P95",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_discovery_sync_duration_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(smg_discovery_sync_duration_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} smg_discovery_sync_duration_seconds Mean",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(smg_mcp_tool_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_mcp_tool_duration_seconds P80",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(smg_mcp_tool_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_mcp_tool_duration_seconds P95",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_mcp_tool_duration_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(smg_mcp_tool_duration_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} smg_mcp_tool_duration_seconds Mean",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(smg_db_operation_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_db_operation_duration_seconds P80",
+          "refId": "Q07"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(smg_db_operation_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} smg_db_operation_duration_seconds P95",
+          "refId": "Q08"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(smg_db_operation_duration_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(smg_db_operation_duration_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} smg_db_operation_duration_seconds Mean",
+          "refId": "Q09"
+        }
+      ],
+      "title": "Discovery, MCP and Persistence - P80 / P95 / Mean",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 156
+      },
+      "id": 55,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_discovery_workers_discovered{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_discovery_workers_discovered",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_mcp_servers_active{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_mcp_servers_active",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (smg_db_connections_active{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} smg_db_connections_active",
+          "refId": "Q03"
+        }
+      ],
+      "title": "Discovery, MCP and Persistence - Current State",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 165
+      },
+      "id": 56,
+      "panels": [],
+      "title": "Router Mesh",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 166
+      },
+      "id": 57,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(router_mesh_convergence_ms_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} router_mesh_convergence_ms P80",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(router_mesh_convergence_ms_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} router_mesh_convergence_ms P95",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(router_mesh_convergence_ms_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(router_mesh_convergence_ms_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} router_mesh_convergence_ms Mean",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.80, sum by (instance, le) (rate(router_mesh_snapshot_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} router_mesh_snapshot_duration_seconds P80",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (instance, le) (rate(router_mesh_snapshot_duration_seconds_bucket{instance=~\"$instance\"}[$__rate_interval])))",
+          "legendFormat": "{{instance}} router_mesh_snapshot_duration_seconds P95",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(router_mesh_snapshot_duration_seconds_sum{instance=~\"$instance\"}[$__rate_interval])) / clamp_min(sum by (instance) (rate(router_mesh_snapshot_duration_seconds_count{instance=~\"$instance\"}[$__rate_interval])), 1e-9)",
+          "legendFormat": "{{instance}} router_mesh_snapshot_duration_seconds Mean",
+          "refId": "Q06"
+        }
+      ],
+      "title": "Router Mesh - P80 / P95 / Mean",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 166
+      },
+      "id": 58,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(router_mesh_batches_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} router_mesh_batches_total",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(router_mesh_bytes_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} router_mesh_bytes_total",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(router_mesh_snapshot_trigger_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} router_mesh_snapshot_trigger_total",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(router_mesh_snapshot_bytes_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} router_mesh_snapshot_bytes_total",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(router_mesh_peer_reconnects_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} router_mesh_peer_reconnects_total",
+          "refId": "Q05"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(router_mesh_peer_ack_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} router_mesh_peer_ack_total",
+          "refId": "Q06"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (instance) (rate(router_mesh_peer_nack_total{instance=~\"$instance\"}[$__rate_interval]))",
+          "legendFormat": "{{instance}} router_mesh_peer_nack_total",
+          "refId": "Q07"
+        }
+      ],
+      "title": "Router Mesh - Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Complete metric-family coverage for this module. Counter panels show rate, histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated or event-created metrics can legitimately return no data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 166
+      },
+      "id": 59,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (router_mesh_peer_connections{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} router_mesh_peer_connections",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (router_mesh_store_cardinality{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} router_mesh_store_cardinality",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (router_mesh_store_hash{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} router_mesh_store_hash",
+          "refId": "Q03"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (router_rl_drift_ratio{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} router_rl_drift_ratio",
+          "refId": "Q04"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (instance) (router_lb_drift_ratio{instance=~\"$instance\"})",
+          "legendFormat": "{{instance}} router_lb_drift_ratio",
+          "refId": "Q05"
+        }
+      ],
+      "title": "Router Mesh - Current State",
+      "type": "timeseries"
     }
   ],
   "refresh": "30s",
   "schemaVersion": 39,
   "tags": [
     "sglang",
-    "split",
+    "split-router",
     "complete-metrics",
-    "placeholder-source"
+    "prometheus"
   ],
   "templating": {
     "list": [
       {
-        "allValue": ".*",
+        "allValue": null,
         "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "Prometheus"
         },
-        "definition": "label_values(up{job=\"file_sd_nodes\",role=~\"sglang-prefill|sglang-decode\"}, role)",
+        "definition": "label_values(up{job=\"file_sd_nodes\",role=~\"sglang-prefill|sglang-decode|sglang-router\"}, role)",
         "hide": 0,
-        "includeAll": true,
+        "includeAll": false,
         "label": "Role",
-        "multi": true,
+        "multi": false,
         "name": "role",
         "options": [],
         "query": {
-          "query": "label_values(up{job=\"file_sd_nodes\",role=~\"sglang-prefill|sglang-decode\"}, role)",
+          "query": "label_values(up{job=\"file_sd_nodes\",role=~\"sglang-prefill|sglang-decode|sglang-router\"}, role)",
           "refId": "Variable-role"
         },
         "refresh": 1,
@@ -2693,7 +4731,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "SGLang PD Disaggregated Metrics",
+  "title": "SGLang PD Disaggregated and Router Metrics",
   "uid": "my-prometheus-sglang-pd-disaggregated",
   "version": 1,
   "weekStart": "",
@@ -3185,6 +5223,250 @@
     {
       "name": "sglang:failed_session_recoveries_total",
       "type": "counter"
+    },
+    {
+      "name": "smg_http_requests_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_http_request_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "smg_http_inflight_request_age_count",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_http_responses_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_http_connections_active",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_http_rate_limit_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_router_requests_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_router_request_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "smg_router_request_errors_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_router_stage_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "smg_router_upstream_responses_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_router_ttft_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "smg_router_tpot_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "smg_router_tokens_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_router_generation_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "smg_worker_pool_size",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_worker_connections_active",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_worker_requests_active",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_worker_health",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_worker_health_checks_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_worker_selection_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_worker_errors_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_worker_routing_keys_active",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_manual_policy_cache_entries",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_manual_policy_branch_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_consistent_hashing_policy_branch_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_prefix_hash_policy_branch_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_worker_cb_state",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_worker_cb_transitions_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_worker_cb_outcomes_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_worker_cb_consecutive_failures",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_worker_cb_consecutive_successes",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_worker_retries_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_worker_retries_exhausted_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_worker_retry_backoff_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "smg_discovery_registrations_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_discovery_deregistrations_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_discovery_sync_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "smg_discovery_workers_discovered",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_mcp_tool_calls_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_mcp_tool_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "smg_mcp_servers_active",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_mcp_tool_iterations_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_db_operations_total",
+      "type": "counter"
+    },
+    {
+      "name": "smg_db_operation_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "smg_db_connections_active",
+      "type": "gauge"
+    },
+    {
+      "name": "smg_db_items_stored",
+      "type": "counter"
+    },
+    {
+      "name": "router_mesh_convergence_ms",
+      "type": "histogram"
+    },
+    {
+      "name": "router_mesh_batches_total",
+      "type": "counter"
+    },
+    {
+      "name": "router_mesh_bytes_total",
+      "type": "counter"
+    },
+    {
+      "name": "router_mesh_snapshot_trigger_total",
+      "type": "counter"
+    },
+    {
+      "name": "router_mesh_snapshot_duration_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "router_mesh_snapshot_bytes_total",
+      "type": "counter"
+    },
+    {
+      "name": "router_mesh_peer_connections",
+      "type": "gauge"
+    },
+    {
+      "name": "router_mesh_peer_reconnects_total",
+      "type": "counter"
+    },
+    {
+      "name": "router_mesh_peer_ack_total",
+      "type": "counter"
+    },
+    {
+      "name": "router_mesh_peer_nack_total",
+      "type": "counter"
+    },
+    {
+      "name": "router_mesh_store_cardinality",
+      "type": "gauge"
+    },
+    {
+      "name": "router_mesh_store_hash",
+      "type": "gauge"
+    },
+    {
+      "name": "router_rl_drift_ratio",
+      "type": "gauge"
+    },
+    {
+      "name": "router_lb_drift_ratio",
+      "type": "gauge"
     }
   ]
 }

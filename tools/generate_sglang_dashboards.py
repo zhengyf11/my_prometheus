@@ -248,8 +248,8 @@ def datasource():
     return {"type": "prometheus", "uid": DATASOURCE_UID}
 
 
-def selector(kind):
-    if kind == "router":
+def selector(item, kind):
+    if item["name"].startswith(("smg_", "router_")):
         return 'instance=~"$instance"'
     return 'instance=~"$instance",model_name=~"$model|^$"'
 
@@ -257,15 +257,26 @@ def selector(kind):
 def expression(item, kind):
     name = item["name"]
     metric_type = item["type"]
-    labels = selector(kind)
+    labels = selector(item, kind)
     if metric_type == "counter":
         return "sum by (instance) (rate({0}{{{1}}}[$__rate_interval]))".format(name, labels)
-    if metric_type == "histogram":
-        return (
-            "histogram_quantile(0.95, sum by (instance, le) "
-            "(rate({0}_bucket{{{1}}}[$__rate_interval])))"
-        ).format(name, labels)
     return "max by (instance) ({0}{{{1}}})".format(name, labels)
+
+
+def histogram_quantile_expression(item, kind, quantile):
+    return (
+        "histogram_quantile({0}, sum by (instance, le) "
+        "(rate({1}_bucket{{{2}}}[$__rate_interval])))"
+    ).format(quantile, item["name"], selector(item, kind))
+
+
+def histogram_mean_expression(item, kind):
+    name = item["name"]
+    labels = selector(item, kind)
+    return (
+        "sum by (instance) (rate({0}_sum{{{1}}}[$__rate_interval])) / "
+        "clamp_min(sum by (instance) (rate({0}_count{{{1}}}[$__rate_interval])), 1e-9)"
+    ).format(name, labels)
 
 
 def ref_id(index):
@@ -288,22 +299,36 @@ def chart_panel(title, items, panel_id, x, y, width, kind):
     suffix = {
         "counter": "Rate",
         "gauge": "Current State",
-        "histogram": "P95",
+        "histogram": "P80 / P95 / Mean",
         "summary": "Quantiles",
     }[metric_type]
     targets = []
-    for index, item in enumerate(items):
-        targets.append({
-            "datasource": datasource(),
-            "expr": expression(item, kind),
-            "legendFormat": "{{{{instance}}}} {0}".format(item["name"]),
-            "refId": ref_id(index),
-        })
+    for item in items:
+        if item["type"] == "histogram":
+            histogram_queries = (
+                ("P80", histogram_quantile_expression(item, kind, "0.80")),
+                ("P95", histogram_quantile_expression(item, kind, "0.95")),
+                ("Mean", histogram_mean_expression(item, kind)),
+            )
+            for label, query in histogram_queries:
+                targets.append({
+                    "datasource": datasource(),
+                    "expr": query,
+                    "legendFormat": "{{{{instance}}}} {0} {1}".format(item["name"], label),
+                    "refId": ref_id(len(targets)),
+                })
+        else:
+            targets.append({
+                "datasource": datasource(),
+                "expr": expression(item, kind),
+                "legendFormat": "{{{{instance}}}} {0}".format(item["name"]),
+                "refId": ref_id(len(targets)),
+            })
     return {
         "datasource": datasource(),
         "description": (
             "Complete metric-family coverage for this module. Counter panels show rate, "
-            "histogram panels show p95, and gauges show the current value. Feature-gated "
+            "histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated "
             "or event-created metrics can legitimately return no data."
         ),
         "fieldConfig": {
@@ -387,11 +412,12 @@ def variables(kind):
                 'label_values(sglang:num_requests_total{instance=~"$instance",engine_type="unified"}, model_name)',
             ),
         ]
-    if kind == "split":
+    if kind == "split-router":
         return [
             query_variable(
                 "role", "Role",
-                'label_values(up{job="file_sd_nodes",role=~"sglang-prefill|sglang-decode"}, role)',
+                'label_values(up{job="file_sd_nodes",role=~"sglang-prefill|sglang-decode|sglang-router"}, role)',
+                multi=False,
             ),
             query_variable(
                 "instance", "Instance",
@@ -402,12 +428,7 @@ def variables(kind):
                 'label_values(sglang:num_requests_total{instance=~"$instance",engine_type=~"prefill|decode"}, model_name)',
             ),
         ]
-    return [
-        query_variable(
-            "instance", "Instance",
-            'label_values(up{job="file_sd_nodes",role="sglang-router"}, instance)',
-        ),
-    ]
+    raise ValueError("unsupported dashboard kind: {0}".format(kind))
 
 
 def build_dashboard(kind, title, uid, groups, role_text):
@@ -439,7 +460,7 @@ def build_dashboard(kind, title, uid, groups, role_text):
         "annotations": {"list": []},
         "description": (
             "Complete SGLang metrics dashboard generated from the PD and Router metric catalogs. "
-            "The configured data source is intentionally a placeholder."
+            "It uses the shared Prometheus data source and role-specific scrape targets."
         ),
         "editable": True,
         "fiscalYearStartMonth": 0,
@@ -450,7 +471,7 @@ def build_dashboard(kind, title, uid, groups, role_text):
         "panels": panels,
         "refresh": "30s",
         "schemaVersion": 39,
-        "tags": ["sglang", kind, "complete-metrics", "placeholder-source"],
+        "tags": ["sglang", kind, "complete-metrics", "prometheus"],
         "templating": {"list": variables(kind)},
         "time": {"from": "now-6h", "to": "now"},
         "timepicker": {},
@@ -490,18 +511,16 @@ def main():
             ENGINE_GROUPS, "a unified prefill/decode engine",
         ),
     )
+    split_router_groups = OrderedDict()
+    split_router_groups.update(ENGINE_GROUPS)
+    split_router_groups.update(ROUTER_GROUPS)
     write_dashboard(
         "sglang-pd-disaggregated.json",
         build_dashboard(
-            "split", "SGLang PD Disaggregated Metrics", "my-prometheus-sglang-pd-disaggregated",
-            ENGINE_GROUPS, "separate prefill and decode engines",
-        ),
-    )
-    write_dashboard(
-        "sglang-router.json",
-        build_dashboard(
-            "router", "SGLang Router Metrics", "my-prometheus-sglang-router",
-            ROUTER_GROUPS, "the standalone SGLang Router and Router Mesh",
+            "split-router", "SGLang PD Disaggregated and Router Metrics",
+            "my-prometheus-sglang-pd-disaggregated", split_router_groups,
+            "separate prefill/decode engines, the Router, and Router Mesh; select one role "
+            "from the Role variable (panels for other roles show no data)",
         ),
     )
 

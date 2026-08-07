@@ -64,9 +64,9 @@ Grafana:    http://<服务器IP>:3000
 Grafana 使用 `admin` 和上面凭据文件中的密码登录。安装器会创建两个 Dashboard 目录：
 
 - `Linux Hosts`：包含 `Linux Node Overview`，使用真实的本机 Prometheus 数据源。
-- `SGLang`：包含 `SGLang PD Unified Metrics`、`SGLang PD Disaggregated Metrics`、`SGLang Router Metrics` 三套看板。
+- `SGLang`：包含 `SGLang PD Unified Metrics` 和 `SGLang PD Disaggregated and Router Metrics` 两套看板。后者通过 `Role` 下拉框选择 Prefill、Decode 或 Router。
 
-Linux 与 SGLang 看板统一使用 Grafana 数据源 `Prometheus`，地址为 `http://localhost:9090`。SGLang 三套看板通过 Prometheus target 的 `role` 标签区分 PD 合部、Prefill、Decode 和 Router。安装器默认写入四个不可达的占位 target，因此看板结构和 Instance 下拉项可见，但 target 会显示 `DOWN`，业务指标暂时显示 No data。
+Linux 与 SGLang 看板统一使用 Grafana 数据源 `Prometheus`，地址为 `http://localhost:9090`。SGLang 两套看板通过 Prometheus target 的 `role` 标签区分 PD 合部、Prefill、Decode 和 Router。安装器默认写入四个不可达的占位 target，因此看板结构和 Instance 下拉项可见，但 target 会显示 `DOWN`，业务指标暂时显示 No data。
 
 Dashboard JSON 分为仓库源文件和安装后的运行时文件：
 
@@ -74,8 +74,7 @@ Dashboard JSON 分为仓库源文件和安装后的运行时文件：
 |---|---|---|
 | Linux Node Overview | `grafana/dashboards/node-overview.json` | `/var/lib/grafana/dashboards/linux/node-overview.json` |
 | SGLang PD Unified Metrics | `grafana/dashboards/sglang-pd-unified.json` | `/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json` |
-| SGLang PD Disaggregated Metrics | `grafana/dashboards/sglang-pd-disaggregated.json` | `/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json` |
-| SGLang Router Metrics | `grafana/dashboards/sglang-router.json` | `/var/lib/grafana/dashboards/sglang/sglang-router.json` |
+| SGLang PD Disaggregated and Router Metrics | `grafana/dashboards/sglang-pd-disaggregated.json` | `/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json` |
 
 Grafana 的 dashboard provider 配置位于：
 
@@ -209,12 +208,10 @@ ssh -p 33003 root@117.187.188.18
 /etc/grafana/provisioning/dashboards/dashboards.yml  Dashboard provider
 /var/lib/grafana/dashboards/linux/node-overview.json                Node dashboard 运行时文件
 /var/lib/grafana/dashboards/sglang/sglang-pd-unified.json           PD 合部 dashboard 运行时文件
-/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json     PD 分离 dashboard 运行时文件
-/var/lib/grafana/dashboards/sglang/sglang-router.json               Router dashboard 运行时文件
+/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json     PD 分离与 Router dashboard 运行时文件
 /opt/my_prometheus-installer/grafana/dashboards/node-overview.json    Node dashboard 源文件
 /opt/my_prometheus-installer/grafana/dashboards/sglang-pd-unified.json        PD 合部 dashboard 源文件
-/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-disaggregated.json  PD 分离 dashboard 源文件
-/opt/my_prometheus-installer/grafana/dashboards/sglang-router.json            Router dashboard 源文件
+/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-disaggregated.json  PD 分离与 Router dashboard 源文件
 /var/lib/my_prometheus                     安装状态和 Grafana 凭据
 /etc/systemd/system/prometheus.service     Prometheus unit
 /etc/systemd/system/node_exporter.service  Node Exporter unit
@@ -261,7 +258,7 @@ ssh -p 33003 root@117.187.188.18
 | Grafana 数据源 | `/etc/grafana/provisioning/datasources/prometheus.yml` | Linux 与 SGLang 统一使用 `Prometheus`，指向本机 `http://localhost:9090` |
 | Dashboard provider | `/etc/grafana/provisioning/dashboards/dashboards.yml` | 分别把 `linux` 运行时目录加载到 `Linux Hosts`，把 `sglang` 运行时目录加载到 `SGLang` |
 | Node Dashboard | `/var/lib/grafana/dashboards/linux/node-overview.json` | 定义 Linux Node Overview 的面板和 PromQL |
-| SGLang Dashboards | `/var/lib/grafana/dashboards/sglang/*.json` | 定义 PD 合部、PD 分离和 Router 三套面板及 PromQL |
+| SGLang Dashboards | `/var/lib/grafana/dashboards/sglang/*.json` | 定义 PD 合部，以及 PD 分离与 Router 两套面板及 PromQL |
 
 仓库文件与 03 节点运行时文件的对应关系：
 
@@ -276,7 +273,6 @@ ssh -p 33003 root@117.187.188.18
 | `grafana/dashboards/node-overview.json` | 安装器复制 JSON | `/var/lib/grafana/dashboards/linux/node-overview.json` |
 | `grafana/dashboards/sglang-pd-unified.json` | 安装器复制 JSON | `/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json` |
 | `grafana/dashboards/sglang-pd-disaggregated.json` | 安装器复制 JSON | `/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json` |
-| `grafana/dashboards/sglang-router.json` | 安装器复制 JSON | `/var/lib/grafana/dashboards/sglang/sglang-router.json` |
 
 03 节点上的仓库副本位于 `/opt/my_prometheus-installer`。例如 PD 合部 Dashboard 存在两份文件：
 
@@ -318,7 +314,7 @@ Dashboard JSON 中的变量和 panel targets
 1. `/etc/prometheus/targets/03-sglang.yml` 指定采集源，目前配置了 `10.30.0.3:30000` 和 `10.30.0.2:31001`。
 2. `/etc/prometheus/prometheus.yml` 中的 `file_sd_nodes` job 发现该文件。target 中没有配置 `metrics_path` 时，Prometheus 默认请求 `http://<IP>:<端口>/metrics`。
 3. Prometheus 将目标地址写入 `instance` 标签，将 job 写为 `file_sd_nodes`，并保留 target 文件声明的 `role`、`node`、`endpoint` 标签。
-4. Linux 和三套 SGLang Dashboard 都通过 UID `Prometheus` 查询本机 `http://localhost:9090`。
+4. Linux 和两套 SGLang Dashboard 都通过 UID `Prometheus` 查询本机 `http://localhost:9090`。
 5. SGLang 看板通过 `role` 筛选 Instance，再使用 `$instance` 等变量查询 `sglang:*`、`smg_*` 或 `router_*` 指标；区别在 target 标签，不在数据源。
 6. `/etc/prometheus/targets/sglang-dashboards.yml` 中的占位 target 即使抓取失败也会生成值为 0 的 `up` 序列，因此 Instance 下拉项存在，但业务指标没有数据。
 
@@ -361,12 +357,11 @@ Dashboard JSON 中的变量和 panel targets
 
 Dashboard 展示哪些数据，不是在 `dashboards.yml` provider 中配置的。`dashboards.yml` 只告诉 Grafana 去哪个目录加载 JSON；具体面板、数据查询和下拉变量都定义在 Dashboard JSON 内。
 
-当前三个 SGLang Dashboard 的仓库源文件是：
+当前两个 SGLang Dashboard 的仓库源文件是：
 
 ```text
 /opt/my_prometheus-installer/grafana/dashboards/sglang-pd-unified.json
 /opt/my_prometheus-installer/grafana/dashboards/sglang-pd-disaggregated.json
-/opt/my_prometheus-installer/grafana/dashboards/sglang-router.json
 ```
 
 Grafana 实际读取的是：
@@ -374,7 +369,6 @@ Grafana 实际读取的是：
 ```text
 /var/lib/grafana/dashboards/sglang/sglang-pd-unified.json
 /var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json
-/var/lib/grafana/dashboards/sglang/sglang-router.json
 ```
 
 Dashboard JSON 中与数据有关的主要结构是：
@@ -459,7 +453,7 @@ panels[].targets[].expr
 | `sum by (instance)` | 按实例汇总，同时保留实例维度 |
 | `legendFormat` | 设置图例名称，不改变查询结果 |
 
-再例如 `Time to First Token` 面板使用 `sglang:time_to_first_token_seconds_bucket`，通过三条 `expr` 分别计算 P50、P95 和 P99：
+再例如 `Time to First Token` 面板使用 `sglang:time_to_first_token_seconds_bucket`，通过三条 `expr` 分别计算 P80、P95 和平均值。P95 查询为：
 
 ```promql
 histogram_quantile(
@@ -539,15 +533,14 @@ Instance 下拉列表出现 10.30.0.3:30000
 
 `up` 指标在 target 抓取失败时仍然存在，只是值为 0，所以 DOWN 的目标也可以保留在 Instance 下拉列表中。
 
-三套 Dashboard 使用不同的角色条件：
+两套 Dashboard 使用以下角色条件：
 
 | Dashboard | Instance 变量查询 |
 |---|---|
 | PD 合部 | `label_values(up{job="file_sd_nodes",role="sglang-unified"}, instance)` |
-| PD 分离 | 先选择 `role=sglang-prefill|sglang-decode`，再用 `label_values(up{job="file_sd_nodes",role=~"$role"}, instance)` |
-| Router | `label_values(up{job="file_sd_nodes",role="sglang-router"}, instance)` |
+| PD 分离与 Router | 先选择 `role=sglang-prefill|sglang-decode|sglang-router`，再用 `label_values(up{job="file_sd_nodes",role=~"$role"}, instance)` |
 
-当前 03 节点旧 target 使用的是 `role: sglang`，与三套新 Dashboard 的角色条件不同。所有看板使用同一个 Prometheus，但实际 SGLang target 必须按上表标记角色，才能进入对应看板的 Instance 下拉列表。
+当前 03 节点旧 target 使用的是 `role: sglang`，与两套新 Dashboard 的角色条件不同。所有看板使用同一个 Prometheus，但实际 SGLang target 必须按上表标记角色，才能进入对应看板的 Instance 下拉列表。
 
 #### 2.3.4 Model 下拉列表
 
@@ -560,23 +553,22 @@ label_values(
 )
 ```
 
-PD 分离查询使用 `engine_type=~"prefill|decode"`。它们都从所选实例的 `sglang:num_requests_total` 指标中提取 `model_name` 标签。Router 指标没有统一的 `model_name` 标签，因此 Router Dashboard 不设置 Model 变量。
+PD 分离查询使用 `engine_type=~"prefill|decode"`。它们都从所选实例的 `sglang:num_requests_total` 指标中提取 `model_name` 标签。合并看板选择 Router 时，Model 下拉框可能为空；Router 查询不会使用 `$model` 过滤条件。
 
 Engine 面板查询使用 `model_name=~"$model|^$"`：所选模型会过滤带 `model_name` 的指标，`|^$` 同时保留没有该标签的 HTTP、进程等全局指标。
 
 手工修改变量 JSON 时，应同步修改 `definition` 和 `query.query`，避免导入或后续 UI 编辑时显示不一致。
 
-#### 2.3.5 三套 Dashboard 的指标范围
+#### 2.3.5 两套 Dashboard 的指标范围
 
-三个 Dashboard 已经按指标体系拆分：
+两个 Dashboard 已按部署模式拆分：
 
 | Dashboard | 指标范围 | 完整指标族数量 |
 |---|---|---:|
 | SGLang PD Unified Metrics | `sglang:*`，`engine_type="unified"` 对应的合部 Engine | 122 |
-| SGLang PD Disaggregated Metrics | `sglang:*`，Prefill/Decode Engine 共用全集，并突出 PD 队列与 KV 传输 | 122 |
-| SGLang Router Metrics | Router `smg_*` 与 Router Mesh `router_*` | 61 |
+| SGLang PD Disaggregated and Router Metrics | `sglang:*` Engine 全集，以及 Router `smg_*`、Router Mesh `router_*`；通过 Role 切换 | 183 |
 
-指标按模块分类成 Row；每个指标族至少出现在一个 `panels[].targets[].expr` 中。Counter 面板展示 `rate`，Histogram 面板展示 P95，Gauge/Summary 面板展示当前序列。功能未启用或事件尚未发生时，懒创建指标显示 No data 属于正常现象。
+指标按模块分类成 Row；每个指标族至少出现在一个 `panels[].targets[].expr` 中。Counter 面板展示 `rate`，Histogram 面板展示 P80、P95 和通过 `_sum / _count` 计算的平均值，Gauge/Summary 面板展示当前序列。功能未启用或事件尚未发生时，懒创建指标显示 No data 属于正常现象。
 
 Router 面板查询示例：
 
@@ -586,7 +578,7 @@ sum by (instance) (
 )
 ```
 
-只把 Router target 加入 Prometheus，不会让 Engine Dashboard 自动展示 Router 数据；Router target 必须使用 `role: sglang-router`，并在独立 Router Dashboard 中查询。
+Router target 必须使用 `role: sglang-router`。在合并看板中选择该 Role 后，Router 分类面板显示数据，Engine 分类面板显示 No data；选择 Prefill 或 Decode 时行为相反。
 
 ### 2.4 Router 指标与现有 Dashboard 的关系
 
@@ -597,7 +589,7 @@ http://127.0.0.1:8000/metrics   返回 404，8000 是业务 API 端口
 http://127.0.0.1:29000/metrics  返回 200，29000 是 Router metrics 端口
 ```
 
-当前 `/etc/prometheus/targets/03-sglang.yml` 尚未配置 `10.30.0.3:29000`，因此 Router Dashboard 不会显示该进程的实时指标。接入时应给 Router target 使用独立的 `role`：
+当前 `/etc/prometheus/targets/03-sglang.yml` 尚未配置 `10.30.0.3:29000`，因此合并看板选择 Router 时不会显示该进程的实时指标。接入时应给 Router target 使用独立的 `role`：
 
 ```yaml
 - targets:

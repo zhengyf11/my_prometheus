@@ -46,14 +46,12 @@ class UninstallContext(object):
         self.sglang_dashboards = [
             Path("/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json"),
             Path("/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json"),
-            Path("/var/lib/grafana/dashboards/sglang/sglang-router.json"),
         ]
         self.repo_root = Path(__file__).resolve().parent.parent
         self.dashboard_source = self.repo_root / "grafana/dashboards/node-overview.json"
         self.sglang_dashboard_sources = [
             self.repo_root / "grafana/dashboards/sglang-pd-unified.json",
             self.repo_root / "grafana/dashboards/sglang-pd-disaggregated.json",
-            self.repo_root / "grafana/dashboards/sglang-router.json",
         ]
 
         self.prometheus_port = args.prometheus_port

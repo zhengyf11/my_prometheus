@@ -36,13 +36,11 @@ class UninstallTests(unittest.TestCase):
             sglang_dashboards=[
                 root / "sglang/sglang-pd-unified.json",
                 root / "sglang/sglang-pd-disaggregated.json",
-                root / "sglang/sglang-router.json",
             ],
             dashboard_source=root / "source-dashboard.json",
             sglang_dashboard_sources=[
                 root / "source-sglang-pd-unified.json",
                 root / "source-sglang-pd-disaggregated.json",
-                root / "source-sglang-router.json",
             ],
             prometheus_port=9090,
             grafana_port=3000,

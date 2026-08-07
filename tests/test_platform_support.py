@@ -140,7 +140,9 @@ class GrafanaTests(unittest.TestCase):
         ctx.grafana_assets_dir = Path("/repo/grafana")
         with mock.patch.object(grafana, "write_managed_file") as write, \
                 mock.patch.object(grafana, "ensure_dir"), \
-                mock.patch.object(grafana, "copy_file") as copy:
+                mock.patch.object(grafana, "copy_file") as copy, \
+                mock.patch.object(Path, "exists", return_value=True), \
+                mock.patch.object(Path, "unlink") as unlink:
             grafana.provision_dashboards(ctx)
 
         sources = [call[0][1].name for call in copy.call_args_list]
@@ -148,16 +150,16 @@ class GrafanaTests(unittest.TestCase):
             "node-overview.json",
             "sglang-pd-unified.json",
             "sglang-pd-disaggregated.json",
-            "sglang-router.json",
         ])
         destinations = [str(call[0][2]) for call in copy.call_args_list]
         self.assertIn("/var/lib/grafana/dashboards/linux/node-overview.json", destinations)
-        self.assertIn("/var/lib/grafana/dashboards/sglang/sglang-router.json", destinations)
+        self.assertIn("/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json", destinations)
         provider = write.call_args[0][2]
         self.assertIn("folder: Linux Hosts", provider)
         self.assertIn("path: /var/lib/grafana/dashboards/linux", provider)
         self.assertIn("folder: SGLang", provider)
         self.assertIn("path: /var/lib/grafana/dashboards/sglang", provider)
+        unlink.assert_called_once()
 
     def test_provisions_only_shared_prometheus_datasource(self):
         ctx = Context()
