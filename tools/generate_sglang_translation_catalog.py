@@ -13,6 +13,12 @@ OUTPUT = ROOT / "docs" / "SGLang_Dashboard_中文翻译候选.md"
 DASHBOARD_SCOPES = {
     "SGLang PD Unified Metrics": "PD 合部",
     "SGLang PD Disaggregated and Router Metrics": "Prefill / Decode / Router",
+    "SGLang Service Overview": "Prefill / Decode / Router",
+    "SGLang PD Pipeline": "Prefill / Decode",
+    "SGLang Engine and Scheduler": "Prefill / Decode",
+    "SGLang Router and Worker": "Router",
+    "SGLang KV and Capacity": "Prefill / Decode",
+    "SGLang Optional Features": "Prefill / Decode / Router",
 }
 
 CATEGORY_SCOPES = {}

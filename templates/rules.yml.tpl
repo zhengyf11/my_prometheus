@@ -21,14 +21,80 @@ groups:
       - record: my_prometheus:sglang_ttft_seconds_p99:5m
         expr: histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:time_to_first_token_seconds_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
 
+      - record: my_prometheus:sglang_itl_seconds_p50:5m
+        expr: histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:inter_token_latency_seconds_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
+
+      - record: my_prometheus:sglang_itl_seconds_p95:5m
+        expr: histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:inter_token_latency_seconds_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
+
+      - record: my_prometheus:sglang_itl_seconds_p99:5m
+        expr: histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:inter_token_latency_seconds_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
+
+      - record: my_prometheus:sglang_e2e_seconds_p50:5m
+        expr: histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:e2e_request_latency_seconds_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
+
+      - record: my_prometheus:sglang_e2e_seconds_p95:5m
+        expr: histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:e2e_request_latency_seconds_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
+
       - record: my_prometheus:sglang_e2e_seconds_p99:5m
         expr: histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:e2e_request_latency_seconds_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
 
+      - record: my_prometheus:sglang_kv_transfer_latency_ms_p50:5m
+        expr: histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
+
+      - record: my_prometheus:sglang_kv_transfer_latency_ms_p95:5m
+        expr: histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
+
       - record: my_prometheus:sglang_kv_transfer_latency_ms_p99:5m
-        expr: histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{job="file_sd_nodes",role=~"sglang-prefill|sglang-decode"}[5m])))
+        expr: histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
+
+      - record: my_prometheus:sglang_router_http_seconds_p50:5m
+        expr: histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_http_request_duration_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_http_seconds_p95:5m
+        expr: histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_http_request_duration_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_http_seconds_p99:5m
+        expr: histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_http_request_duration_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_request_seconds_p50:5m
+        expr: histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_request_duration_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_request_seconds_p95:5m
+        expr: histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_request_duration_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_request_seconds_p99:5m
+        expr: histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_request_duration_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_ttft_seconds_p50:5m
+        expr: histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_ttft_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_ttft_seconds_p95:5m
+        expr: histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_ttft_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_ttft_seconds_p99:5m
+        expr: histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_ttft_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_tpot_seconds_p50:5m
+        expr: histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_tpot_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_tpot_seconds_p95:5m
+        expr: histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_tpot_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_tpot_seconds_p99:5m
+        expr: histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_tpot_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_generation_seconds_p50:5m
+        expr: histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_generation_duration_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_generation_seconds_p95:5m
+        expr: histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_generation_duration_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
+
+      - record: my_prometheus:sglang_router_generation_seconds_p99:5m
+        expr: histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_generation_duration_seconds_bucket{job="file_sd_nodes",role="sglang-router"}[5m])))
 
       - record: my_prometheus:sglang_kv_transfer_speed_gb_s_p99:5m
-        expr: histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_speed_gb_s_bucket{job="file_sd_nodes",role=~"sglang-prefill|sglang-decode"}[5m])))
+        expr: histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_speed_gb_s_bucket{job="file_sd_nodes",role=~"sglang-unified|sglang-prefill|sglang-decode"}[5m])))
 
       - record: my_prometheus:sglang_kv_transfer_failure_ratio:5m
         expr: sum by (role, instance, model_name) (rate(sglang:num_transfer_failed_reqs_total{job="file_sd_nodes",role=~"sglang-prefill|sglang-decode"}[5m])) / clamp_min(sum by (role, instance, model_name) (rate(sglang:num_requests_total{job="file_sd_nodes",role=~"sglang-prefill|sglang-decode"}[5m])), 1e-9)

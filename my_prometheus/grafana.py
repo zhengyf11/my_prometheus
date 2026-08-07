@@ -214,6 +214,12 @@ providers:
     for name in (
         "sglang-pd-unified.json",
         "sglang-pd-disaggregated.json",
+        "sglang-service-overview.json",
+        "sglang-pd-pipeline.json",
+        "sglang-engine-scheduler.json",
+        "sglang-router-worker.json",
+        "sglang-kv-capacity.json",
+        "sglang-optional-features.json",
     ):
         copy_file(
             ctx,

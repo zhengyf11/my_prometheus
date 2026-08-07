@@ -13,11 +13,23 @@ class PrometheusRuleTests(unittest.TestCase):
     def test_sglang_recording_rules_are_unique_and_complete(self):
         records = re.findall(r"^\s+- record: (\S+)$", self.content, re.MULTILINE)
         self.assertEqual(len(records), len(set(records)))
+        self.assertEqual(len(records), 41)
         expected = {
             "my_prometheus:sglang_request_rate:5m",
             "my_prometheus:sglang_ttft_seconds_p50:5m",
             "my_prometheus:sglang_ttft_seconds_p95:5m",
             "my_prometheus:sglang_ttft_seconds_p99:5m",
+            "my_prometheus:sglang_itl_seconds_p50:5m",
+            "my_prometheus:sglang_itl_seconds_p95:5m",
+            "my_prometheus:sglang_itl_seconds_p99:5m",
+            "my_prometheus:sglang_e2e_seconds_p50:5m",
+            "my_prometheus:sglang_e2e_seconds_p95:5m",
+            "my_prometheus:sglang_e2e_seconds_p99:5m",
+            "my_prometheus:sglang_router_http_seconds_p99:5m",
+            "my_prometheus:sglang_router_request_seconds_p99:5m",
+            "my_prometheus:sglang_router_ttft_seconds_p99:5m",
+            "my_prometheus:sglang_router_tpot_seconds_p99:5m",
+            "my_prometheus:sglang_router_generation_seconds_p99:5m",
             "my_prometheus:sglang_kv_transfer_failure_ratio:5m",
             "my_prometheus:sglang_bootstrap_failure_ratio:5m",
             "my_prometheus:sglang_prefill_retry_ratio:5m",

@@ -54,6 +54,12 @@ cd /opt/my_prometheus-installer
 | `/var/lib/grafana/dashboards/linux/node-overview.json` | Linux Dashboard 运行时文件 |
 | `/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json` | PD 合部 Dashboard 运行时文件 |
 | `/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json` | PD 分离与 Router Dashboard 运行时文件 |
+| `/var/lib/grafana/dashboards/sglang/sglang-service-overview.json` | SGLang 服务总览运行时文件 |
+| `/var/lib/grafana/dashboards/sglang/sglang-pd-pipeline.json` | PD 链路运行时文件 |
+| `/var/lib/grafana/dashboards/sglang/sglang-engine-scheduler.json` | Engine/Scheduler 运行时文件 |
+| `/var/lib/grafana/dashboards/sglang/sglang-router-worker.json` | Router/Worker 运行时文件 |
+| `/var/lib/grafana/dashboards/sglang/sglang-kv-capacity.json` | KV/容量运行时文件 |
+| `/var/lib/grafana/dashboards/sglang/sglang-optional-features.json` | 可选功能运行时文件 |
 | `/var/lib/grafana` | Grafana 数据库、插件和运行数据 |
 
 Dashboard 源文件与运行时文件不是同一份：
@@ -63,6 +69,7 @@ Dashboard 源文件与运行时文件不是同一份：
 | Linux | `/opt/my_prometheus-installer/grafana/dashboards/node-overview.json` | `/var/lib/grafana/dashboards/linux/node-overview.json` |
 | PD 合部 | `/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-unified.json` | `/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json` |
 | PD 分离与 Router | `/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-disaggregated.json` | `/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json` |
+| 六张运维看板 | `/opt/my_prometheus-installer/grafana/dashboards/sglang-{service-overview,pd-pipeline,engine-scheduler,router-worker,kv-capacity,optional-features}.json` | `/var/lib/grafana/dashboards/sglang/` 下的同名文件 |
 
 只修改仓库源文件不会改变当前 Grafana 页面。必须重新执行安装器，或把生成后的 JSON 发布到对应运行时目录。
 
@@ -317,6 +324,7 @@ Dashboard JSON 中通过固定 UID 引用：
 | `time` | 默认查询时间范围 |
 | `templating.list[]` | Role、Instance、Model 等下拉变量 |
 | `panels[]` | Row、说明面板和指标面板 |
+| `panels[].collapsed` | Row 是否默认折叠；折叠 Row 的子面板存放在该 Row 的 `panels[]` 中 |
 | `panels[].targets[].expr` | 真正决定展示哪些指标的 PromQL |
 | `panels[].targets[].legendFormat` | 图例名称 |
 | `panels[].description` | 中文名称、Prometheus 原指标、类型、完整解释和特殊统计口径 |
@@ -343,6 +351,8 @@ label_values(sglang:num_requests_total{instance=~"$instance",role=~"$role",engin
 ```
 
 变量内部名称保持为 `$role`、`$instance`、`$model`。界面标签显示为 `角色 (Role)`、`实例 (Instance)`、`模型 (Model)`。这些变量都支持多选和 All。
+
+当前 target 和 SGLang exporter 没有统一提供 `cluster`、`namespace`、`service`、`version` 标签，因此不创建永远为空的下拉变量。需要这些维度时，应先在 `/etc/prometheus/targets/*.yml` 的 `labels` 中统一补齐，再扩展 Dashboard 变量与每条 PromQL。当前依赖顺序为 Role -> Instance -> Model，避免 Role All 直接展开无关实例。
 
 Role 下拉项不是在 Grafana 中写死的，而是来自 Prometheus 中 `up` 序列的 `role` 标签。因此 role 拼写不正确时，Dashboard 不会出现对应实例。
 
@@ -437,6 +447,8 @@ Router HTTP 响应面板只使用 `smg_http_responses_total`，先按 `status_co
 
 SGLang 指标中的 `sglang:utilization` 表示引擎调度利用率，不是 GPU 利用率；`sglang:startup_available_gpu_memory_gb` 只是启动时可用显存，不是运行时显存。真实 GPU 利用率和显存面板需要额外接入 DCGM Exporter 或 NVIDIA GPU Exporter，本项目当前没有这类数据源，因此不生成伪 GPU 面板。
 
+两张全量指标看板用于兼容和指标查阅，刷新周期为 1 分钟，非核心 Row 默认折叠并把子面板嵌套在 Row 中，折叠时不会发起这些查询。六张运维看板按 `Service Overview`、`PD Pipeline`、`Engine / Scheduler`、`Router / Worker`、`KV / Capacity`、`Optional Features` 拆分；总览和 PD 链路使用 30 秒刷新，详情使用 1 分钟。核心 Histogram 面板查询 recording rules，高基数错误类面板使用 `topk(10)` 即时表格。
+
 ### 6.7 翻译和重新生成
 
 SGLang Dashboard 由生成器维护，不建议直接大规模手改生成后的 JSON：
@@ -448,6 +460,12 @@ tools/generate_sglang_dashboards.py
               v
 grafana/dashboards/sglang-pd-unified.json
 grafana/dashboards/sglang-pd-disaggregated.json
+grafana/dashboards/sglang-service-overview.json
+grafana/dashboards/sglang-pd-pipeline.json
+grafana/dashboards/sglang-engine-scheduler.json
+grafana/dashboards/sglang-router-worker.json
+grafana/dashboards/sglang-kv-capacity.json
+grafana/dashboards/sglang-optional-features.json
 ```
 
 修改后执行：
@@ -458,11 +476,8 @@ python3 tools/generate_sglang_dashboards.py
 python3 tools/generate_sglang_translation_catalog.py
 python3 -m unittest discover -s tests -v
 sudo install -o grafana -g grafana -m 0644 \
-  grafana/dashboards/sglang-pd-unified.json \
-  /var/lib/grafana/dashboards/sglang/sglang-pd-unified.json
-sudo install -o grafana -g grafana -m 0644 \
-  grafana/dashboards/sglang-pd-disaggregated.json \
-  /var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json
+  grafana/dashboards/sglang-*.json \
+  /var/lib/grafana/dashboards/sglang/
 ```
 
 翻译评审文档 `docs/SGLang_Dashboard_中文翻译候选.md` 从结构化 JSON 生成。只有需要导入人工编辑过的 Markdown 时才执行：

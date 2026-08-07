@@ -17,12 +17,34 @@ class DashboardTests(unittest.TestCase):
         for name, path in cls.paths.items():
             with open(str(path), "r") as handle:
                 cls.dashboards[name] = json.load(handle)
+        cls.operational = {}
+        for filename in (
+            "sglang-service-overview.json",
+            "sglang-pd-pipeline.json",
+            "sglang-engine-scheduler.json",
+            "sglang-router-worker.json",
+            "sglang-kv-capacity.json",
+            "sglang-optional-features.json",
+        ):
+            with open(str(dashboard_dir / filename), "r") as handle:
+                cls.operational[filename] = json.load(handle)
         with open(str(grafana_dir / "sglang-translations.json"), "r") as handle:
             cls.translations = json.load(handle)
 
+    def all_panels(self, dashboard):
+        result = []
+
+        def visit(panels):
+            for panel in panels:
+                result.append(panel)
+                visit(panel.get("panels", []))
+
+        visit(dashboard["panels"])
+        return result
+
     def data_panels(self, dashboard):
         return [
-            panel for panel in dashboard["panels"]
+            panel for panel in self.all_panels(dashboard)
             if panel["type"] not in ("row", "text")
         ]
 
@@ -46,7 +68,7 @@ class DashboardTests(unittest.TestCase):
         }
         for name, dashboard in self.dashboards.items():
             self.assertEqual(dashboard["uid"], expected[name])
-            panel_ids = [panel["id"] for panel in dashboard["panels"]]
+            panel_ids = [panel["id"] for panel in self.all_panels(dashboard)]
             self.assertEqual(len(panel_ids), len(set(panel_ids)))
 
     def test_dashboards_cover_complete_metric_catalogs(self):
@@ -59,12 +81,16 @@ class DashboardTests(unittest.TestCase):
 
             expressions = [
                 target["expr"]
-                for panel in dashboard["panels"]
+                for panel in self.all_panels(dashboard)
                 for target in panel.get("targets", [])
             ]
             for item in catalog:
                 self.assertTrue(
-                    any(item["name"] in expression for expression in expressions),
+                    any(item["name"] in expression for expression in expressions)
+                    or any(
+                        panel.get("x-querySource") == "recording-rule"
+                        for panel in self.panels_for_metric(dashboard, item["name"])
+                    ),
                     "{0} is not queried by {1}".format(item["name"], name),
                 )
 
@@ -77,13 +103,13 @@ class DashboardTests(unittest.TestCase):
         category_names = {
             panel["title"].rsplit(" (", 1)[-1].rstrip(")")
             for dashboard in self.dashboards.values()
-            for panel in dashboard["panels"]
+            for panel in self.all_panels(dashboard)
             if panel["type"] == "row"
             and panel.get("x-panelKind") not in ("scrape-health", "derived")
         }
         self.assertEqual(set(self.translations["metrics"]), metric_names)
         self.assertEqual(set(self.translations["categories"]), category_names)
-        self.assertEqual(len(self.translations["dashboards"]), 2)
+        self.assertEqual(len(self.translations["dashboards"]), 8)
         for translation in self.translations["metrics"].values():
             self.assertTrue(translation["title"])
             self.assertTrue(translation["description"])
@@ -92,7 +118,7 @@ class DashboardTests(unittest.TestCase):
         for dashboard in self.dashboards.values():
             for variable in dashboard["templating"]["list"]:
                 self.assertEqual(variable["datasource"]["uid"], "Prometheus")
-            for panel in dashboard["panels"]:
+            for panel in self.all_panels(dashboard):
                 if "datasource" in panel:
                     self.assertEqual(panel["datasource"]["uid"], "Prometheus")
                 for target in panel.get("targets", []):
@@ -176,7 +202,11 @@ class DashboardTests(unittest.TestCase):
                     )
                 else:
                     self.assertIn('model_name=~"$model"', expressions, metric_name)
-                    self.assertIn("by (role, instance, model_name", expressions, metric_name)
+                    if not any(
+                        panel.get("x-querySource") == "recording-rule"
+                        for panel in panels
+                    ):
+                        self.assertIn("by (role, instance, model_name", expressions, metric_name)
                     self.assertTrue(
                         all("{{model_name}}" in legend for legend in legends),
                         metric_name,
@@ -207,13 +237,13 @@ class DashboardTests(unittest.TestCase):
         }
         unified_sections = {
             panel["title"]
-            for panel in self.dashboards["unified"]["panels"]
+            for panel in self.all_panels(self.dashboards["unified"])
             if panel["type"] == "row"
             and panel.get("x-panelKind") not in ("scrape-health", "derived")
         }
         split_sections = {
             panel["title"]
-            for panel in self.dashboards["split"]["panels"]
+            for panel in self.all_panels(self.dashboards["split"])
             if panel["type"] == "row"
             and panel.get("x-panelKind") not in ("scrape-health", "derived")
         }
@@ -270,6 +300,11 @@ class DashboardTests(unittest.TestCase):
             metric_names = [item["name"] for item in dashboard["x-metricsCatalog"]]
             for panel in self.metric_panels(dashboard):
                 expressions = "\n".join(target["expr"] for target in panel["targets"])
+                if panel.get("x-querySource") == "recording-rule":
+                    self.assertTrue(
+                        all("my_prometheus:" in target["expr"] for target in panel["targets"])
+                    )
+                    continue
                 matching = {
                     metric for metric in metric_names
                     if re.search(re.escape(metric) + r"(?:_(?:bucket|sum|count))?\{", expressions)
@@ -283,7 +318,7 @@ class DashboardTests(unittest.TestCase):
     def test_dashboards_expose_scrape_health_and_do_not_hide_gaps(self):
         for dashboard in self.dashboards.values():
             health_panels = [
-                panel for panel in dashboard["panels"]
+                panel for panel in self.all_panels(dashboard)
                 if panel.get("x-panelKind") == "scrape-health"
             ]
             self.assertEqual(len(health_panels), 6)
@@ -311,7 +346,7 @@ class DashboardTests(unittest.TestCase):
             )
             self.assertNotIn("thresholds", status_panels[2]["fieldConfig"]["defaults"])
 
-            info = next(panel for panel in dashboard["panels"] if panel["type"] == "text")
+            info = next(panel for panel in self.all_panels(dashboard) if panel["type"] == "text")
             self.assertIn("抓取失败", info["options"]["content"])
             self.assertIn("目标消失", info["options"]["content"])
 
@@ -362,24 +397,25 @@ class DashboardTests(unittest.TestCase):
             "smg_router_generation_duration_seconds",
         }
         for dashboard in self.dashboards.values():
-            expressions = [
-                target["expr"]
-                for panel in dashboard["panels"]
-                for target in panel.get("targets", [])
-            ]
             for item in dashboard["x-metricsCatalog"]:
                 if item["type"] != "histogram":
                     continue
                 name = item["name"]
-                matching = [expr for expr in expressions if name in expr]
+                matching = [
+                    target["expr"]
+                    for panel in self.panels_for_metric(dashboard, name)
+                    for target in panel["targets"]
+                ]
                 self.assertFalse(any("histogram_quantile(0.80" in expr for expr in matching))
                 if name not in special_histograms:
-                    self.assertTrue(any("histogram_quantile(0.95" in expr for expr in matching))
                     if name in slo_latency_histograms:
-                        self.assertTrue(any("histogram_quantile(0.50" in expr for expr in matching))
-                        self.assertTrue(any("histogram_quantile(0.99" in expr for expr in matching))
+                        self.assertTrue(all("my_prometheus:" in expr for expr in matching))
+                        self.assertTrue(any("_p50:5m" in expr for expr in matching))
+                        self.assertTrue(any("_p95:5m" in expr for expr in matching))
+                        self.assertTrue(any("_p99:5m" in expr for expr in matching))
                         self.assertFalse(any(name + "_sum" in expr for expr in matching))
                     else:
+                        self.assertTrue(any("histogram_quantile(0.95" in expr for expr in matching))
                         self.assertTrue(any(name + "_sum" in expr for expr in matching))
                         self.assertTrue(any(name + "_count" in expr for expr in matching))
 
@@ -428,7 +464,7 @@ class DashboardTests(unittest.TestCase):
     def test_split_dashboard_exposes_recording_rule_derived_metrics(self):
         dashboard = self.dashboards["split"]
         derived = [
-            panel for panel in dashboard["panels"]
+            panel for panel in self.all_panels(dashboard)
             if panel.get("x-panelKind") == "derived"
         ]
         rows = [panel for panel in derived if panel["type"] == "row"]
@@ -449,6 +485,71 @@ class DashboardTests(unittest.TestCase):
                 self.assertFalse(
                     panel["fieldConfig"]["defaults"]["custom"]["spanNulls"]
                 )
+
+    def test_operational_dashboards_are_split_and_refresh_by_cost(self):
+        expected = {
+            "sglang-service-overview.json": ("my-prometheus-sglang-service-overview", "30s"),
+            "sglang-pd-pipeline.json": ("my-prometheus-sglang-pd-pipeline", "30s"),
+            "sglang-engine-scheduler.json": ("my-prometheus-sglang-engine-scheduler", "1m"),
+            "sglang-router-worker.json": ("my-prometheus-sglang-router-worker", "1m"),
+            "sglang-kv-capacity.json": ("my-prometheus-sglang-kv-capacity", "1m"),
+            "sglang-optional-features.json": ("my-prometheus-sglang-optional-features", "1m"),
+        }
+        self.assertEqual(set(self.operational), set(expected))
+        for filename, dashboard in self.operational.items():
+            uid, refresh = expected[filename]
+            self.assertEqual(dashboard["uid"], uid)
+            self.assertEqual(dashboard["refresh"], refresh)
+            panel_ids = [panel["id"] for panel in self.all_panels(dashboard)]
+            self.assertEqual(len(panel_ids), len(set(panel_ids)))
+            for variable in dashboard["templating"]["list"]:
+                self.assertEqual(variable["datasource"]["uid"], "Prometheus")
+            for panel in self.data_panels(dashboard):
+                self.assertEqual(panel["datasource"]["uid"], "Prometheus")
+
+        self.assertEqual(self.dashboards["unified"]["refresh"], "1m")
+        self.assertEqual(self.dashboards["split"]["refresh"], "1m")
+
+    def test_full_catalog_dashboards_collapse_non_core_rows_correctly(self):
+        expected_expanded = {
+            "unified": {"Key Engine Metrics", "Request Latency Pipeline"},
+            "split": {"Key Engine Metrics", "Key Router Metrics", "Request Latency Pipeline"},
+        }
+        for name, dashboard in self.dashboards.items():
+            for row in [panel for panel in dashboard["panels"] if panel["type"] == "row"]:
+                if row.get("x-panelKind") in ("scrape-health", "derived"):
+                    self.assertFalse(row["collapsed"])
+                    continue
+                original = row["title"].rsplit(" (", 1)[-1].rstrip(")")
+                if original in expected_expanded[name]:
+                    self.assertFalse(row["collapsed"])
+                    self.assertEqual(row["panels"], [])
+                else:
+                    self.assertTrue(row["collapsed"])
+                    self.assertTrue(row["panels"])
+
+    def test_axes_thresholds_and_high_cardinality_tables_are_bounded(self):
+        for dashboard in list(self.dashboards.values()) + list(self.operational.values()):
+            for panel in self.data_panels(dashboard):
+                defaults = panel["fieldConfig"]["defaults"]
+                self.assertEqual(defaults["min"], 0)
+                if defaults["unit"] == "percentunit":
+                    self.assertEqual(defaults["max"], 1)
+                for step in defaults.get("thresholds", {}).get("steps", []):
+                    self.assertNotEqual(step.get("value"), 80)
+
+        for metric_name in (
+            "smg_router_request_errors_total",
+            "smg_worker_errors_total",
+            "smg_worker_retries_exhausted_total",
+            "smg_worker_cb_transitions_total",
+            "smg_worker_cb_outcomes_total",
+        ):
+            panel = self.panels_for_metric(self.dashboards["split"], metric_name)[0]
+            self.assertEqual(panel["type"], "table")
+            self.assertIn("topk(10", panel["targets"][0]["expr"])
+            self.assertEqual(panel["targets"][0]["format"], "table")
+            self.assertTrue(panel["targets"][0]["instant"])
 
     def test_token_histograms_use_default_sglang_bucket_ranges(self):
         expected = {

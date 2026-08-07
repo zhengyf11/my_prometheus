@@ -8,6 +8,12 @@
 |---|---|---|---|---|
 |  | SGLang PD Unified Metrics | SGLang PD 合部指标 | PD 合部 | 展示 unified engine 的 122 个指标族。 |
 |  | SGLang PD Disaggregated and Router Metrics | SGLang PD 分离与 Router 指标 | Prefill / Decode / Router | 通过 Role 下拉框单选、多选或选择 All 查看 Prefill、Decode 和 Router，共覆盖 183 个指标族。 |
+|  | SGLang Service Overview | SGLang 服务总览 | Prefill / Decode / Router | 用于值班的请求、Token、核心延迟、错误、健康和派生指标总览。 |
+|  | SGLang PD Pipeline | SGLang PD 链路 | Prefill / Decode | 集中展示 PD 请求时延链路、阶段队列和 KV 传输指标。 |
+|  | SGLang Engine and Scheduler | SGLang 引擎与调度器 | Prefill / Decode | 展示 Engine HTTP、请求、Token、调度器和队列状态。 |
+|  | SGLang Router and Worker | SGLang Router 与 Worker | Router | 展示 Router 请求、Worker 池、熔断、重试和路由时延。 |
+|  | SGLang KV and Capacity | SGLang KV 与容量 | Prefill / Decode | 展示 KV/SWA/Mamba 资源池、引擎容量、PD 传输和计算运行时指标。 |
+|  | SGLang Optional Features | SGLang 可选功能 | Prefill / Decode / Router | 按需查看 Grammar、投机解码、LoRA、HiCache、MCP 和 Router Mesh 等可选能力。 |
 
 ## 2. 分类名称
 

@@ -342,8 +342,16 @@ ssh -L 13000:127.0.0.1:3000 -L 19090:127.0.0.1:9090 \
 - `Linux Hosts/Linux Node Overview`：Linux CPU、内存、磁盘和网络。
 - `SGLang/SGLang PD 合部指标 (SGLang PD Unified Metrics)`：PD 合部指标。
 - `SGLang/SGLang PD 分离与 Router 指标 (SGLang PD Disaggregated and Router Metrics)`：Prefill、Decode 和 Router 指标。
+- `SGLang/SGLang 服务总览 (SGLang Service Overview)`：30 秒刷新的值班入口。
+- `SGLang/SGLang PD 链路 (SGLang PD Pipeline)`：PD 队列、阶段时延和 KV 传输。
+- `SGLang/SGLang 引擎与调度器 (SGLang Engine and Scheduler)`：Engine、Scheduler、请求和 Token。
+- `SGLang/SGLang Router 与 Worker (SGLang Router and Worker)`：Router、Worker、熔断和重试。
+- `SGLang/SGLang KV 与容量 (SGLang KV and Capacity)`：KV/SWA/Mamba 池、容量和计算运行时。
+- `SGLang/SGLang 可选功能 (SGLang Optional Features)`：Grammar、投机解码、LoRA、HiCache、MCP 和 Mesh。
 
 PD 分离看板顶部的 `角色 (Role)` 支持单选、多选和 All；`实例 (Instance)`、`模型 (Model)` 也支持多选。
+
+两张原全量看板继续保留，兼容已有 URL，但刷新周期调整为 1 分钟，只有采集健康、关键总览和 PD 时延链路默认展开；其他 Row 折叠后按需查询。六张运维看板之间可通过顶部“SGLang 运维看板”下拉链接切换，并保留当前时间范围和变量。
 
 SGLang 面板标题采用 `中文名称（大致解释）`，Prometheus 原始指标名不占用标题或图例，可在面板信息（Panel description）中查看。看板的展示约定如下：
 
@@ -357,12 +365,14 @@ SGLang 面板标题采用 `中文名称（大致解释）`，Prometheus 原始�
 - 每个普通指标单独成图；关键指标和请求全链路时延放在靠前的独立分组中。
 - 看板顶部的“采集健康”分组独立展示目标状态、目标缺失状态、最近成功采集距今时间、单次采集样本数和采集耗时。
 - 时序图不会跨空值连线；Prometheus 抓取中断会显示为曲线缺口。
+- 所有数值轴从 0 开始，比例轴固定为 0–100%；不保留无业务依据的默认阈值 80。
+- 高基数 Router 错误、熔断转换和重试耗尽指标使用 `topk(10)` 即时表格，保留 exporter 原始标签。
 
 “关键引擎指标”分组包含 15 个值班面板，覆盖请求/Token 吞吐、Abort、运行与等待请求、TTFT/ITL/E2E、Token 池/引擎利用率以及 KV 传输失败、重试和延迟。“关键 Router 指标”包含 12 个面板，其中 HTTP 响应按 2xx、5xx、429 展示占比，并展示 Router 错误、限流、重试耗尽、熔断状态和健康 Worker 总数。
 
 当前 SGLang `/metrics` 不提供真实 GPU 利用率和运行时显存占用；`sglang:utilization` 是引擎调度利用率，不能当作 GPU 利用率。需要 GPU 面板时必须另行部署 DCGM Exporter 或 NVIDIA GPU Exporter。当前 `smg_worker_health` 只有 `worker` 标签，没有 `worker_type`/模型标签，因此健康 Worker 只能展示总数，不能准确拆成健康 Prefill/Decode Worker 数。
 
-PD 分离与 Router 看板还包含两个派生指标分组。它们读取 `/etc/prometheus/rules/default.yml` 中以 `my_prometheus:` 开头的 recording rules，展示 PD 吞吐/容量比、KV 失败与重试比例、KV P99 延迟/速度，以及 Router 错误率、重试耗尽率、健康 Worker、打开的熔断器和 Worker 负载偏斜。
+PD 分离与 Router 看板还包含两个派生指标分组。它们读取 `/etc/prometheus/rules/default.yml` 中以 `my_prometheus:` 开头的 recording rules，展示 PD 吞吐/容量比、KV 失败与重试比例、KV P99 延迟/速度，以及 Router 错误率、重试耗尽率、健康 Worker、打开的熔断器和 Worker 负载偏斜。TTFT、ITL、E2E、KV 和 Router 核心时延也使用 30 秒预计算的 5 分钟 recording rules，避免页面重复扫描 Histogram buckets。
 
 Prometheus 默认启用无需业务阈值的确定性告警，包括 target DOWN、Router 无健康 Worker、KV/Bootstrap 失败、Router 重试耗尽、Worker 熔断器打开和 Router Mesh 断连。查看规则和当前告警：
 

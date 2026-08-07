@@ -305,6 +305,18 @@ SLO_LATENCY_METRICS = {
     "smg_router_generation_duration_seconds",
 }
 
+RECORDED_LATENCY_PREFIXES = {
+    "sglang:time_to_first_token_seconds": "my_prometheus:sglang_ttft_seconds",
+    "sglang:inter_token_latency_seconds": "my_prometheus:sglang_itl_seconds",
+    "sglang:e2e_request_latency_seconds": "my_prometheus:sglang_e2e_seconds",
+    "sglang:kv_transfer_latency_ms": "my_prometheus:sglang_kv_transfer_latency_ms",
+    "smg_http_request_duration_seconds": "my_prometheus:sglang_router_http_seconds",
+    "smg_router_request_duration_seconds": "my_prometheus:sglang_router_request_seconds",
+    "smg_router_ttft_seconds": "my_prometheus:sglang_router_ttft_seconds",
+    "smg_router_tpot_seconds": "my_prometheus:sglang_router_tpot_seconds",
+    "smg_router_generation_duration_seconds": "my_prometheus:sglang_router_generation_seconds",
+}
+
 STATIC_METRICS = {
     "sglang:max_total_num_tokens",
     "sglang:max_running_requests_under_SLO",
@@ -612,6 +624,20 @@ def histogram_quantile_expression(item, kind, quantile):
     )
 
 
+def recorded_latency_expression(item, kind, quantile):
+    labels = ['instance=~"$instance"']
+    if kind == "unified":
+        labels.append('role="sglang-unified"')
+    else:
+        labels.append('role=~"$role"')
+    if metric_scope(item) == "engine-model":
+        labels.append('model_name=~"$model"')
+    suffix = {"0.50": "p50", "0.95": "p95", "0.99": "p99"}[quantile]
+    return "{0}_{1}:5m{{{2}}}".format(
+        RECORDED_LATENCY_PREFIXES[item["name"]], suffix, ",".join(labels)
+    )
+
+
 def histogram_mean_expression(item, kind):
     name = item["name"]
     labels = selector(item, kind)
@@ -696,14 +722,18 @@ def timeseries_custom_options():
 
 
 def panel_base(item, panel_id, x, y, width, unit):
+    defaults = {
+        "color": {"mode": "palette-classic"},
+        "min": 0,
+        "unit": unit,
+    }
+    if unit == "percentunit":
+        defaults["max"] = 1
     return {
         "datasource": datasource(),
         "description": metric_mapping(item),
         "fieldConfig": {
-            "defaults": {
-                "color": {"mode": "palette-classic"},
-                "unit": unit,
-            },
+            "defaults": defaults,
             "overrides": [],
         },
         "gridPos": {"h": 8, "w": width, "x": x, "y": y},
@@ -788,6 +818,31 @@ def router_response_outcome_panel(item, panel_id, x, y, width, kind):
     return panel
 
 
+def topk_table_panel(item, panel_id, x, y, width, kind):
+    panel = panel_base(item, panel_id, x, y, width, metric_unit(item))
+    panel["description"] += (
+        "\n- 展示口径：按单条原始标签序列计算每秒速率，仅展示当前值最高的 10 条；"
+        "表格保留 Worker、模型、接口和错误类型等 exporter 实际提供的标签。"
+    )
+    query = target(
+        "topk(10, rate({0}{{{1}}}[$__rate_interval]))".format(
+            item["name"], selector(item, kind)
+        ),
+        legend_format(item),
+        0,
+        instant=True,
+    )
+    query["format"] = "table"
+    panel["targets"] = [query]
+    panel["options"] = {
+        "cellHeight": "sm",
+        "footer": {"countRows": False, "fields": "", "reducer": ["sum"], "show": False},
+        "showHeader": True,
+    }
+    panel["type"] = "table"
+    return panel
+
+
 def worker_health_panel(item, panel_id, x, y, width, kind):
     panel = panel_base(item, panel_id, x, y, width, "short")
     panel["title"] = "健康 Worker 总数（Router 当前可用的后端 Worker 数量）"
@@ -826,6 +881,14 @@ def metric_panel(item, panel_id, x, y, width, kind):
         return cache_hit_panel(item, panel_id, x, y, width, kind)
     if name == "smg_http_responses_total":
         return router_response_outcome_panel(item, panel_id, x, y, width, kind)
+    if name in {
+        "smg_router_request_errors_total",
+        "smg_worker_errors_total",
+        "smg_worker_retries_exhausted_total",
+        "smg_worker_cb_transitions_total",
+        "smg_worker_cb_outcomes_total",
+    }:
+        return topk_table_panel(item, panel_id, x, y, width, kind)
     if name == "smg_worker_health":
         return worker_health_panel(item, panel_id, x, y, width, kind)
 
@@ -834,7 +897,7 @@ def metric_panel(item, panel_id, x, y, width, kind):
         if name in SLO_LATENCY_METRICS:
             panel["targets"] = [
                 target(
-                    histogram_quantile_expression(item, kind, quantile),
+                    recorded_latency_expression(item, kind, quantile),
                     legend_format(item, label),
                     index,
                 )
@@ -842,7 +905,11 @@ def metric_panel(item, panel_id, x, y, width, kind):
                     ("0.50", "P50"), ("0.95", "P95"), ("0.99", "P99"),
                 ))
             ]
-            panel["description"] += "\n- 值班口径：展示 P50、P95 和 P99，不使用平均值掩盖长尾。"
+            panel["description"] += (
+                "\n- 值班口径：展示 P50、P95 和 P99，不使用平均值掩盖长尾。"
+                "\n- 查询来源：30 秒计算一次的 5 分钟 recording rules，避免每次打开看板重复扫描 Histogram buckets。"
+            )
+            panel["x-querySource"] = "recording-rule"
         else:
             panel["targets"] = [
                 target(
@@ -910,12 +977,15 @@ def health_panel(title, description, expression_value, legend, panel_id, x, y, w
                  thresholds=None, mappings=None):
     defaults = {
         "color": {"mode": "thresholds" if thresholds else "palette-classic"},
+        "min": 0,
         "unit": unit,
     }
     if thresholds:
         defaults["thresholds"] = {"mode": "absolute", "steps": thresholds}
     if mappings:
         defaults["mappings"] = mappings
+    if unit == "percentunit":
+        defaults["max"] = 1
     panel = {
         "datasource": datasource(),
         "description": description,
@@ -1016,6 +1086,7 @@ def recording_panel(definition, panel_id, x, y):
         "fieldConfig": {
             "defaults": {
                 "color": {"mode": "palette-classic"},
+                "min": 0,
                 "unit": definition.get("unit", "short"),
             },
             "overrides": [],
@@ -1030,6 +1101,8 @@ def recording_panel(definition, panel_id, x, y):
         "type": panel_type,
         "x-panelKind": "derived",
     }
+    if definition.get("unit") == "percentunit":
+        panel["fieldConfig"]["defaults"]["max"] = 1
     if panel_type == "stat":
         panel["options"] = {
             "colorMode": "value",
@@ -1236,8 +1309,10 @@ def variables(kind):
     raise ValueError("unsupported dashboard kind: {0}".format(kind))
 
 
-def build_dashboard(kind, title, uid, groups, role_text):
+def build_dashboard(kind, title, uid, groups, role_text, expanded_groups=None,
+                    refresh="1m", include_derived=False):
     catalog = flatten(groups)
+    expanded_groups = set(expanded_groups or ())
     panels = []
     panel_id = 1
     y = 0
@@ -1251,7 +1326,9 @@ def build_dashboard(kind, title, uid, groups, role_text):
     y += 17
 
     for group_title, items in groups.items():
-        panels.append(row_panel(group_title, panel_id, y))
+        row = row_panel(group_title, panel_id, y)
+        row["collapsed"] = group_title not in expanded_groups
+        panels.append(row)
         panel_id += 1
         y += 1
         x = 0
@@ -1266,11 +1343,15 @@ def build_dashboard(kind, title, uid, groups, role_text):
             if x + panel_width > 24:
                 x = 0
                 y += row_height
-            panels.append(metric_panel(item, panel_id, x, y, panel_width, kind))
+            metric = metric_panel(item, panel_id, x, y, panel_width, kind)
+            if row["collapsed"]:
+                row["panels"].append(metric)
+            else:
+                panels.append(metric)
             panel_id += 1
             x += panel_width
         y += row_height
-        if kind == "split-router" and group_title == "Key Router Metrics":
+        if include_derived and group_title == "Key Router Metrics":
             extra_panels, panel_id, y = derived_panels(panel_id, y)
             panels.extend(extra_panels)
 
@@ -1284,12 +1365,21 @@ def build_dashboard(kind, title, uid, groups, role_text):
         "fiscalYearStartMonth": 0,
         "graphTooltip": 1,
         "id": None,
-        "links": [],
+        "links": [{
+            "asDropdown": True,
+            "icon": "external link",
+            "includeVars": True,
+            "keepTime": True,
+            "tags": ["sglang-operations"],
+            "targetBlank": False,
+            "title": "SGLang 运维看板",
+            "type": "dashboards",
+        }],
         "liveNow": False,
         "panels": panels,
-        "refresh": "30s",
+        "refresh": refresh,
         "schemaVersion": 39,
-        "tags": ["sglang", kind, "complete-metrics", "prometheus"],
+        "tags": ["sglang", "sglang-operations", kind, "prometheus"],
         "templating": {"list": variables(kind)},
         "time": {"from": "now-6h", "to": "now"},
         "timepicker": {},
@@ -1319,12 +1409,28 @@ def validate_catalog(groups, expected_count):
         raise RuntimeError("duplicate metrics: {0}".format(", ".join(duplicates)))
 
 
+def selected_groups(*names):
+    combined = {}
+    combined.update(ENGINE_GROUPS)
+    combined.update(ROUTER_GROUPS)
+    return OrderedDict((name, combined[name]) for name in names)
+
+
 def main():
     validate_catalog(ENGINE_GROUPS, 122)
     validate_catalog(ROUTER_GROUPS, 61)
     validate_translations(
         TRANSLATIONS,
-        ("SGLang PD Unified Metrics", "SGLang PD Disaggregated and Router Metrics"),
+        (
+            "SGLang PD Unified Metrics",
+            "SGLang PD Disaggregated and Router Metrics",
+            "SGLang Service Overview",
+            "SGLang PD Pipeline",
+            "SGLang Engine and Scheduler",
+            "SGLang Router and Worker",
+            "SGLang KV and Capacity",
+            "SGLang Optional Features",
+        ),
         list(ENGINE_GROUPS) + list(ROUTER_GROUPS),
         [item["name"] for item in flatten(ENGINE_GROUPS) + flatten(ROUTER_GROUPS)],
     )
@@ -1333,6 +1439,7 @@ def main():
         build_dashboard(
             "unified", "SGLang PD Unified Metrics", "my-prometheus-sglang-pd-unified",
             ENGINE_GROUPS, "a unified prefill/decode engine",
+            expanded_groups=("Key Engine Metrics", "Request Latency Pipeline"),
         ),
     )
     split_router_groups = OrderedDict()
@@ -1350,8 +1457,77 @@ def main():
             "my-prometheus-sglang-pd-disaggregated", split_router_groups,
             "separate prefill/decode engines, the Router, and Router Mesh; select one or more "
             "roles, or All, from the Role variable (panels without matching metrics show no data)",
+            expanded_groups=(
+                "Key Engine Metrics", "Key Router Metrics", "Request Latency Pipeline",
+            ),
+            include_derived=True,
         ),
     )
+
+    operational_dashboards = (
+        (
+            "sglang-service-overview.json", "SGLang Service Overview",
+            "my-prometheus-sglang-service-overview",
+            selected_groups("Key Engine Metrics", "Key Router Metrics"),
+            ("Key Engine Metrics", "Key Router Metrics"), "30s", True,
+        ),
+        (
+            "sglang-pd-pipeline.json", "SGLang PD Pipeline",
+            "my-prometheus-sglang-pd-pipeline",
+            selected_groups("Request Latency Pipeline", "PD Queues and KV Transfer"),
+            ("Request Latency Pipeline", "PD Queues and KV Transfer"), "30s", False,
+        ),
+        (
+            "sglang-engine-scheduler.json", "SGLang Engine and Scheduler",
+            "my-prometheus-sglang-engine-scheduler",
+            selected_groups(
+                "HTTP, Process and Functions", "Requests, Tokens and User Latency",
+                "Scheduler State", "Retraction, Queue and Stage Latency",
+            ),
+            ("Scheduler State",), "1m", False,
+        ),
+        (
+            "sglang-router-worker.json", "SGLang Router and Worker",
+            "my-prometheus-sglang-router-worker",
+            selected_groups(
+                "Key Router Metrics", "Router Request Latency Pipeline",
+                "HTTP and Router Requests", "Worker Pool and Health",
+                "Policies, Circuit Breaker and Retries",
+            ),
+            ("Key Router Metrics",), "1m", False,
+        ),
+        (
+            "sglang-kv-capacity.json", "SGLang KV and Capacity",
+            "my-prometheus-sglang-kv-capacity",
+            selected_groups(
+                "KV, SWA and Mamba Pools", "CUDA, Tokens and MFU Runtime",
+                "Engine Capacity and Startup", "PD Queues and KV Transfer",
+                "Prefix Cache and Routing Keys",
+            ),
+            ("KV, SWA and Mamba Pools",), "1m", False,
+        ),
+        (
+            "sglang-optional-features.json", "SGLang Optional Features",
+            "my-prometheus-sglang-optional-features",
+            selected_groups(
+                "Grammar", "Speculative Decoding and Prefill Delayer",
+                "Optional LoRA, HiCache, Streaming and EPLB",
+                "Discovery, MCP and Persistence", "Router Mesh",
+            ),
+            (), "1m", False,
+        ),
+    )
+    for filename, title, uid, groups, expanded, refresh, include_derived in operational_dashboards:
+        write_dashboard(
+            filename,
+            build_dashboard(
+                "split-router", title, uid, groups,
+                "the selected SGLang operational scope",
+                expanded_groups=expanded,
+                refresh=refresh,
+                include_derived=include_derived,
+            ),
+        )
 
 
 if __name__ == "__main__":
