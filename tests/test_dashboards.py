@@ -29,7 +29,7 @@ class DashboardTests(unittest.TestCase):
     def metric_panels(self, dashboard):
         return [
             panel for panel in self.data_panels(dashboard)
-            if panel.get("x-panelKind") != "scrape-health"
+            if panel.get("x-panelKind") not in ("scrape-health", "derived")
         ]
 
     def panels_for_metric(self, dashboard, metric_name):
@@ -78,7 +78,8 @@ class DashboardTests(unittest.TestCase):
             panel["title"].rsplit(" (", 1)[-1].rstrip(")")
             for dashboard in self.dashboards.values()
             for panel in dashboard["panels"]
-            if panel["type"] == "row" and panel.get("x-panelKind") != "scrape-health"
+            if panel["type"] == "row"
+            and panel.get("x-panelKind") not in ("scrape-health", "derived")
         }
         self.assertEqual(set(self.translations["metrics"]), metric_names)
         self.assertEqual(set(self.translations["categories"]), category_names)
@@ -130,7 +131,7 @@ class DashboardTests(unittest.TestCase):
         self.assertIn('role=~"$role"', split_model["definition"])
         self.assertIn('role="sglang-unified"', unified_model["definition"])
 
-        for panel in self.data_panels(self.dashboards["split"]):
+        for panel in self.metric_panels(self.dashboards["split"]):
             for target in panel["targets"]:
                 self.assertIn('role=~"$role"', target["expr"])
         for panel in self.data_panels(self.dashboards["unified"]):
@@ -207,12 +208,14 @@ class DashboardTests(unittest.TestCase):
         unified_sections = {
             panel["title"]
             for panel in self.dashboards["unified"]["panels"]
-            if panel["type"] == "row" and panel.get("x-panelKind") != "scrape-health"
+            if panel["type"] == "row"
+            and panel.get("x-panelKind") not in ("scrape-health", "derived")
         }
         split_sections = {
             panel["title"]
             for panel in self.dashboards["split"]["panels"]
-            if panel["type"] == "row" and panel.get("x-panelKind") != "scrape-health"
+            if panel["type"] == "row"
+            and panel.get("x-panelKind") not in ("scrape-health", "derived")
         }
         expected = {
             "{0} ({1})".format(self.translations["categories"][name], name)
@@ -421,6 +424,31 @@ class DashboardTests(unittest.TestCase):
         )[0]
         self.assertEqual(health_panel["type"], "stat")
         self.assertIn("sum by (role, instance)", health_panel["targets"][0]["expr"])
+
+    def test_split_dashboard_exposes_recording_rule_derived_metrics(self):
+        dashboard = self.dashboards["split"]
+        derived = [
+            panel for panel in dashboard["panels"]
+            if panel.get("x-panelKind") == "derived"
+        ]
+        rows = [panel for panel in derived if panel["type"] == "row"]
+        data = [panel for panel in derived if panel["type"] != "row"]
+        self.assertEqual(
+            [panel["title"] for panel in rows],
+            [
+                "PD 链路派生指标 (PD Pipeline Derived Metrics)",
+                "Router 可用性派生指标 (Router Availability Derived Metrics)",
+            ],
+        )
+        self.assertEqual(len(data), 12)
+        for panel in data:
+            self.assertEqual(len(panel["targets"]), 1)
+            self.assertIn("my_prometheus:", panel["targets"][0]["expr"])
+            self.assertNotIn("histogram_quantile", panel["targets"][0]["expr"])
+            if panel["type"] == "timeseries":
+                self.assertFalse(
+                    panel["fieldConfig"]["defaults"]["custom"]["spanNulls"]
+                )
 
     def test_token_histograms_use_default_sglang_bucket_ranges(self):
         expected = {

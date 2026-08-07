@@ -37,7 +37,7 @@ cd /opt/my_prometheus-installer
 | `/etc/prometheus/targets/nodes.yml` | 额外 Linux Node Exporter target |
 | `/etc/prometheus/targets/sglang-dashboards.yml` | SGLang unified、prefill、decode、router target |
 | `/etc/prometheus/targets/*.yml` | `file_sd_nodes` job 自动发现的全部 target 文件 |
-| `/etc/prometheus/rules/default.yml` | 默认告警规则 |
+| `/etc/prometheus/rules/default.yml` | 默认 recording rules 和告警规则 |
 | `/var/lib/prometheus` | Prometheus TSDB 数据 |
 | `/etc/systemd/system/prometheus.service` | Prometheus systemd unit |
 | `/etc/systemd/system/node_exporter.service` | Node Exporter systemd unit |
@@ -473,7 +473,54 @@ python3 tools/import_sglang_translation_catalog.py
 
 Grafana 运行时文件被修改后，provider 最多约 30 秒重新扫描。通过 Grafana UI 保存的修改可能在下次部署时被仓库源文件覆盖，正式修改应回到仓库并提交 Git。
 
-## 7. 配置保护和重复部署
+## 7. Recording Rules 和告警
+
+仓库模板为 `templates/rules.yml.tpl`，安装后写入 `/etc/prometheus/rules/default.yml`。Prometheus 每 15 秒计算规则，其中 SGLang recording group 显式使用 30 秒周期和 5 分钟速率窗口。
+
+主要派生指标如下：
+
+| Recording rule | 含义 |
+|---|---|
+| `my_prometheus:sglang_request_rate:5m` | 按 Role/Instance/Model 的请求完成速率 |
+| `my_prometheus:sglang_ttft_seconds_p50/p95/p99:5m` | TTFT 三个核心分位 |
+| `my_prometheus:sglang_prefill_decode_throughput_ratio:5m` | Prefill/Decode 请求吞吐比 |
+| `my_prometheus:sglang_prefill_decode_worker_capacity_ratio` | Router 注册的 Prefill/Decode Worker 容量比 |
+| `my_prometheus:sglang_kv_transfer_failure_ratio:5m` | KV 传输失败请求比例 |
+| `my_prometheus:sglang_bootstrap_failure_ratio:5m` | Bootstrap 失败请求比例 |
+| `my_prometheus:sglang_prefill_retry_ratio:5m` | Prefill 重试比例 |
+| `my_prometheus:sglang_kv_transfer_latency_ms_p99:5m` | KV 传输 P99 延迟 |
+| `my_prometheus:sglang_kv_transfer_speed_gb_s_p99:5m` | KV 传输速度 P99 |
+| `my_prometheus:sglang_router_error_ratio:5m` | Router 请求错误比例 |
+| `my_prometheus:sglang_router_retry_exhausted_ratio:5m` | Router 重试耗尽比例 |
+| `my_prometheus:sglang_router_healthy_workers` | Router 健康 Worker 总数 |
+| `my_prometheus:sglang_router_open_circuit_breakers` | Open 状态的 Worker 熔断器数 |
+| `my_prometheus:sglang_router_worker_load_skew` | Worker 活跃请求数的 Max/Avg |
+
+默认确定性告警包括：
+
+| Alert | 触发条件 |
+|---|---|
+| `InstanceDown` | 任意配置 target 连续 2 分钟抓取失败 |
+| `SGLangNoHealthyRouterWorkers` | Router 自身 UP，但健康 Worker 总数连续 2 分钟为 0 |
+| `SGLangKVTransferFailure` | 最近 5 分钟出现 KV 传输失败 |
+| `SGLangBootstrapFailure` | 最近 5 分钟出现 Bootstrap 失败 |
+| `SGLangRouterRetryExhausted` | 最近 5 分钟出现重试耗尽 |
+| `SGLangWorkerCircuitBreakerOpen` | Worker 熔断器连续 2 分钟为 Open |
+| `SGLangRouterMeshDisconnected` | Router Mesh Peer 连接数连续 5 分钟为 0 |
+
+以下告警没有默认阈值，因此不会在代码中猜测：错误率/429、TTFT/E2E P99、等待队列增长速度、KV Cache 使用率和可用槽位。启用前应根据模型、负载和容量测试确定阈值与持续时间。真实 GPU 显存/利用率告警还需要先接入 GPU exporter。
+
+检查规则与当前状态：
+
+```bash
+sudo /usr/local/bin/promtool check rules /etc/prometheus/rules/default.yml
+curl -fsS http://127.0.0.1:9090/api/v1/rules | python3 -m json.tool
+curl -fsS http://127.0.0.1:9090/api/v1/alerts | python3 -m json.tool
+```
+
+Alertmanager 默认 receiver 为空；告警状态会在 Prometheus 中计算，但不会自动外发。通知路由配置见 `/etc/alertmanager/alertmanager.yml`。
+
+## 8. 配置保护和重复部署
 
 安装器生成的文本配置带有：
 
@@ -505,7 +552,7 @@ git diff "$old_commit"..HEAD -- README.md OPERATIONS.md my_prometheus templates 
 
 根据 diff 决定后续动作：Dashboard 使用定向发布；安装器代码或系统配置需要更新时，先执行 `sudo python3 install.py --yes --dry-run`，确认不会覆盖 target 后再执行正式安装。
 
-## 8. 状态、日志和验证
+## 9. 状态、日志和验证
 
 服务状态：
 
@@ -543,7 +590,7 @@ sudo sed -n '1,200p' /etc/grafana/provisioning/datasources/prometheus.yml
 sudo sed -n '1,240p' /etc/grafana/provisioning/dashboards/dashboards.yml
 ```
 
-## 9. 常见问题定位
+## 10. 常见问题定位
 
 ### Target 为 DOWN
 

@@ -362,6 +362,17 @@ SGLang 面板标题采用 `中文名称（大致解释）`，Prometheus 原始�
 
 当前 SGLang `/metrics` 不提供真实 GPU 利用率和运行时显存占用；`sglang:utilization` 是引擎调度利用率，不能当作 GPU 利用率。需要 GPU 面板时必须另行部署 DCGM Exporter 或 NVIDIA GPU Exporter。当前 `smg_worker_health` 只有 `worker` 标签，没有 `worker_type`/模型标签，因此健康 Worker 只能展示总数，不能准确拆成健康 Prefill/Decode Worker 数。
 
+PD 分离与 Router 看板还包含两个派生指标分组。它们读取 `/etc/prometheus/rules/default.yml` 中以 `my_prometheus:` 开头的 recording rules，展示 PD 吞吐/容量比、KV 失败与重试比例、KV P99 延迟/速度，以及 Router 错误率、重试耗尽率、健康 Worker、打开的熔断器和 Worker 负载偏斜。
+
+Prometheus 默认启用无需业务阈值的确定性告警，包括 target DOWN、Router 无健康 Worker、KV/Bootstrap 失败、Router 重试耗尽、Worker 熔断器打开和 Router Mesh 断连。查看规则和当前告警：
+
+```bash
+curl -fsS http://127.0.0.1:9090/api/v1/rules | python3 -m json.tool
+curl -fsS http://127.0.0.1:9090/api/v1/alerts | python3 -m json.tool
+```
+
+默认 Alertmanager receiver 为空，不会自动发送邮件或即时通信通知。错误率、429、TTFT/E2E P99、队列增长和 KV 使用率等告警必须先确定业务 SLO/容量阈值，再添加到规则文件。
+
 输入 Token 分段为 `0-4k`、`4k-15k`、`15k-60k`、`60k-300k`、`300k-1M`、`1M+`；生成 Token 分段为 `0-500`、`500-2k`、`2k-8k`、`8k-30k`、`30k-100k`、`100k+`。这些区间使用 SGLang 默认 Histogram bucket 的实际边界；每段数值由相邻累计 bucket 相减得到，因此不需要修改 SGLang 启动参数。
 
 在 PD 分离与 Router 看板中，所有 PromQL 都直接带有 `role=~"$role"`。选择 Router 后，PD 指标面板不会查询到 PD 数据；由于 Grafana 静态 Dashboard JSON 不支持按变量动态隐藏任意面板，不适用的 PD 面板仍会保留位置并显示 `No data`。

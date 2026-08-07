@@ -2062,6 +2062,730 @@
       },
       "id": 37,
       "panels": [],
+      "title": "PD \u94fe\u8def\u6d3e\u751f\u6307\u6807 (PD Pipeline Derived Metrics)",
+      "type": "row",
+      "x-panelKind": "derived"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_prefill_decode_throughput_ratio:5m`\u3002\u6309\u6a21\u578b\u6bd4\u8f83 Prefill \u4e0e Decode \u7684 5 \u5206\u949f\u8bf7\u6c42\u541e\u5410\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 97
+      },
+      "id": 38,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_prefill_decode_throughput_ratio:5m{model_name=~\"$model\"}",
+          "legendFormat": "{{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "Prefill/Decode \u541e\u5410\u6bd4\uff08\u4e24\u9636\u6bb5\u6bcf\u79d2\u5b8c\u6210\u8bf7\u6c42\u6570\u4e4b\u6bd4\uff09",
+      "type": "timeseries",
+      "x-panelKind": "derived",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_prefill_decode_worker_capacity_ratio`\u3002\u6570\u636e\u6765\u81ea Router Worker Pool\uff0c\u5e76\u6309 Router \u5b9e\u4f8b\u548c\u6a21\u578b\u805a\u5408\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 97
+      },
+      "id": 39,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_prefill_decode_worker_capacity_ratio{model=~\"$model\"}",
+          "legendFormat": "{{instance}} / {{model}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "Prefill/Decode Worker \u5bb9\u91cf\u6bd4\uff08Router \u6ce8\u518c\u7684\u4e24\u7c7b Worker \u6570\u91cf\u6bd4\uff09",
+      "type": "timeseries",
+      "x-panelKind": "derived",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_kv_transfer_failure_ratio:5m`\u3002\u5206\u6bcd\u4e3a\u76f8\u540c Role/Instance/Model \u7684\u9636\u6bb5\u5b8c\u6210\u8bf7\u6c42\u901f\u7387\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "percentunit",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 105
+      },
+      "id": 40,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_kv_transfer_failure_ratio:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "KV \u4f20\u8f93\u5931\u8d25\u7387\uff08\u5931\u8d25\u8bf7\u6c42\u5360\u9636\u6bb5\u5b8c\u6210\u8bf7\u6c42\u7684\u6bd4\u4f8b\uff09",
+      "type": "timeseries",
+      "x-panelKind": "derived",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_bootstrap_failure_ratio:5m`\u3002\u7528\u4e8e\u8bc6\u522b PD Bootstrap \u5efa\u94fe\u5931\u8d25\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "percentunit",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 105
+      },
+      "id": 41,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_bootstrap_failure_ratio:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "Bootstrap \u5931\u8d25\u7387\uff08\u5931\u8d25\u8bf7\u6c42\u5360\u9636\u6bb5\u5b8c\u6210\u8bf7\u6c42\u7684\u6bd4\u4f8b\uff09",
+      "type": "timeseries",
+      "x-panelKind": "derived",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_prefill_retry_ratio:5m`\u3002\u4ec5 Prefill Role \u6709\u6570\u636e\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "percentunit",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 113
+      },
+      "id": 42,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_prefill_retry_ratio:5m{instance=~\"$instance\",model_name=~\"$model\"}",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "Prefill \u91cd\u8bd5\u7387\uff08\u91cd\u8bd5\u6b21\u6570\u5360 Prefill \u5b8c\u6210\u8bf7\u6c42\u7684\u6bd4\u4f8b\uff09",
+      "type": "timeseries",
+      "x-panelKind": "derived",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_kv_transfer_latency_ms_p99:5m`\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "ms",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 113
+      },
+      "id": 43,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_kv_transfer_latency_ms_p99:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "KV \u4f20\u8f93 P99 \u5ef6\u8fdf\uff08\u6700\u8fd1 5 \u5206\u949f\u7684\u957f\u5c3e\u4f20\u8f93\u8017\u65f6\uff09",
+      "type": "timeseries",
+      "x-panelKind": "derived",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_kv_transfer_speed_gb_s_p99:5m`\uff0c\u5355\u4f4d\u4e3a GB/s\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "suffix: GB/s",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 121
+      },
+      "id": 44,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_kv_transfer_speed_gb_s_p99:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "KV \u4f20\u8f93 P99 \u901f\u5ea6\uff08\u6700\u8fd1 5 \u5206\u949f\u7684\u4f20\u8f93\u901f\u5ea6\u5206\u4f4d\uff09",
+      "type": "timeseries",
+      "x-panelKind": "derived",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 129
+      },
+      "id": 45,
+      "panels": [],
+      "title": "Router \u53ef\u7528\u6027\u6d3e\u751f\u6307\u6807 (Router Availability Derived Metrics)",
+      "type": "row",
+      "x-panelKind": "derived"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_router_error_ratio:5m`\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "percentunit",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 130
+      },
+      "id": 46,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_router_error_ratio:5m{instance=~\"$instance\"}",
+          "legendFormat": "{{role}} / {{instance}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "Router \u9519\u8bef\u7387\uff08\u8def\u7531\u9519\u8bef\u5360 Router \u8bf7\u6c42\u7684\u6bd4\u4f8b\uff09",
+      "type": "timeseries",
+      "x-panelKind": "derived",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_router_retry_exhausted_ratio:5m`\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "percentunit",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 130
+      },
+      "id": 47,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_router_retry_exhausted_ratio:5m{instance=~\"$instance\"}",
+          "legendFormat": "{{role}} / {{instance}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "\u91cd\u8bd5\u8017\u5c3d\u7387\uff08\u8017\u5c3d\u5168\u90e8\u91cd\u8bd5\u7684\u8bf7\u6c42\u6bd4\u4f8b\uff09",
+      "type": "timeseries",
+      "x-panelKind": "derived",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_router_healthy_workers`\u3002\u5f53\u524d\u539f\u6307\u6807\u65e0 Worker \u7c7b\u578b\u548c\u6a21\u578b\u6807\u7b7e\uff0c\u53ea\u80fd\u51c6\u786e\u5c55\u793a\u603b\u6570\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 138
+      },
+      "id": 48,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_router_healthy_workers{instance=~\"$instance\"}",
+          "legendFormat": "{{role}} / {{instance}}",
+          "refId": "Q01",
+          "instant": true
+        }
+      ],
+      "title": "\u5065\u5eb7 Worker \u603b\u6570\uff08Router \u5f53\u524d\u53ef\u7528\u540e\u7aef\u6570\u91cf\uff09",
+      "type": "stat",
+      "x-panelKind": "derived",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_router_open_circuit_breakers`\u3002\u539f\u6307\u6807\u72b6\u6001 0/1/2 \u5206\u522b\u8868\u793a Closed/Open/Half-open\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 138
+      },
+      "id": 49,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_router_open_circuit_breakers{instance=~\"$instance\"}",
+          "legendFormat": "{{role}} / {{instance}}",
+          "refId": "Q01",
+          "instant": true
+        }
+      ],
+      "title": "\u6253\u5f00\u7684\u7194\u65ad\u5668\u6570\u91cf\uff08\u72b6\u6001\u4e3a Open \u7684 Worker \u6570\uff09",
+      "type": "stat",
+      "x-panelKind": "derived",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Recording rule\uff1a`my_prometheus:sglang_router_worker_load_skew`\u3002\u63a5\u8fd1 1 \u8868\u793a\u8f83\u5747\u8861\uff0c\u5347\u9ad8\u8868\u793a\u6700\u5fd9 Worker \u660e\u663e\u9ad8\u4e8e\u5e73\u5747\u503c\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 146
+      },
+      "id": 50,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "my_prometheus:sglang_router_worker_load_skew{instance=~\"$instance\"}",
+          "legendFormat": "{{role}} / {{instance}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "Worker \u8d1f\u8f7d\u504f\u659c\uff08\u6d3b\u8dc3\u8bf7\u6c42\u6570 Max/Avg\uff09",
+      "type": "timeseries",
+      "x-panelKind": "derived",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 154
+      },
+      "id": 51,
+      "panels": [],
       "title": "\u8bf7\u6c42\u5168\u94fe\u8def\u65f6\u5ef6 (Request Latency Pipeline)",
       "type": "row"
     },
@@ -2091,9 +2815,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 97
+        "y": 155
       },
-      "id": 38,
+      "id": 52,
       "targets": [
         {
           "datasource": {
@@ -2158,9 +2882,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 97
+        "y": 155
       },
-      "id": 39,
+      "id": 53,
       "targets": [
         {
           "datasource": {
@@ -2225,9 +2949,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 105
+        "y": 163
       },
-      "id": 40,
+      "id": 54,
       "targets": [
         {
           "datasource": {
@@ -2292,9 +3016,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 105
+        "y": 163
       },
-      "id": 41,
+      "id": 55,
       "targets": [
         {
           "datasource": {
@@ -2359,9 +3083,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 113
+        "y": 171
       },
-      "id": 42,
+      "id": 56,
       "targets": [
         {
           "datasource": {
@@ -2406,9 +3130,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 121
+        "y": 179
       },
-      "id": 43,
+      "id": 57,
       "panels": [],
       "title": "HTTP\u3001\u8fdb\u7a0b\u4e0e\u51fd\u6570 (HTTP, Process and Functions)",
       "type": "row"
@@ -2439,9 +3163,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 122
+        "y": 180
       },
-      "id": 44,
+      "id": 58,
       "targets": [
         {
           "datasource": {
@@ -2497,9 +3221,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 122
+        "y": 180
       },
-      "id": 45,
+      "id": 59,
       "targets": [
         {
           "datasource": {
@@ -2555,9 +3279,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 130
+        "y": 188
       },
-      "id": 46,
+      "id": 60,
       "targets": [
         {
           "datasource": {
@@ -2613,9 +3337,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 130
+        "y": 188
       },
-      "id": 47,
+      "id": 61,
       "targets": [
         {
           "datasource": {
@@ -2671,9 +3395,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 138
+        "y": 196
       },
-      "id": 48,
+      "id": 62,
       "targets": [
         {
           "datasource": {
@@ -2729,9 +3453,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 138
+        "y": 196
       },
-      "id": 49,
+      "id": 63,
       "targets": [
         {
           "datasource": {
@@ -2776,9 +3500,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 146
+        "y": 204
       },
-      "id": 50,
+      "id": 64,
       "panels": [],
       "title": "\u8bf7\u6c42\u3001Token \u4e0e\u7528\u6237\u5ef6\u8fdf (Requests, Tokens and User Latency)",
       "type": "row"
@@ -2809,9 +3533,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 147
+        "y": 205
       },
-      "id": 51,
+      "id": 65,
       "targets": [
         {
           "datasource": {
@@ -2860,9 +3584,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 147
+        "y": 205
       },
-      "id": 52,
+      "id": 66,
       "targets": [
         {
           "datasource": {
@@ -2968,9 +3692,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 155
+        "y": 213
       },
-      "id": 53,
+      "id": 67,
       "targets": [
         {
           "datasource": {
@@ -3019,9 +3743,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 155
+        "y": 213
       },
-      "id": 54,
+      "id": 68,
       "targets": [
         {
           "datasource": {
@@ -3127,9 +3851,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 163
+        "y": 221
       },
-      "id": 55,
+      "id": 69,
       "targets": [
         {
           "datasource": {
@@ -3185,9 +3909,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 163
+        "y": 221
       },
-      "id": 56,
+      "id": 70,
       "targets": [
         {
           "datasource": {
@@ -3252,9 +3976,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 171
+        "y": 229
       },
-      "id": 57,
+      "id": 71,
       "targets": [
         {
           "datasource": {
@@ -3290,9 +4014,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 179
+        "y": 237
       },
-      "id": 58,
+      "id": 72,
       "panels": [],
       "title": "\u8c03\u5ea6\u5668\u72b6\u6001 (Scheduler State)",
       "type": "row"
@@ -3323,9 +4047,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 180
+        "y": 238
       },
-      "id": 59,
+      "id": 73,
       "targets": [
         {
           "datasource": {
@@ -3381,9 +4105,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 180
+        "y": 238
       },
-      "id": 60,
+      "id": 74,
       "targets": [
         {
           "datasource": {
@@ -3439,9 +4163,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 188
+        "y": 246
       },
-      "id": 61,
+      "id": 75,
       "targets": [
         {
           "datasource": {
@@ -3497,9 +4221,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 188
+        "y": 246
       },
-      "id": 62,
+      "id": 76,
       "targets": [
         {
           "datasource": {
@@ -3555,9 +4279,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 196
+        "y": 254
       },
-      "id": 63,
+      "id": 77,
       "targets": [
         {
           "datasource": {
@@ -3613,9 +4337,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 196
+        "y": 254
       },
-      "id": 64,
+      "id": 78,
       "targets": [
         {
           "datasource": {
@@ -3671,9 +4395,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 204
+        "y": 262
       },
-      "id": 65,
+      "id": 79,
       "targets": [
         {
           "datasource": {
@@ -3709,9 +4433,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 212
+        "y": 270
       },
-      "id": 66,
+      "id": 80,
       "panels": [],
       "title": "KV\u3001SWA \u4e0e Mamba \u8d44\u6e90\u6c60 (KV, SWA and Mamba Pools)",
       "type": "row"
@@ -3742,9 +4466,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 213
+        "y": 271
       },
-      "id": 67,
+      "id": 81,
       "targets": [
         {
           "datasource": {
@@ -3800,9 +4524,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 213
+        "y": 271
       },
-      "id": 68,
+      "id": 82,
       "targets": [
         {
           "datasource": {
@@ -3858,9 +4582,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 221
+        "y": 279
       },
-      "id": 69,
+      "id": 83,
       "targets": [
         {
           "datasource": {
@@ -3916,9 +4640,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 221
+        "y": 279
       },
-      "id": 70,
+      "id": 84,
       "targets": [
         {
           "datasource": {
@@ -3974,9 +4698,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 229
+        "y": 287
       },
-      "id": 71,
+      "id": 85,
       "targets": [
         {
           "datasource": {
@@ -4032,9 +4756,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 229
+        "y": 287
       },
-      "id": 72,
+      "id": 86,
       "targets": [
         {
           "datasource": {
@@ -4090,9 +4814,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 237
+        "y": 295
       },
-      "id": 73,
+      "id": 87,
       "targets": [
         {
           "datasource": {
@@ -4148,9 +4872,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 237
+        "y": 295
       },
-      "id": 74,
+      "id": 88,
       "targets": [
         {
           "datasource": {
@@ -4206,9 +4930,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 245
+        "y": 303
       },
-      "id": 75,
+      "id": 89,
       "targets": [
         {
           "datasource": {
@@ -4264,9 +4988,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 245
+        "y": 303
       },
-      "id": 76,
+      "id": 90,
       "targets": [
         {
           "datasource": {
@@ -4322,9 +5046,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 253
+        "y": 311
       },
-      "id": 77,
+      "id": 91,
       "targets": [
         {
           "datasource": {
@@ -4380,9 +5104,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 253
+        "y": 311
       },
-      "id": 78,
+      "id": 92,
       "targets": [
         {
           "datasource": {
@@ -4438,9 +5162,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 261
+        "y": 319
       },
-      "id": 79,
+      "id": 93,
       "targets": [
         {
           "datasource": {
@@ -4476,9 +5200,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 269
+        "y": 327
       },
-      "id": 80,
+      "id": 94,
       "panels": [],
       "title": "CUDA\u3001Token \u4e0e MFU \u8fd0\u884c\u65f6 (CUDA, Tokens and MFU Runtime)",
       "type": "row"
@@ -4509,9 +5233,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 270
+        "y": 328
       },
-      "id": 81,
+      "id": 95,
       "targets": [
         {
           "datasource": {
@@ -4567,9 +5291,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 270
+        "y": 328
       },
-      "id": 82,
+      "id": 96,
       "targets": [
         {
           "datasource": {
@@ -4625,9 +5349,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 278
+        "y": 336
       },
-      "id": 83,
+      "id": 97,
       "targets": [
         {
           "datasource": {
@@ -4683,9 +5407,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 278
+        "y": 336
       },
-      "id": 84,
+      "id": 98,
       "targets": [
         {
           "datasource": {
@@ -4741,9 +5465,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 286
+        "y": 344
       },
-      "id": 85,
+      "id": 99,
       "targets": [
         {
           "datasource": {
@@ -4799,9 +5523,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 286
+        "y": 344
       },
-      "id": 86,
+      "id": 100,
       "targets": [
         {
           "datasource": {
@@ -4857,9 +5581,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 294
+        "y": 352
       },
-      "id": 87,
+      "id": 101,
       "targets": [
         {
           "datasource": {
@@ -4915,9 +5639,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 294
+        "y": 352
       },
-      "id": 88,
+      "id": 102,
       "targets": [
         {
           "datasource": {
@@ -4953,9 +5677,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 302
+        "y": 360
       },
-      "id": 89,
+      "id": 103,
       "panels": [],
       "title": "\u5f15\u64ce\u5bb9\u91cf\u4e0e\u542f\u52a8 (Engine Capacity and Startup)",
       "type": "row"
@@ -4979,9 +5703,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 303
+        "y": 361
       },
-      "id": 90,
+      "id": 104,
       "targets": [
         {
           "datasource": {
@@ -5031,9 +5755,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 303
+        "y": 361
       },
-      "id": 91,
+      "id": 105,
       "targets": [
         {
           "datasource": {
@@ -5083,9 +5807,9 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 303
+        "y": 361
       },
-      "id": 92,
+      "id": 106,
       "targets": [
         {
           "datasource": {
@@ -5135,9 +5859,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 303
+        "y": 361
       },
-      "id": 93,
+      "id": 107,
       "targets": [
         {
           "datasource": {
@@ -5187,9 +5911,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 311
+        "y": 369
       },
-      "id": 94,
+      "id": 108,
       "targets": [
         {
           "datasource": {
@@ -5239,9 +5963,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 311
+        "y": 369
       },
-      "id": 95,
+      "id": 109,
       "targets": [
         {
           "datasource": {
@@ -5291,9 +6015,9 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 311
+        "y": 369
       },
-      "id": 96,
+      "id": 110,
       "targets": [
         {
           "datasource": {
@@ -5343,9 +6067,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 311
+        "y": 369
       },
-      "id": 97,
+      "id": 111,
       "targets": [
         {
           "datasource": {
@@ -5402,9 +6126,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 319
+        "y": 377
       },
-      "id": 98,
+      "id": 112,
       "targets": [
         {
           "datasource": {
@@ -5440,9 +6164,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 327
+        "y": 385
       },
-      "id": 99,
+      "id": 113,
       "panels": [],
       "title": "\u56de\u9000\u3001\u961f\u5217\u4e0e\u9636\u6bb5\u5ef6\u8fdf (Retraction, Queue and Stage Latency)",
       "type": "row"
@@ -5473,9 +6197,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 328
+        "y": 386
       },
-      "id": 100,
+      "id": 114,
       "targets": [
         {
           "datasource": {
@@ -5531,9 +6255,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 328
+        "y": 386
       },
-      "id": 101,
+      "id": 115,
       "targets": [
         {
           "datasource": {
@@ -5589,9 +6313,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 336
+        "y": 394
       },
-      "id": 102,
+      "id": 116,
       "targets": [
         {
           "datasource": {
@@ -5647,9 +6371,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 336
+        "y": 394
       },
-      "id": 103,
+      "id": 117,
       "targets": [
         {
           "datasource": {
@@ -5705,9 +6429,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 344
+        "y": 402
       },
-      "id": 104,
+      "id": 118,
       "targets": [
         {
           "datasource": {
@@ -5743,9 +6467,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 352
+        "y": 410
       },
-      "id": 105,
+      "id": 119,
       "panels": [],
       "title": "Grammar \u7ed3\u6784\u5316\u8f93\u51fa (Grammar)",
       "type": "row"
@@ -5776,9 +6500,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 353
+        "y": 411
       },
-      "id": 106,
+      "id": 120,
       "targets": [
         {
           "datasource": {
@@ -5843,9 +6567,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 353
+        "y": 411
       },
-      "id": 107,
+      "id": 121,
       "targets": [
         {
           "datasource": {
@@ -5901,9 +6625,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 361
+        "y": 419
       },
-      "id": 108,
+      "id": 122,
       "targets": [
         {
           "datasource": {
@@ -5959,9 +6683,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 361
+        "y": 419
       },
-      "id": 109,
+      "id": 123,
       "targets": [
         {
           "datasource": {
@@ -6017,9 +6741,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 369
+        "y": 427
       },
-      "id": 110,
+      "id": 124,
       "targets": [
         {
           "datasource": {
@@ -6075,9 +6799,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 369
+        "y": 427
       },
-      "id": 111,
+      "id": 125,
       "targets": [
         {
           "datasource": {
@@ -6142,9 +6866,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 377
+        "y": 435
       },
-      "id": 112,
+      "id": 126,
       "targets": [
         {
           "datasource": {
@@ -6209,9 +6933,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 377
+        "y": 435
       },
-      "id": 113,
+      "id": 127,
       "targets": [
         {
           "datasource": {
@@ -6276,9 +7000,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 385
+        "y": 443
       },
-      "id": 114,
+      "id": 128,
       "targets": [
         {
           "datasource": {
@@ -6323,9 +7047,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 393
+        "y": 451
       },
-      "id": 115,
+      "id": 129,
       "panels": [],
       "title": "\u6295\u673a\u89e3\u7801\u4e0e Prefill \u5ef6\u8fdf\u5668 (Speculative Decoding and Prefill Delayer)",
       "type": "row"
@@ -6356,9 +7080,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 394
+        "y": 452
       },
-      "id": 116,
+      "id": 130,
       "targets": [
         {
           "datasource": {
@@ -6414,9 +7138,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 394
+        "y": 452
       },
-      "id": 117,
+      "id": 131,
       "targets": [
         {
           "datasource": {
@@ -6472,9 +7196,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 402
+        "y": 460
       },
-      "id": 118,
+      "id": 132,
       "targets": [
         {
           "datasource": {
@@ -6530,9 +7254,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 402
+        "y": 460
       },
-      "id": 119,
+      "id": 133,
       "targets": [
         {
           "datasource": {
@@ -6581,9 +7305,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 410
+        "y": 468
       },
-      "id": 120,
+      "id": 134,
       "targets": [
         {
           "datasource": {
@@ -6633,9 +7357,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 410
+        "y": 468
       },
-      "id": 121,
+      "id": 135,
       "targets": [
         {
           "datasource": {
@@ -6692,9 +7416,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 410
+        "y": 468
       },
-      "id": 122,
+      "id": 136,
       "targets": [
         {
           "datasource": {
@@ -6759,9 +7483,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 418
+        "y": 476
       },
-      "id": 123,
+      "id": 137,
       "targets": [
         {
           "datasource": {
@@ -6797,9 +7521,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 426
+        "y": 484
       },
-      "id": 124,
+      "id": 138,
       "panels": [],
       "title": "PD \u961f\u5217\u4e0e KV \u4f20\u8f93 (PD Queues and KV Transfer)",
       "type": "row"
@@ -6830,9 +7554,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 427
+        "y": 485
       },
-      "id": 125,
+      "id": 139,
       "targets": [
         {
           "datasource": {
@@ -6888,9 +7612,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 427
+        "y": 485
       },
-      "id": 126,
+      "id": 140,
       "targets": [
         {
           "datasource": {
@@ -6946,9 +7670,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 435
+        "y": 493
       },
-      "id": 127,
+      "id": 141,
       "targets": [
         {
           "datasource": {
@@ -7004,9 +7728,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 435
+        "y": 493
       },
-      "id": 128,
+      "id": 142,
       "targets": [
         {
           "datasource": {
@@ -7062,9 +7786,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 443
+        "y": 501
       },
-      "id": 129,
+      "id": 143,
       "targets": [
         {
           "datasource": {
@@ -7120,9 +7844,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 443
+        "y": 501
       },
-      "id": 130,
+      "id": 144,
       "targets": [
         {
           "datasource": {
@@ -7187,9 +7911,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 451
+        "y": 509
       },
-      "id": 131,
+      "id": 145,
       "targets": [
         {
           "datasource": {
@@ -7234,9 +7958,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 459
+        "y": 517
       },
-      "id": 132,
+      "id": 146,
       "panels": [],
       "title": "Prefix Cache \u4e0e\u8def\u7531\u952e (Prefix Cache and Routing Keys)",
       "type": "row"
@@ -7267,9 +7991,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 460
+        "y": 518
       },
-      "id": 133,
+      "id": 147,
       "targets": [
         {
           "datasource": {
@@ -7334,9 +8058,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 460
+        "y": 518
       },
-      "id": 134,
+      "id": 148,
       "targets": [
         {
           "datasource": {
@@ -7392,9 +8116,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 468
+        "y": 526
       },
-      "id": 135,
+      "id": 149,
       "targets": [
         {
           "datasource": {
@@ -7459,9 +8183,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 468
+        "y": 526
       },
-      "id": 136,
+      "id": 150,
       "targets": [
         {
           "datasource": {
@@ -7517,9 +8241,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 476
+        "y": 534
       },
-      "id": 137,
+      "id": 151,
       "targets": [
         {
           "datasource": {
@@ -7575,9 +8299,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 476
+        "y": 534
       },
-      "id": 138,
+      "id": 152,
       "targets": [
         {
           "datasource": {
@@ -7633,9 +8357,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 484
+        "y": 542
       },
-      "id": 139,
+      "id": 153,
       "targets": [
         {
           "datasource": {
@@ -7671,9 +8395,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 492
+        "y": 550
       },
-      "id": 140,
+      "id": 154,
       "panels": [],
       "title": "\u53ef\u9009 LoRA\u3001HiCache\u3001\u6d41\u5f0f\u4f1a\u8bdd\u4e0e EPLB (Optional LoRA, HiCache, Streaming and EPLB)",
       "type": "row"
@@ -7704,9 +8428,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 493
+        "y": 551
       },
-      "id": 141,
+      "id": 155,
       "targets": [
         {
           "datasource": {
@@ -7755,9 +8479,9 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 493
+        "y": 551
       },
-      "id": 142,
+      "id": 156,
       "targets": [
         {
           "datasource": {
@@ -7814,9 +8538,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 501
+        "y": 559
       },
-      "id": 143,
+      "id": 157,
       "targets": [
         {
           "datasource": {
@@ -7872,9 +8596,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 501
+        "y": 559
       },
-      "id": 144,
+      "id": 158,
       "targets": [
         {
           "datasource": {
@@ -7923,9 +8647,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 509
+        "y": 567
       },
-      "id": 145,
+      "id": 159,
       "targets": [
         {
           "datasource": {
@@ -7982,9 +8706,9 @@
         "h": 8,
         "w": 12,
         "x": 6,
-        "y": 509
+        "y": 567
       },
-      "id": 146,
+      "id": 160,
       "targets": [
         {
           "datasource": {
@@ -8040,9 +8764,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 517
+        "y": 575
       },
-      "id": 147,
+      "id": 161,
       "targets": [
         {
           "datasource": {
@@ -8098,9 +8822,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 517
+        "y": 575
       },
-      "id": 148,
+      "id": 162,
       "targets": [
         {
           "datasource": {
@@ -8156,9 +8880,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 525
+        "y": 583
       },
-      "id": 149,
+      "id": 163,
       "targets": [
         {
           "datasource": {
@@ -8214,9 +8938,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 525
+        "y": 583
       },
-      "id": 150,
+      "id": 164,
       "targets": [
         {
           "datasource": {
@@ -8281,9 +9005,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 533
+        "y": 591
       },
-      "id": 151,
+      "id": 165,
       "targets": [
         {
           "datasource": {
@@ -8348,9 +9072,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 533
+        "y": 591
       },
-      "id": 152,
+      "id": 166,
       "targets": [
         {
           "datasource": {
@@ -8415,9 +9139,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 541
+        "y": 599
       },
-      "id": 153,
+      "id": 167,
       "targets": [
         {
           "datasource": {
@@ -8482,9 +9206,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 541
+        "y": 599
       },
-      "id": 154,
+      "id": 168,
       "targets": [
         {
           "datasource": {
@@ -8549,9 +9273,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 549
+        "y": 607
       },
-      "id": 155,
+      "id": 169,
       "targets": [
         {
           "datasource": {
@@ -8607,9 +9331,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 549
+        "y": 607
       },
-      "id": 156,
+      "id": 170,
       "targets": [
         {
           "datasource": {
@@ -8645,9 +9369,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 557
+        "y": 615
       },
-      "id": 157,
+      "id": 171,
       "panels": [],
       "title": "Router \u8bf7\u6c42\u5168\u94fe\u8def\u65f6\u5ef6 (Router Request Latency Pipeline)",
       "type": "row"
@@ -8678,9 +9402,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 558
+        "y": 616
       },
-      "id": 158,
+      "id": 172,
       "targets": [
         {
           "datasource": {
@@ -8754,9 +9478,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 558
+        "y": 616
       },
-      "id": 159,
+      "id": 173,
       "targets": [
         {
           "datasource": {
@@ -8830,9 +9554,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 566
+        "y": 624
       },
-      "id": 160,
+      "id": 174,
       "targets": [
         {
           "datasource": {
@@ -8897,9 +9621,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 566
+        "y": 624
       },
-      "id": 161,
+      "id": 175,
       "targets": [
         {
           "datasource": {
@@ -8973,9 +9697,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 574
+        "y": 632
       },
-      "id": 162,
+      "id": 176,
       "targets": [
         {
           "datasource": {
@@ -9049,9 +9773,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 574
+        "y": 632
       },
-      "id": 163,
+      "id": 177,
       "targets": [
         {
           "datasource": {
@@ -9105,9 +9829,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 582
+        "y": 640
       },
-      "id": 164,
+      "id": 178,
       "panels": [],
       "title": "HTTP \u4e0e Router \u8bf7\u6c42 (HTTP and Router Requests)",
       "type": "row"
@@ -9138,9 +9862,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 583
+        "y": 641
       },
-      "id": 165,
+      "id": 179,
       "targets": [
         {
           "datasource": {
@@ -9196,9 +9920,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 583
+        "y": 641
       },
-      "id": 166,
+      "id": 180,
       "targets": [
         {
           "datasource": {
@@ -9254,9 +9978,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 591
+        "y": 649
       },
-      "id": 167,
+      "id": 181,
       "targets": [
         {
           "datasource": {
@@ -9292,9 +10016,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 599
+        "y": 657
       },
-      "id": 168,
+      "id": 182,
       "panels": [],
       "title": "Worker \u6c60\u4e0e\u5065\u5eb7\u72b6\u6001 (Worker Pool and Health)",
       "type": "row"
@@ -9325,9 +10049,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 600
+        "y": 658
       },
-      "id": 169,
+      "id": 183,
       "targets": [
         {
           "datasource": {
@@ -9383,9 +10107,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 600
+        "y": 658
       },
-      "id": 170,
+      "id": 184,
       "targets": [
         {
           "datasource": {
@@ -9441,9 +10165,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 608
+        "y": 666
       },
-      "id": 171,
+      "id": 185,
       "targets": [
         {
           "datasource": {
@@ -9499,9 +10223,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 608
+        "y": 666
       },
-      "id": 172,
+      "id": 186,
       "targets": [
         {
           "datasource": {
@@ -9557,9 +10281,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 616
+        "y": 674
       },
-      "id": 173,
+      "id": 187,
       "targets": [
         {
           "datasource": {
@@ -9595,9 +10319,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 624
+        "y": 682
       },
-      "id": 174,
+      "id": 188,
       "panels": [],
       "title": "\u8def\u7531\u7b56\u7565\u3001\u7194\u65ad\u4e0e\u91cd\u8bd5 (Policies, Circuit Breaker and Retries)",
       "type": "row"
@@ -9628,9 +10352,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 625
+        "y": 683
       },
-      "id": 175,
+      "id": 189,
       "targets": [
         {
           "datasource": {
@@ -9686,9 +10410,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 625
+        "y": 683
       },
-      "id": 176,
+      "id": 190,
       "targets": [
         {
           "datasource": {
@@ -9744,9 +10468,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 633
+        "y": 691
       },
-      "id": 177,
+      "id": 191,
       "targets": [
         {
           "datasource": {
@@ -9802,9 +10526,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 633
+        "y": 691
       },
-      "id": 178,
+      "id": 192,
       "targets": [
         {
           "datasource": {
@@ -9860,9 +10584,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 641
+        "y": 699
       },
-      "id": 179,
+      "id": 193,
       "targets": [
         {
           "datasource": {
@@ -9918,9 +10642,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 641
+        "y": 699
       },
-      "id": 180,
+      "id": 194,
       "targets": [
         {
           "datasource": {
@@ -9976,9 +10700,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 649
+        "y": 707
       },
-      "id": 181,
+      "id": 195,
       "targets": [
         {
           "datasource": {
@@ -10034,9 +10758,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 649
+        "y": 707
       },
-      "id": 182,
+      "id": 196,
       "targets": [
         {
           "datasource": {
@@ -10092,9 +10816,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 657
+        "y": 715
       },
-      "id": 183,
+      "id": 197,
       "targets": [
         {
           "datasource": {
@@ -10139,9 +10863,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 665
+        "y": 723
       },
-      "id": 184,
+      "id": 198,
       "panels": [],
       "title": "\u670d\u52a1\u53d1\u73b0\u3001MCP \u4e0e\u6301\u4e45\u5316 (Discovery, MCP and Persistence)",
       "type": "row"
@@ -10172,9 +10896,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 666
+        "y": 724
       },
-      "id": 185,
+      "id": 199,
       "targets": [
         {
           "datasource": {
@@ -10230,9 +10954,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 666
+        "y": 724
       },
-      "id": 186,
+      "id": 200,
       "targets": [
         {
           "datasource": {
@@ -10288,9 +11012,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 674
+        "y": 732
       },
-      "id": 187,
+      "id": 201,
       "targets": [
         {
           "datasource": {
@@ -10355,9 +11079,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 674
+        "y": 732
       },
-      "id": 188,
+      "id": 202,
       "targets": [
         {
           "datasource": {
@@ -10413,9 +11137,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 682
+        "y": 740
       },
-      "id": 189,
+      "id": 203,
       "targets": [
         {
           "datasource": {
@@ -10471,9 +11195,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 682
+        "y": 740
       },
-      "id": 190,
+      "id": 204,
       "targets": [
         {
           "datasource": {
@@ -10538,9 +11262,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 690
+        "y": 748
       },
-      "id": 191,
+      "id": 205,
       "targets": [
         {
           "datasource": {
@@ -10596,9 +11320,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 690
+        "y": 748
       },
-      "id": 192,
+      "id": 206,
       "targets": [
         {
           "datasource": {
@@ -10654,9 +11378,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 698
+        "y": 756
       },
-      "id": 193,
+      "id": 207,
       "targets": [
         {
           "datasource": {
@@ -10712,9 +11436,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 698
+        "y": 756
       },
-      "id": 194,
+      "id": 208,
       "targets": [
         {
           "datasource": {
@@ -10779,9 +11503,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 706
+        "y": 764
       },
-      "id": 195,
+      "id": 209,
       "targets": [
         {
           "datasource": {
@@ -10837,9 +11561,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 706
+        "y": 764
       },
-      "id": 196,
+      "id": 210,
       "targets": [
         {
           "datasource": {
@@ -10875,9 +11599,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 714
+        "y": 772
       },
-      "id": 197,
+      "id": 211,
       "panels": [],
       "title": "Router Mesh \u96c6\u7fa4 (Router Mesh)",
       "type": "row"
@@ -10908,9 +11632,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 715
+        "y": 773
       },
-      "id": 198,
+      "id": 212,
       "targets": [
         {
           "datasource": {
@@ -10975,9 +11699,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 715
+        "y": 773
       },
-      "id": 199,
+      "id": 213,
       "targets": [
         {
           "datasource": {
@@ -11033,9 +11757,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 723
+        "y": 781
       },
-      "id": 200,
+      "id": 214,
       "targets": [
         {
           "datasource": {
@@ -11091,9 +11815,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 723
+        "y": 781
       },
-      "id": 201,
+      "id": 215,
       "targets": [
         {
           "datasource": {
@@ -11149,9 +11873,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 731
+        "y": 789
       },
-      "id": 202,
+      "id": 216,
       "targets": [
         {
           "datasource": {
@@ -11216,9 +11940,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 731
+        "y": 789
       },
-      "id": 203,
+      "id": 217,
       "targets": [
         {
           "datasource": {
@@ -11274,9 +11998,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 739
+        "y": 797
       },
-      "id": 204,
+      "id": 218,
       "targets": [
         {
           "datasource": {
@@ -11332,9 +12056,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 739
+        "y": 797
       },
-      "id": 205,
+      "id": 219,
       "targets": [
         {
           "datasource": {
@@ -11390,9 +12114,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 747
+        "y": 805
       },
-      "id": 206,
+      "id": 220,
       "targets": [
         {
           "datasource": {
@@ -11448,9 +12172,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 747
+        "y": 805
       },
-      "id": 207,
+      "id": 221,
       "targets": [
         {
           "datasource": {
@@ -11506,9 +12230,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 755
+        "y": 813
       },
-      "id": 208,
+      "id": 222,
       "targets": [
         {
           "datasource": {
@@ -11564,9 +12288,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 755
+        "y": 813
       },
-      "id": 209,
+      "id": 223,
       "targets": [
         {
           "datasource": {
@@ -11622,9 +12346,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 763
+        "y": 821
       },
-      "id": 210,
+      "id": 224,
       "targets": [
         {
           "datasource": {
@@ -11680,9 +12404,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 763
+        "y": 821
       },
-      "id": 211,
+      "id": 225,
       "targets": [
         {
           "datasource": {
