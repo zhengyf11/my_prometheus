@@ -351,12 +351,16 @@ SGLang 面板标题采用 `中文名称（大致解释）`，Prometheus 原始�
 - Engine 模型级指标严格匹配模型 (Model) 变量，并按 Role、Instance、Model 分组；HTTP、进程等实例级指标不带 `model_name`，不受 Model 变量影响。
 - 图例至少显示 Role 和 Instance，模型级 Engine 指标同时显示 Model，选择 All 时可以区分 Prefill、Decode 和不同模型。
 - 启动后通常不变化的容量、页大小、上下文长度等配置类指标使用 Stat 数字面板。
-- 普通 Histogram 只展示 P95 和平均值，不展示 P80。
+- 普通 Histogram 展示 P95 和平均值；TTFT、ITL、端到端、KV 传输及 Router 核心时延展示 P50/P95/P99；所有面板都不展示 P80。
 - 输入和生成 Token 长度使用分段数量展示；统计窗口是当前选择的 Dashboard 时间范围。
 - 未缓存输入 Token 长度不单独展示，页面使用总输入与未缓存输入 Token 计算缓存命中率。
 - 每个普通指标单独成图；关键指标和请求全链路时延放在靠前的独立分组中。
 - 看板顶部的“采集健康”分组独立展示目标状态、目标缺失状态、最近成功采集距今时间、单次采集样本数和采集耗时。
 - 时序图不会跨空值连线；Prometheus 抓取中断会显示为曲线缺口。
+
+“关键引擎指标”分组包含 15 个值班面板，覆盖请求/Token 吞吐、Abort、运行与等待请求、TTFT/ITL/E2E、Token 池/引擎利用率以及 KV 传输失败、重试和延迟。“关键 Router 指标”包含 12 个面板，其中 HTTP 响应按 2xx、5xx、429 展示占比，并展示 Router 错误、限流、重试耗尽、熔断状态和健康 Worker 总数。
+
+当前 SGLang `/metrics` 不提供真实 GPU 利用率和运行时显存占用；`sglang:utilization` 是引擎调度利用率，不能当作 GPU 利用率。需要 GPU 面板时必须另行部署 DCGM Exporter 或 NVIDIA GPU Exporter。当前 `smg_worker_health` 只有 `worker` 标签，没有 `worker_type`/模型标签，因此健康 Worker 只能展示总数，不能准确拆成健康 Prefill/Decode Worker 数。
 
 输入 Token 分段为 `0-4k`、`4k-15k`、`15k-60k`、`60k-300k`、`300k-1M`、`1M+`；生成 Token 分段为 `0-500`、`500-2k`、`2k-8k`、`8k-30k`、`30k-100k`、`100k+`。这些区间使用 SGLang 默认 Histogram bucket 的实际边界；每段数值由相邻累计 bucket 相减得到，因此不需要修改 SGLang 启动参数。
 

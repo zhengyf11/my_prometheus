@@ -247,12 +247,18 @@ KEY_ENGINE_METRICS = (
     "sglang:num_requests_total",
     "sglang:prompt_tokens_total",
     "sglang:generation_tokens_total",
+    "sglang:num_aborted_requests_total",
     "sglang:num_running_reqs",
     "sglang:num_queue_reqs",
-    "sglang:gen_throughput",
-    "sglang:cache_hit_rate",
     "sglang:token_usage",
     "sglang:utilization",
+    "sglang:time_to_first_token_seconds",
+    "sglang:inter_token_latency_seconds",
+    "sglang:e2e_request_latency_seconds",
+    "sglang:kv_transfer_latency_ms",
+    "sglang:num_transfer_failed_reqs_total",
+    "sglang:num_bootstrap_failed_reqs_total",
+    "sglang:num_prefill_retries_total",
 )
 
 ENGINE_LATENCY_METRICS = (
@@ -260,21 +266,22 @@ ENGINE_LATENCY_METRICS = (
     "sglang:prefill_delayer_wait_seconds",
     "sglang:kv_transfer_bootstrap_ms",
     "sglang:kv_transfer_alloc_ms",
-    "sglang:kv_transfer_latency_ms",
     "sglang:per_stage_req_latency_seconds",
-    "sglang:time_to_first_token_seconds",
-    "sglang:inter_token_latency_seconds",
-    "sglang:e2e_request_latency_seconds",
 )
 
 KEY_ROUTER_METRICS = (
     "smg_http_requests_total",
+    "smg_http_responses_total",
+    "smg_http_rate_limit_total",
     "smg_http_connections_active",
     "smg_router_requests_total",
     "smg_router_request_errors_total",
     "smg_worker_pool_size",
     "smg_worker_requests_active",
     "smg_worker_health",
+    "smg_worker_retries_total",
+    "smg_worker_retries_exhausted_total",
+    "smg_worker_cb_state",
 )
 
 ROUTER_LATENCY_METRICS = (
@@ -285,6 +292,18 @@ ROUTER_LATENCY_METRICS = (
     "smg_router_tpot_seconds",
     "smg_router_generation_duration_seconds",
 )
+
+SLO_LATENCY_METRICS = {
+    "sglang:time_to_first_token_seconds",
+    "sglang:inter_token_latency_seconds",
+    "sglang:e2e_request_latency_seconds",
+    "sglang:kv_transfer_latency_ms",
+    "smg_http_request_duration_seconds",
+    "smg_router_request_duration_seconds",
+    "smg_router_ttft_seconds",
+    "smg_router_tpot_seconds",
+    "smg_router_generation_duration_seconds",
+}
 
 STATIC_METRICS = {
     "sglang:max_total_num_tokens",
@@ -738,6 +757,65 @@ def cache_hit_panel(item, panel_id, x, y, width, kind):
     return panel
 
 
+def router_response_ratio_expression(item, kind, status_pattern):
+    labels = selector(item, kind)
+    aggregation = aggregation_labels(item)
+    total = "sum by ({0}) (rate({1}{{{2}}}[$__rate_interval]))".format(
+        aggregation, item["name"], labels
+    )
+    matching = (
+        'sum by ({0}) (rate({1}{{{2},status_code=~"{3}"}}[$__rate_interval]))'
+    ).format(aggregation, item["name"], labels, status_pattern)
+    numerator = "(({0}) or ({1} * 0))".format(matching, total)
+    return "{0} / clamp_min(({1}), 1e-9)".format(numerator, total)
+
+
+def router_response_outcome_panel(item, panel_id, x, y, width, kind):
+    panel = panel_base(item, panel_id, x, y, width, "percentunit")
+    panel["title"] = "Router HTTP 响应占比（按成功、5xx 与 429 分类）"
+    panel["description"] = panel["description"].replace(
+        "- 面板口径：使用 `rate()` 展示每秒速率，不是累计总数。",
+        "- 面板口径：先用 `rate()` 计算各状态响应速率，再除以全部响应速率得到占比。",
+    )
+    panel["targets"] = [
+        target(router_response_ratio_expression(item, kind, "2.."), legend_format(item, "成功 (2xx)"), 0),
+        target(router_response_ratio_expression(item, kind, "5.."), legend_format(item, "服务端错误 (5xx)"), 1),
+        target(router_response_ratio_expression(item, kind, "429"), legend_format(item, "限流 (429)"), 2),
+    ]
+    panel["fieldConfig"]["defaults"]["custom"] = timeseries_custom_options()
+    panel["options"] = timeseries_options()
+    panel["type"] = "timeseries"
+    return panel
+
+
+def worker_health_panel(item, panel_id, x, y, width, kind):
+    panel = panel_base(item, panel_id, x, y, width, "short")
+    panel["title"] = "健康 Worker 总数（Router 当前可用的后端 Worker 数量）"
+    panel["description"] += (
+        "\n- 聚合口径：对 `smg_worker_health` 求和；当前 exporter 未提供 `worker_type` 和模型标签，"
+        "因此不能准确拆分 Prefill/Decode 或模型。"
+    )
+    panel["targets"] = [target(
+        "sum by ({0}) ({1}{{{2}}})".format(
+            aggregation_labels(item), item["name"], selector(item, kind)
+        ),
+        legend_format(item),
+        0,
+        instant=True,
+    )]
+    panel["options"] = {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": False},
+        "textMode": "auto",
+        "wideLayout": True,
+    }
+    panel["type"] = "stat"
+    return panel
+
+
 def metric_panel(item, panel_id, x, y, width, kind):
     name = item["name"]
     if name == "sglang:prompt_tokens_histogram":
@@ -746,21 +824,38 @@ def metric_panel(item, panel_id, x, y, width, kind):
         return token_distribution_panel(item, panel_id, x, y, width, kind, GENERATION_TOKEN_BUCKETS)
     if name == "sglang:uncached_prompt_tokens_histogram":
         return cache_hit_panel(item, panel_id, x, y, width, kind)
+    if name == "smg_http_responses_total":
+        return router_response_outcome_panel(item, panel_id, x, y, width, kind)
+    if name == "smg_worker_health":
+        return worker_health_panel(item, panel_id, x, y, width, kind)
 
     panel = panel_base(item, panel_id, x, y, width, metric_unit(item))
     if item["type"] == "histogram":
-        panel["targets"] = [
-            target(
-                histogram_quantile_expression(item, kind, "0.95"),
-                legend_format(item, "P95"),
-                0,
-            ),
-            target(
-                histogram_mean_expression(item, kind),
-                legend_format(item, "平均值 (Mean)"),
-                1,
-            ),
-        ]
+        if name in SLO_LATENCY_METRICS:
+            panel["targets"] = [
+                target(
+                    histogram_quantile_expression(item, kind, quantile),
+                    legend_format(item, label),
+                    index,
+                )
+                for index, (quantile, label) in enumerate((
+                    ("0.50", "P50"), ("0.95", "P95"), ("0.99", "P99"),
+                ))
+            ]
+            panel["description"] += "\n- 值班口径：展示 P50、P95 和 P99，不使用平均值掩盖长尾。"
+        else:
+            panel["targets"] = [
+                target(
+                    histogram_quantile_expression(item, kind, "0.95"),
+                    legend_format(item, "P95"),
+                    0,
+                ),
+                target(
+                    histogram_mean_expression(item, kind),
+                    legend_format(item, "平均值 (Mean)"),
+                    1,
+                ),
+            ]
     else:
         legend = (
             legend_format(item, "{{quantile}}")
@@ -1004,7 +1099,12 @@ def build_dashboard(kind, title, uid, groups, role_text):
         x = 0
         row_height = 8
         for item in items:
-            panel_width = 6 if item["name"] in STATIC_METRICS else 12
+            if item["name"] in STATIC_METRICS:
+                panel_width = 6
+            elif group_title in ("Key Engine Metrics", "Key Router Metrics"):
+                panel_width = 8
+            else:
+                panel_width = 12
             if x + panel_width > 24:
                 x = 0
                 y += row_height
@@ -1075,8 +1175,13 @@ def main():
         ),
     )
     split_router_groups = OrderedDict()
-    split_router_groups.update(ENGINE_GROUPS)
-    split_router_groups.update(ROUTER_GROUPS)
+    for group_name in ("Key Engine Metrics", "Key Router Metrics"):
+        source = ENGINE_GROUPS if group_name in ENGINE_GROUPS else ROUTER_GROUPS
+        split_router_groups[group_name] = source[group_name]
+    for source in (ENGINE_GROUPS, ROUTER_GROUPS):
+        for group_name, items in source.items():
+            if group_name not in split_router_groups:
+                split_router_groups[group_name] = items
     write_dashboard(
         "sglang-pd-disaggregated.json",
         build_dashboard(

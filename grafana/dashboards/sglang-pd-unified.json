@@ -413,7 +413,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 23
       },
@@ -471,8 +471,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 8,
         "y": 23
       },
       "id": 10,
@@ -529,9 +529,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 31
+        "w": 8,
+        "x": 16,
+        "y": 23
       },
       "id": 11,
       "targets": [
@@ -546,6 +546,64 @@
         }
       ],
       "title": "Decode \u541e\u5410\uff08\u6bcf\u79d2\u751f\u6210\u7684\u8f93\u51fa Token \u6570\uff09",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u4e2d\u6b62\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_aborted_requests_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u88ab\u4e2d\u6b62\u7684\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "ops",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 31
+      },
+      "id": 12,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (role, instance, model_name) (rate(sglang:num_aborted_requests_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "\u4e2d\u6b62\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
       "options": {
         "legend": {
           "calcs": [
@@ -587,11 +645,11 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 8,
         "y": 31
       },
-      "id": 12,
+      "id": 13,
       "targets": [
         {
           "datasource": {
@@ -645,11 +703,11 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 39
+        "w": 8,
+        "x": 16,
+        "y": 31
       },
-      "id": 13,
+      "id": 14,
       "targets": [
         {
           "datasource": {
@@ -662,122 +720,6 @@
         }
       ],
       "title": "\u7b49\u5f85\u961f\u5217\u8bf7\u6c42\u6570\uff08\u8c03\u5ea6\u5668\u666e\u901a\u7b49\u5f85\u961f\u5217\u4e2d\u7684\u8bf7\u6c42\u6570\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u751f\u6210\u541e\u5410\u91cf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:gen_throughput`\n- \u6307\u6807\u7c7b\u578b\uff1a`gauge`\n- \u8bf4\u660e\uff1a\u5f53\u524d\u751f\u6210\u541e\u5410\u91cf\uff0c\u5355\u4f4d\u4e3a Token/s\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "suffix: Token/s",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 39
-      },
-      "id": 14,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "max by (role, instance, model_name) (sglang:gen_throughput{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"})",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "\u751f\u6210\u541e\u5410\u91cf\uff08\u5f53\u524d\u751f\u6210\u541e\u5410\u91cf\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u524d\u7f00\u7f13\u5b58\u547d\u4e2d\u7387\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:cache_hit_rate`\n- \u6307\u6807\u7c7b\u578b\uff1a`gauge`\n- \u8bf4\u660e\uff1aPrefix Cache \u7684\u547d\u4e2d\u7387\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "percentunit",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 47
-      },
-      "id": 15,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "max by (role, instance, model_name) (sglang:cache_hit_rate{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"})",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "\u524d\u7f00\u7f13\u5b58\u547d\u4e2d\u7387\uff08Prefix Cache \u7684\u547d\u4e2d\u7387\uff09",
       "options": {
         "legend": {
           "calcs": [
@@ -819,11 +761,11 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 47
+        "w": 8,
+        "x": 0,
+        "y": 39
       },
-      "id": 16,
+      "id": 15,
       "targets": [
         {
           "datasource": {
@@ -877,11 +819,11 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 55
+        "w": 8,
+        "x": 8,
+        "y": 39
       },
-      "id": 17,
+      "id": 16,
       "targets": [
         {
           "datasource": {
@@ -912,6 +854,484 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u9996 Token \u5ef6\u8fdf\uff08TTFT\uff09\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:time_to_first_token_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u4ece\u8bf7\u6c42\u8fdb\u5165\u5230\u751f\u6210\u9996\u4e2a Token \u7684\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 39
+      },
+      "id": 17,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P50",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P99",
+          "refId": "Q03"
+        }
+      ],
+      "title": "\u9996 Token \u5ef6\u8fdf\uff08TTFT\uff09\uff08\u4ece\u8bf7\u6c42\u8fdb\u5165\u5230\u751f\u6210\u9996\u4e2a Token \u7684\u8017\u65f6\u5206\u5e03\uff09",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aToken \u95f4\u5ef6\u8fdf\uff08ITL\uff09\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:inter_token_latency_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u76f8\u90bb\u8f93\u51fa Token \u4e4b\u95f4\u7684\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 47
+      },
+      "id": 18,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P50",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P99",
+          "refId": "Q03"
+        }
+      ],
+      "title": "Token \u95f4\u5ef6\u8fdf\uff08ITL\uff09\uff08\u76f8\u90bb\u8f93\u51fa Token \u4e4b\u95f4\u7684\u8017\u65f6\u5206\u5e03\uff09",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8bf7\u6c42\u7aef\u5230\u7aef\u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:e2e_request_latency_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u8bf7\u6c42\u4ece\u8fdb\u5165\u670d\u52a1\u5230\u5b8c\u6210\u7684\u7aef\u5230\u7aef\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 47
+      },
+      "id": 19,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P50",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P99",
+          "refId": "Q03"
+        }
+      ],
+      "title": "\u8bf7\u6c42\u7aef\u5230\u7aef\u5ef6\u8fdf\uff08\u8bf7\u6c42\u4ece\u8fdb\u5165\u670d\u52a1\u5230\u5b8c\u6210\u7684\u7aef\u5230\u7aef\u8017\u65f6\u5206\u5e03\uff09",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aKV Cache \u4f20\u8f93\u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:kv_transfer_latency_ms`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1aKV Cache \u4f20\u8f93\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "ms",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 47
+      },
+      "id": 20,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P50",
+          "refId": "Q01"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
+          "refId": "Q02"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P99",
+          "refId": "Q03"
+        }
+      ],
+      "title": "KV Cache \u4f20\u8f93\u5ef6\u8fdf\uff08KV Cache \u4f20\u8f93\u8017\u65f6\u5206\u5e03\uff09",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aKV \u4f20\u8f93\u5931\u8d25\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_transfer_failed_reqs_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1 KV Cache \u4f20\u8f93\u5931\u8d25\u7684\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "ops",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 55
+      },
+      "id": 21,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (role, instance, model_name) (rate(sglang:num_transfer_failed_reqs_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "KV \u4f20\u8f93\u5931\u8d25\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aBootstrap \u5931\u8d25\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_bootstrap_failed_reqs_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1 Bootstrap \u5931\u8d25\u7684\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "ops",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 55
+      },
+      "id": 22,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (role, instance, model_name) (rate(sglang:num_bootstrap_failed_reqs_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "Bootstrap \u5931\u8d25\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aPrefill \u91cd\u8bd5\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_prefill_retries_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u6267\u884c\u7684 Prefill \u91cd\u8bd5\u6b21\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "ops",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 55
+      },
+      "id": 23,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum by (role, instance, model_name) (rate(sglang:num_prefill_retries_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "Prefill \u91cd\u8bd5\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "type": "timeseries"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -919,7 +1339,7 @@
         "x": 0,
         "y": 63
       },
-      "id": 18,
+      "id": 24,
       "panels": [],
       "title": "\u8bf7\u6c42\u5168\u94fe\u8def\u65f6\u5ef6 (Request Latency Pipeline)",
       "type": "row"
@@ -952,7 +1372,7 @@
         "x": 0,
         "y": 64
       },
-      "id": 19,
+      "id": 25,
       "targets": [
         {
           "datasource": {
@@ -1019,7 +1439,7 @@
         "x": 12,
         "y": 64
       },
-      "id": 20,
+      "id": 26,
       "targets": [
         {
           "datasource": {
@@ -1086,7 +1506,7 @@
         "x": 0,
         "y": 72
       },
-      "id": 21,
+      "id": 27,
       "targets": [
         {
           "datasource": {
@@ -1153,7 +1573,7 @@
         "x": 12,
         "y": 72
       },
-      "id": 22,
+      "id": 28,
       "targets": [
         {
           "datasource": {
@@ -1197,73 +1617,6 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aKV Cache \u4f20\u8f93\u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:kv_transfer_latency_ms`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1aKV Cache \u4f20\u8f93\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "ms",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 80
-      },
-      "id": 23,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
-          "refId": "Q01"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:kv_transfer_latency_ms_sum{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])) / clamp_min(sum by (role, instance, model_name) (rate(sglang:kv_transfer_latency_ms_count{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])), 1e-9)",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / \u5e73\u5747\u503c (Mean)",
-          "refId": "Q02"
-        }
-      ],
-      "title": "KV Cache \u4f20\u8f93\u5ef6\u8fdf\uff08KV Cache \u4f20\u8f93\u8017\u65f6\u5206\u5e03\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
       "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8bf7\u6c42\u9636\u6bb5\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:per_stage_req_latency_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u8bf7\u6c42\u5404\u5904\u7406\u9636\u6bb5\u7684\u8017\u65f6\u5206\u5e03\uff0c\u6309 stage \u6807\u7b7e\u533a\u5206\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002",
       "fieldConfig": {
         "defaults": {
@@ -1284,10 +1637,10 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
+        "x": 0,
         "y": 80
       },
-      "id": 24,
+      "id": 29,
       "targets": [
         {
           "datasource": {
@@ -1327,215 +1680,14 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u9996 Token \u5ef6\u8fdf\uff08TTFT\uff09\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:time_to_first_token_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u4ece\u8bf7\u6c42\u8fdb\u5165\u5230\u751f\u6210\u9996\u4e2a Token \u7684\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "s",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 88
-      },
-      "id": 25,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
-          "refId": "Q01"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:time_to_first_token_seconds_sum{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])) / clamp_min(sum by (role, instance, model_name) (rate(sglang:time_to_first_token_seconds_count{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])), 1e-9)",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / \u5e73\u5747\u503c (Mean)",
-          "refId": "Q02"
-        }
-      ],
-      "title": "\u9996 Token \u5ef6\u8fdf\uff08TTFT\uff09\uff08\u4ece\u8bf7\u6c42\u8fdb\u5165\u5230\u751f\u6210\u9996\u4e2a Token \u7684\u8017\u65f6\u5206\u5e03\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aToken \u95f4\u5ef6\u8fdf\uff08ITL\uff09\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:inter_token_latency_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u76f8\u90bb\u8f93\u51fa Token \u4e4b\u95f4\u7684\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "s",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 88
-      },
-      "id": 26,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
-          "refId": "Q01"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:inter_token_latency_seconds_sum{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])) / clamp_min(sum by (role, instance, model_name) (rate(sglang:inter_token_latency_seconds_count{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])), 1e-9)",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / \u5e73\u5747\u503c (Mean)",
-          "refId": "Q02"
-        }
-      ],
-      "title": "Token \u95f4\u5ef6\u8fdf\uff08ITL\uff09\uff08\u76f8\u90bb\u8f93\u51fa Token \u4e4b\u95f4\u7684\u8017\u65f6\u5206\u5e03\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8bf7\u6c42\u7aef\u5230\u7aef\u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:e2e_request_latency_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u8bf7\u6c42\u4ece\u8fdb\u5165\u670d\u52a1\u5230\u5b8c\u6210\u7684\u7aef\u5230\u7aef\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "s",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 96
-      },
-      "id": 27,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
-          "refId": "Q01"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:e2e_request_latency_seconds_sum{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])) / clamp_min(sum by (role, instance, model_name) (rate(sglang:e2e_request_latency_seconds_count{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])), 1e-9)",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / \u5e73\u5747\u503c (Mean)",
-          "refId": "Q02"
-        }
-      ],
-      "title": "\u8bf7\u6c42\u7aef\u5230\u7aef\u5ef6\u8fdf\uff08\u8bf7\u6c42\u4ece\u8fdb\u5165\u670d\u52a1\u5230\u5b8c\u6210\u7684\u7aef\u5230\u7aef\u8017\u65f6\u5206\u5e03\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 104
+        "y": 88
       },
-      "id": 28,
+      "id": 30,
       "panels": [],
       "title": "HTTP\u3001\u8fdb\u7a0b\u4e0e\u51fd\u6570 (HTTP, Process and Functions)",
       "type": "row"
@@ -1566,9 +1718,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 105
+        "y": 89
       },
-      "id": 29,
+      "id": 31,
       "targets": [
         {
           "datasource": {
@@ -1624,9 +1776,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 105
+        "y": 89
       },
-      "id": 30,
+      "id": 32,
       "targets": [
         {
           "datasource": {
@@ -1682,9 +1834,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 113
+        "y": 97
       },
-      "id": 31,
+      "id": 33,
       "targets": [
         {
           "datasource": {
@@ -1740,9 +1892,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 113
+        "y": 97
       },
-      "id": 32,
+      "id": 34,
       "targets": [
         {
           "datasource": {
@@ -1798,9 +1950,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 121
+        "y": 105
       },
-      "id": 33,
+      "id": 35,
       "targets": [
         {
           "datasource": {
@@ -1856,9 +2008,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 121
+        "y": 105
       },
-      "id": 34,
+      "id": 36,
       "targets": [
         {
           "datasource": {
@@ -1903,9 +2055,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 129
+        "y": 113
       },
-      "id": 35,
+      "id": 37,
       "panels": [],
       "title": "\u8bf7\u6c42\u3001Token \u4e0e\u7528\u6237\u5ef6\u8fdf (Requests, Tokens and User Latency)",
       "type": "row"
@@ -1936,9 +2088,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 130
+        "y": 114
       },
-      "id": 36,
+      "id": 38,
       "targets": [
         {
           "datasource": {
@@ -1987,9 +2139,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 130
+        "y": 114
       },
-      "id": 37,
+      "id": 39,
       "targets": [
         {
           "datasource": {
@@ -2095,9 +2247,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 138
+        "y": 122
       },
-      "id": 38,
+      "id": 40,
       "targets": [
         {
           "datasource": {
@@ -2146,9 +2298,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 138
+        "y": 122
       },
-      "id": 39,
+      "id": 41,
       "targets": [
         {
           "datasource": {
@@ -2254,9 +2406,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 146
+        "y": 130
       },
-      "id": 40,
+      "id": 42,
       "targets": [
         {
           "datasource": {
@@ -2312,9 +2464,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 146
+        "y": 130
       },
-      "id": 41,
+      "id": 43,
       "targets": [
         {
           "datasource": {
@@ -2379,9 +2531,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 154
+        "y": 138
       },
-      "id": 42,
+      "id": 44,
       "targets": [
         {
           "datasource": {
@@ -2412,72 +2564,14 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u4e2d\u6b62\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_aborted_requests_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u88ab\u4e2d\u6b62\u7684\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "ops",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 154
-      },
-      "id": 43,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:num_aborted_requests_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "\u4e2d\u6b62\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 162
+        "y": 146
       },
-      "id": 44,
+      "id": 45,
       "panels": [],
       "title": "\u8c03\u5ea6\u5668\u72b6\u6001 (Scheduler State)",
       "type": "row"
@@ -2508,9 +2602,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 163
+        "y": 147
       },
-      "id": 45,
+      "id": 46,
       "targets": [
         {
           "datasource": {
@@ -2523,6 +2617,122 @@
         }
       ],
       "title": "Grammar \u7b49\u5f85\u961f\u5217\u8bf7\u6c42\u6570\uff08\u7b49\u5f85 Grammar \u5904\u7406\u7684\u8bf7\u6c42\u6570\uff09",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u751f\u6210\u541e\u5410\u91cf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:gen_throughput`\n- \u6307\u6807\u7c7b\u578b\uff1a`gauge`\n- \u8bf4\u660e\uff1a\u5f53\u524d\u751f\u6210\u541e\u5410\u91cf\uff0c\u5355\u4f4d\u4e3a Token/s\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "suffix: Token/s",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 147
+      },
+      "id": 47,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (role, instance, model_name) (sglang:gen_throughput{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"})",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "\u751f\u6210\u541e\u5410\u91cf\uff08\u5f53\u524d\u751f\u6210\u541e\u5410\u91cf\uff09",
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u524d\u7f00\u7f13\u5b58\u547d\u4e2d\u7387\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:cache_hit_rate`\n- \u6307\u6807\u7c7b\u578b\uff1a`gauge`\n- \u8bf4\u660e\uff1aPrefix Cache \u7684\u547d\u4e2d\u7387\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "percentunit",
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "lineWidth": 1,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 155
+      },
+      "id": 48,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max by (role, instance, model_name) (sglang:cache_hit_rate{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"})",
+          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
+          "refId": "Q01"
+        }
+      ],
+      "title": "\u524d\u7f00\u7f13\u5b58\u547d\u4e2d\u7387\uff08Prefix Cache \u7684\u547d\u4e2d\u7387\uff09",
       "options": {
         "legend": {
           "calcs": [
@@ -2566,9 +2776,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 163
+        "y": 155
       },
-      "id": 46,
+      "id": 49,
       "targets": [
         {
           "datasource": {
@@ -2624,9 +2834,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 171
+        "y": 163
       },
-      "id": 47,
+      "id": 50,
       "targets": [
         {
           "datasource": {
@@ -2682,9 +2892,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 171
+        "y": 163
       },
-      "id": 48,
+      "id": 51,
       "targets": [
         {
           "datasource": {
@@ -2740,9 +2950,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 179
+        "y": 171
       },
-      "id": 49,
+      "id": 52,
       "targets": [
         {
           "datasource": {
@@ -2778,9 +2988,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 187
+        "y": 179
       },
-      "id": 50,
+      "id": 53,
       "panels": [],
       "title": "KV\u3001SWA \u4e0e Mamba \u8d44\u6e90\u6c60 (KV, SWA and Mamba Pools)",
       "type": "row"
@@ -2811,9 +3021,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 188
+        "y": 180
       },
-      "id": 51,
+      "id": 54,
       "targets": [
         {
           "datasource": {
@@ -2869,9 +3079,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 188
+        "y": 180
       },
-      "id": 52,
+      "id": 55,
       "targets": [
         {
           "datasource": {
@@ -2927,9 +3137,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 196
+        "y": 188
       },
-      "id": 53,
+      "id": 56,
       "targets": [
         {
           "datasource": {
@@ -2985,9 +3195,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 196
+        "y": 188
       },
-      "id": 54,
+      "id": 57,
       "targets": [
         {
           "datasource": {
@@ -3043,9 +3253,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 204
+        "y": 196
       },
-      "id": 55,
+      "id": 58,
       "targets": [
         {
           "datasource": {
@@ -3101,9 +3311,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 204
+        "y": 196
       },
-      "id": 56,
+      "id": 59,
       "targets": [
         {
           "datasource": {
@@ -3159,9 +3369,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 212
+        "y": 204
       },
-      "id": 57,
+      "id": 60,
       "targets": [
         {
           "datasource": {
@@ -3217,9 +3427,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 212
+        "y": 204
       },
-      "id": 58,
+      "id": 61,
       "targets": [
         {
           "datasource": {
@@ -3275,9 +3485,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 220
+        "y": 212
       },
-      "id": 59,
+      "id": 62,
       "targets": [
         {
           "datasource": {
@@ -3333,9 +3543,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 220
+        "y": 212
       },
-      "id": 60,
+      "id": 63,
       "targets": [
         {
           "datasource": {
@@ -3391,9 +3601,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 228
+        "y": 220
       },
-      "id": 61,
+      "id": 64,
       "targets": [
         {
           "datasource": {
@@ -3449,9 +3659,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 228
+        "y": 220
       },
-      "id": 62,
+      "id": 65,
       "targets": [
         {
           "datasource": {
@@ -3507,9 +3717,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 236
+        "y": 228
       },
-      "id": 63,
+      "id": 66,
       "targets": [
         {
           "datasource": {
@@ -3545,9 +3755,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 244
+        "y": 236
       },
-      "id": 64,
+      "id": 67,
       "panels": [],
       "title": "CUDA\u3001Token \u4e0e MFU \u8fd0\u884c\u65f6 (CUDA, Tokens and MFU Runtime)",
       "type": "row"
@@ -3578,9 +3788,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 245
+        "y": 237
       },
-      "id": 65,
+      "id": 68,
       "targets": [
         {
           "datasource": {
@@ -3636,9 +3846,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 245
+        "y": 237
       },
-      "id": 66,
+      "id": 69,
       "targets": [
         {
           "datasource": {
@@ -3694,9 +3904,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 253
+        "y": 245
       },
-      "id": 67,
+      "id": 70,
       "targets": [
         {
           "datasource": {
@@ -3752,9 +3962,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 253
+        "y": 245
       },
-      "id": 68,
+      "id": 71,
       "targets": [
         {
           "datasource": {
@@ -3810,9 +4020,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 261
+        "y": 253
       },
-      "id": 69,
+      "id": 72,
       "targets": [
         {
           "datasource": {
@@ -3868,9 +4078,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 261
+        "y": 253
       },
-      "id": 70,
+      "id": 73,
       "targets": [
         {
           "datasource": {
@@ -3926,9 +4136,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 269
+        "y": 261
       },
-      "id": 71,
+      "id": 74,
       "targets": [
         {
           "datasource": {
@@ -3984,9 +4194,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 269
+        "y": 261
       },
-      "id": 72,
+      "id": 75,
       "targets": [
         {
           "datasource": {
@@ -4022,9 +4232,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 277
+        "y": 269
       },
-      "id": 73,
+      "id": 76,
       "panels": [],
       "title": "\u5f15\u64ce\u5bb9\u91cf\u4e0e\u542f\u52a8 (Engine Capacity and Startup)",
       "type": "row"
@@ -4048,9 +4258,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 278
+        "y": 270
       },
-      "id": 74,
+      "id": 77,
       "targets": [
         {
           "datasource": {
@@ -4100,9 +4310,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 278
+        "y": 270
       },
-      "id": 75,
+      "id": 78,
       "targets": [
         {
           "datasource": {
@@ -4152,9 +4362,9 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 278
+        "y": 270
       },
-      "id": 76,
+      "id": 79,
       "targets": [
         {
           "datasource": {
@@ -4204,9 +4414,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 278
+        "y": 270
       },
-      "id": 77,
+      "id": 80,
       "targets": [
         {
           "datasource": {
@@ -4256,9 +4466,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 286
+        "y": 278
       },
-      "id": 78,
+      "id": 81,
       "targets": [
         {
           "datasource": {
@@ -4308,9 +4518,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 286
+        "y": 278
       },
-      "id": 79,
+      "id": 82,
       "targets": [
         {
           "datasource": {
@@ -4360,9 +4570,9 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 286
+        "y": 278
       },
-      "id": 80,
+      "id": 83,
       "targets": [
         {
           "datasource": {
@@ -4412,9 +4622,9 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 286
+        "y": 278
       },
-      "id": 81,
+      "id": 84,
       "targets": [
         {
           "datasource": {
@@ -4471,9 +4681,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 294
+        "y": 286
       },
-      "id": 82,
+      "id": 85,
       "targets": [
         {
           "datasource": {
@@ -4509,9 +4719,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 302
+        "y": 294
       },
-      "id": 83,
+      "id": 86,
       "panels": [],
       "title": "\u56de\u9000\u3001\u961f\u5217\u4e0e\u9636\u6bb5\u5ef6\u8fdf (Retraction, Queue and Stage Latency)",
       "type": "row"
@@ -4542,9 +4752,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 303
+        "y": 295
       },
-      "id": 84,
+      "id": 87,
       "targets": [
         {
           "datasource": {
@@ -4600,9 +4810,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 303
+        "y": 295
       },
-      "id": 85,
+      "id": 88,
       "targets": [
         {
           "datasource": {
@@ -4658,9 +4868,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 311
+        "y": 303
       },
-      "id": 86,
+      "id": 89,
       "targets": [
         {
           "datasource": {
@@ -4716,9 +4926,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 311
+        "y": 303
       },
-      "id": 87,
+      "id": 90,
       "targets": [
         {
           "datasource": {
@@ -4774,9 +4984,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 319
+        "y": 311
       },
-      "id": 88,
+      "id": 91,
       "targets": [
         {
           "datasource": {
@@ -4812,9 +5022,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 327
+        "y": 319
       },
-      "id": 89,
+      "id": 92,
       "panels": [],
       "title": "Grammar \u7ed3\u6784\u5316\u8f93\u51fa (Grammar)",
       "type": "row"
@@ -4845,9 +5055,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 328
+        "y": 320
       },
-      "id": 90,
+      "id": 93,
       "targets": [
         {
           "datasource": {
@@ -4912,9 +5122,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 328
+        "y": 320
       },
-      "id": 91,
+      "id": 94,
       "targets": [
         {
           "datasource": {
@@ -4970,9 +5180,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 336
+        "y": 328
       },
-      "id": 92,
+      "id": 95,
       "targets": [
         {
           "datasource": {
@@ -5028,9 +5238,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 336
+        "y": 328
       },
-      "id": 93,
+      "id": 96,
       "targets": [
         {
           "datasource": {
@@ -5086,9 +5296,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 344
+        "y": 336
       },
-      "id": 94,
+      "id": 97,
       "targets": [
         {
           "datasource": {
@@ -5144,9 +5354,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 344
+        "y": 336
       },
-      "id": 95,
+      "id": 98,
       "targets": [
         {
           "datasource": {
@@ -5211,9 +5421,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 352
+        "y": 344
       },
-      "id": 96,
+      "id": 99,
       "targets": [
         {
           "datasource": {
@@ -5278,9 +5488,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 352
+        "y": 344
       },
-      "id": 97,
+      "id": 100,
       "targets": [
         {
           "datasource": {
@@ -5345,9 +5555,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 360
+        "y": 352
       },
-      "id": 98,
+      "id": 101,
       "targets": [
         {
           "datasource": {
@@ -5392,9 +5602,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 368
+        "y": 360
       },
-      "id": 99,
+      "id": 102,
       "panels": [],
       "title": "\u6295\u673a\u89e3\u7801\u4e0e Prefill \u5ef6\u8fdf\u5668 (Speculative Decoding and Prefill Delayer)",
       "type": "row"
@@ -5425,9 +5635,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 369
+        "y": 361
       },
-      "id": 100,
+      "id": 103,
       "targets": [
         {
           "datasource": {
@@ -5483,9 +5693,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 369
+        "y": 361
       },
-      "id": 101,
+      "id": 104,
       "targets": [
         {
           "datasource": {
@@ -5541,9 +5751,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 377
+        "y": 369
       },
-      "id": 102,
+      "id": 105,
       "targets": [
         {
           "datasource": {
@@ -5599,9 +5809,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 377
+        "y": 369
       },
-      "id": 103,
+      "id": 106,
       "targets": [
         {
           "datasource": {
@@ -5650,9 +5860,9 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 385
+        "y": 377
       },
-      "id": 104,
+      "id": 107,
       "targets": [
         {
           "datasource": {
@@ -5702,9 +5912,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 385
+        "y": 377
       },
-      "id": 105,
+      "id": 108,
       "targets": [
         {
           "datasource": {
@@ -5761,9 +5971,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 385
+        "y": 377
       },
-      "id": 106,
+      "id": 109,
       "targets": [
         {
           "datasource": {
@@ -5828,9 +6038,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 393
+        "y": 385
       },
-      "id": 107,
+      "id": 110,
       "targets": [
         {
           "datasource": {
@@ -5866,9 +6076,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 401
+        "y": 393
       },
-      "id": 108,
+      "id": 111,
       "panels": [],
       "title": "PD \u961f\u5217\u4e0e KV \u4f20\u8f93 (PD Queues and KV Transfer)",
       "type": "row"
@@ -5899,9 +6109,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 402
+        "y": 394
       },
-      "id": 109,
+      "id": 112,
       "targets": [
         {
           "datasource": {
@@ -5957,9 +6167,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 402
+        "y": 394
       },
-      "id": 110,
+      "id": 113,
       "targets": [
         {
           "datasource": {
@@ -6015,9 +6225,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 410
+        "y": 402
       },
-      "id": 111,
+      "id": 114,
       "targets": [
         {
           "datasource": {
@@ -6073,9 +6283,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 410
+        "y": 402
       },
-      "id": 112,
+      "id": 115,
       "targets": [
         {
           "datasource": {
@@ -6131,9 +6341,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 418
+        "y": 410
       },
-      "id": 113,
+      "id": 116,
       "targets": [
         {
           "datasource": {
@@ -6189,9 +6399,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 418
+        "y": 410
       },
-      "id": 114,
+      "id": 117,
       "targets": [
         {
           "datasource": {
@@ -6256,9 +6466,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 426
+        "y": 418
       },
-      "id": 115,
+      "id": 118,
       "targets": [
         {
           "datasource": {
@@ -6298,186 +6508,12 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aBootstrap \u5931\u8d25\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_bootstrap_failed_reqs_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1 Bootstrap \u5931\u8d25\u7684\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "ops",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 426
-      },
-      "id": 116,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:num_bootstrap_failed_reqs_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Bootstrap \u5931\u8d25\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aKV \u4f20\u8f93\u5931\u8d25\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_transfer_failed_reqs_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1 KV Cache \u4f20\u8f93\u5931\u8d25\u7684\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "ops",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 434
-      },
-      "id": 117,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:num_transfer_failed_reqs_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "KV \u4f20\u8f93\u5931\u8d25\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aPrefill \u91cd\u8bd5\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_prefill_retries_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u6267\u884c\u7684 Prefill \u91cd\u8bd5\u6b21\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "unit": "ops",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 434
-      },
-      "id": 118,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:num_prefill_retries_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Prefill \u91cd\u8bd5\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 442
+        "y": 426
       },
       "id": 119,
       "panels": [],
@@ -6510,7 +6546,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 443
+        "y": 427
       },
       "id": 120,
       "targets": [
@@ -6577,7 +6613,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 443
+        "y": 427
       },
       "id": 121,
       "targets": [
@@ -6635,7 +6671,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 451
+        "y": 435
       },
       "id": 122,
       "targets": [
@@ -6702,7 +6738,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 451
+        "y": 435
       },
       "id": 123,
       "targets": [
@@ -6760,7 +6796,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 459
+        "y": 443
       },
       "id": 124,
       "targets": [
@@ -6818,7 +6854,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 459
+        "y": 443
       },
       "id": 125,
       "targets": [
@@ -6876,7 +6912,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 467
+        "y": 451
       },
       "id": 126,
       "targets": [
@@ -6914,7 +6950,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 475
+        "y": 459
       },
       "id": 127,
       "panels": [],
@@ -6947,7 +6983,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 476
+        "y": 460
       },
       "id": 128,
       "targets": [
@@ -6998,7 +7034,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 476
+        "y": 460
       },
       "id": 129,
       "targets": [
@@ -7057,7 +7093,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 484
+        "y": 468
       },
       "id": 130,
       "targets": [
@@ -7115,7 +7151,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 484
+        "y": 468
       },
       "id": 131,
       "targets": [
@@ -7166,7 +7202,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 492
+        "y": 476
       },
       "id": 132,
       "targets": [
@@ -7225,7 +7261,7 @@
         "h": 8,
         "w": 12,
         "x": 6,
-        "y": 492
+        "y": 476
       },
       "id": 133,
       "targets": [
@@ -7283,7 +7319,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 500
+        "y": 484
       },
       "id": 134,
       "targets": [
@@ -7341,7 +7377,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 500
+        "y": 484
       },
       "id": 135,
       "targets": [
@@ -7399,7 +7435,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 508
+        "y": 492
       },
       "id": 136,
       "targets": [
@@ -7457,7 +7493,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 508
+        "y": 492
       },
       "id": 137,
       "targets": [
@@ -7524,7 +7560,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 516
+        "y": 500
       },
       "id": 138,
       "targets": [
@@ -7591,7 +7627,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 516
+        "y": 500
       },
       "id": 139,
       "targets": [
@@ -7658,7 +7694,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 524
+        "y": 508
       },
       "id": 140,
       "targets": [
@@ -7725,7 +7761,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 524
+        "y": 508
       },
       "id": 141,
       "targets": [
@@ -7792,7 +7828,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 532
+        "y": 516
       },
       "id": 142,
       "targets": [
@@ -7850,7 +7886,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 532
+        "y": 516
       },
       "id": 143,
       "targets": [
@@ -7967,19 +8003,15 @@
       "type": "counter"
     },
     {
+      "name": "sglang:num_aborted_requests_total",
+      "type": "counter"
+    },
+    {
       "name": "sglang:num_running_reqs",
       "type": "gauge"
     },
     {
       "name": "sglang:num_queue_reqs",
-      "type": "gauge"
-    },
-    {
-      "name": "sglang:gen_throughput",
-      "type": "gauge"
-    },
-    {
-      "name": "sglang:cache_hit_rate",
       "type": "gauge"
     },
     {
@@ -7989,6 +8021,34 @@
     {
       "name": "sglang:utilization",
       "type": "gauge"
+    },
+    {
+      "name": "sglang:time_to_first_token_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:inter_token_latency_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:e2e_request_latency_seconds",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:kv_transfer_latency_ms",
+      "type": "histogram"
+    },
+    {
+      "name": "sglang:num_transfer_failed_reqs_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_bootstrap_failed_reqs_total",
+      "type": "counter"
+    },
+    {
+      "name": "sglang:num_prefill_retries_total",
+      "type": "counter"
     },
     {
       "name": "sglang:queue_time_seconds",
@@ -8007,23 +8067,7 @@
       "type": "histogram"
     },
     {
-      "name": "sglang:kv_transfer_latency_ms",
-      "type": "histogram"
-    },
-    {
       "name": "sglang:per_stage_req_latency_seconds",
-      "type": "histogram"
-    },
-    {
-      "name": "sglang:time_to_first_token_seconds",
-      "type": "histogram"
-    },
-    {
-      "name": "sglang:inter_token_latency_seconds",
-      "type": "histogram"
-    },
-    {
-      "name": "sglang:e2e_request_latency_seconds",
       "type": "histogram"
     },
     {
@@ -8079,11 +8123,15 @@
       "type": "counter"
     },
     {
-      "name": "sglang:num_aborted_requests_total",
-      "type": "counter"
+      "name": "sglang:num_grammar_queue_reqs",
+      "type": "gauge"
     },
     {
-      "name": "sglang:num_grammar_queue_reqs",
+      "name": "sglang:gen_throughput",
+      "type": "gauge"
+    },
+    {
+      "name": "sglang:cache_hit_rate",
       "type": "gauge"
     },
     {
@@ -8337,18 +8385,6 @@
     {
       "name": "sglang:kv_transfer_total_mb",
       "type": "histogram"
-    },
-    {
-      "name": "sglang:num_bootstrap_failed_reqs_total",
-      "type": "counter"
-    },
-    {
-      "name": "sglang:num_transfer_failed_reqs_total",
-      "type": "counter"
-    },
-    {
-      "name": "sglang:num_prefill_retries_total",
-      "type": "counter"
     },
     {
       "name": "sglang:eviction_duration_seconds",

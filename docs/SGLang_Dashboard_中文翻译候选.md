@@ -44,21 +44,23 @@
 |  | `sglang:num_requests_total` | 已处理请求总数 | Counter | Unified / Prefill / Decode | 关键引擎指标 | 累计处理完成的推理请求数。 |
 |  | `sglang:prompt_tokens_total` | Prefill Token 总数 | Counter | Unified / Prefill / Decode | 关键引擎指标 | 累计处理的输入（Prefill）Token 数。 |
 |  | `sglang:generation_tokens_total` | 生成 Token 总数 | Counter | Unified / Prefill / Decode | 关键引擎指标 | 累计处理的生成 Token 数。 |
+|  | `sglang:num_aborted_requests_total` | 中止请求总数 | Counter | Unified / Prefill / Decode | 关键引擎指标 | 累计被中止的请求数。 |
 |  | `sglang:num_running_reqs` | 运行中请求数 | Gauge | Unified / Prefill / Decode | 关键引擎指标 | 调度器当前正在运行的请求数。 |
 |  | `sglang:num_queue_reqs` | 等待队列请求数 | Gauge | Unified / Prefill / Decode | 关键引擎指标 | 调度器普通等待队列中的请求数。 |
-|  | `sglang:gen_throughput` | 生成吞吐量 | Gauge | Unified / Prefill / Decode | 关键引擎指标 | 当前生成吞吐量，单位为 Token/s。 |
-|  | `sglang:cache_hit_rate` | 前缀缓存命中率 | Gauge | Unified / Prefill / Decode | 关键引擎指标 | Prefix Cache 的命中率。 |
 |  | `sglang:token_usage` | Token 池使用率 | Gauge | Unified / Prefill / Decode | 关键引擎指标 | Token 内存池的总体使用率。 |
 |  | `sglang:utilization` | 引擎利用率 | Gauge | Unified / Prefill / Decode | 关键引擎指标 | 调度器计算得到的当前引擎利用率。 |
+|  | `sglang:time_to_first_token_seconds` | 首 Token 延迟（TTFT） | Histogram | Unified / Prefill / Decode | 关键引擎指标 | 从请求进入到生成首个 Token 的耗时分布，单位为秒。 |
+|  | `sglang:inter_token_latency_seconds` | Token 间延迟（ITL） | Histogram | Unified / Prefill / Decode | 关键引擎指标 | 相邻输出 Token 之间的耗时分布，单位为秒。 |
+|  | `sglang:e2e_request_latency_seconds` | 请求端到端延迟 | Histogram | Unified / Prefill / Decode | 关键引擎指标 | 请求从进入服务到完成的端到端耗时分布，单位为秒。 |
+|  | `sglang:kv_transfer_latency_ms` | KV Cache 传输延迟 | Histogram | Unified / Prefill / Decode | 关键引擎指标 | KV Cache 传输耗时分布，单位为毫秒。 |
+|  | `sglang:num_transfer_failed_reqs_total` | KV 传输失败请求总数 | Counter | Unified / Prefill / Decode | 关键引擎指标 | 累计 KV Cache 传输失败的请求数。 |
+|  | `sglang:num_bootstrap_failed_reqs_total` | Bootstrap 失败请求总数 | Counter | Unified / Prefill / Decode | 关键引擎指标 | 累计 Bootstrap 失败的请求数。 |
+|  | `sglang:num_prefill_retries_total` | Prefill 重试总数 | Counter | Unified / Prefill / Decode | 关键引擎指标 | 累计执行的 Prefill 重试次数。 |
 |  | `sglang:queue_time_seconds` | 请求排队耗时 | Histogram | Unified / Prefill / Decode | 请求全链路时延 | 请求在调度队列中等待的时间分布，单位为秒。 |
 |  | `sglang:prefill_delayer_wait_seconds` | Prefill 延迟器等待耗时 | Histogram | Unified / Prefill / Decode | 请求全链路时延 | Prefill 延迟器的等待时间分布，单位为秒。 |
 |  | `sglang:kv_transfer_bootstrap_ms` | KV 传输 Bootstrap 耗时 | Histogram | Unified / Prefill / Decode | 请求全链路时延 | KV 传输 Bootstrap 阶段耗时分布，单位为毫秒。 |
 |  | `sglang:kv_transfer_alloc_ms` | KV 传输分配等待耗时 | Histogram | Unified / Prefill / Decode | 请求全链路时延 | KV 传输等待内存分配的耗时分布，单位为毫秒。 |
-|  | `sglang:kv_transfer_latency_ms` | KV Cache 传输延迟 | Histogram | Unified / Prefill / Decode | 请求全链路时延 | KV Cache 传输耗时分布，单位为毫秒。 |
 |  | `sglang:per_stage_req_latency_seconds` | 请求阶段耗时 | Histogram | Unified / Prefill / Decode | 请求全链路时延 | 请求各处理阶段的耗时分布，按 stage 标签区分，单位为秒。 |
-|  | `sglang:time_to_first_token_seconds` | 首 Token 延迟（TTFT） | Histogram | Unified / Prefill / Decode | 请求全链路时延 | 从请求进入到生成首个 Token 的耗时分布，单位为秒。 |
-|  | `sglang:inter_token_latency_seconds` | Token 间延迟（ITL） | Histogram | Unified / Prefill / Decode | 请求全链路时延 | 相邻输出 Token 之间的耗时分布，单位为秒。 |
-|  | `sglang:e2e_request_latency_seconds` | 请求端到端延迟 | Histogram | Unified / Prefill / Decode | 请求全链路时延 | 请求从进入服务到完成的端到端耗时分布，单位为秒。 |
 |  | `sglang:http_requests_total` | HTTP 请求总数 | Counter | Unified / Prefill / Decode | HTTP、进程与函数 | 按接口和方法累计收到的 HTTP 请求数。 |
 |  | `sglang:http_responses_total` | HTTP 响应总数 | Counter | Unified / Prefill / Decode | HTTP、进程与函数 | 按接口、方法和状态码累计返回的 HTTP 响应数。 |
 |  | `sglang:http_requests_active` | 活跃 HTTP 请求数 | Gauge | Unified / Prefill / Decode | HTTP、进程与函数 | 当前正在处理的 HTTP 请求数，按接口和方法区分。 |
@@ -72,8 +74,9 @@
 |  | `sglang:cached_tokens_total` | 缓存命中 Token 总数 | Counter | Unified / Prefill / Decode | 请求、Token 与用户延迟 | 累计由设备、主机或存储缓存命中的输入 Token 数，按 cache_source 区分来源。 |
 |  | `sglang:get_loads_duration_seconds` | 负载查询耗时 | Histogram | Unified / Prefill / Decode | 请求、Token 与用户延迟 | 处理 /v1/loads 请求所花费的时间分布，单位为秒。 |
 |  | `sglang:num_so_requests_total` | 结构化输出请求总数 | Counter | Unified / Prefill / Decode | 请求、Token 与用户延迟 | 累计处理的结构化输出请求数。 |
-|  | `sglang:num_aborted_requests_total` | 中止请求总数 | Counter | Unified / Prefill / Decode | 请求、Token 与用户延迟 | 累计被中止的请求数。 |
 |  | `sglang:num_grammar_queue_reqs` | Grammar 等待队列请求数 | Gauge | Unified / Prefill / Decode | 调度器状态 | 等待 Grammar 处理的请求数。 |
+|  | `sglang:gen_throughput` | 生成吞吐量 | Gauge | Unified / Prefill / Decode | 调度器状态 | 当前生成吞吐量，单位为 Token/s。 |
+|  | `sglang:cache_hit_rate` | 前缀缓存命中率 | Gauge | Unified / Prefill / Decode | 调度器状态 | Prefix Cache 的命中率。 |
 |  | `sglang:decode_sum_seq_lens` | Decode 序列总长度 | Gauge | Unified / Prefill / Decode | 调度器状态 | 当前 Decode 批次中所有序列长度之和。 |
 |  | `sglang:fwd_occupancy` | 前向计算 GPU 占用率 | Gauge | Unified / Prefill / Decode | 调度器状态 | 前向计算期间的 GPU 占用百分比。 |
 |  | `sglang:new_token_ratio` | 新 Token 比例 | Gauge | Unified / Prefill / Decode | 调度器状态 | 调度器当前使用的新 Token 比例。 |
@@ -137,9 +140,6 @@
 |  | `sglang:pending_prealloc_token_usage` | 待预分配 Token 使用量 | Gauge | Unified / Prefill / Decode | PD 队列与 KV 传输 | 尚未实际完成预分配的待处理 Token 使用量；源码未明确其量纲。 |
 |  | `sglang:kv_transfer_speed_gb_s` | KV Cache 传输速度 | Histogram | Unified / Prefill / Decode | PD 队列与 KV 传输 | KV Cache 传输速度分布，单位为 GB/s。 |
 |  | `sglang:kv_transfer_total_mb` | KV Cache 传输数据量 | Histogram | Unified / Prefill / Decode | PD 队列与 KV 传输 | 单次 KV Cache 传输数据量分布，单位为 MB。 |
-|  | `sglang:num_bootstrap_failed_reqs_total` | Bootstrap 失败请求总数 | Counter | Unified / Prefill / Decode | PD 队列与 KV 传输 | 累计 Bootstrap 失败的请求数。 |
-|  | `sglang:num_transfer_failed_reqs_total` | KV 传输失败请求总数 | Counter | Unified / Prefill / Decode | PD 队列与 KV 传输 | 累计 KV Cache 传输失败的请求数。 |
-|  | `sglang:num_prefill_retries_total` | Prefill 重试总数 | Counter | Unified / Prefill / Decode | PD 队列与 KV 传输 | 累计执行的 Prefill 重试次数。 |
 |  | `sglang:eviction_duration_seconds` | KV Cache 淘汰耗时 | Histogram | Unified / Prefill / Decode | Prefix Cache 与路由键 | 将 KV Cache 从 GPU 淘汰到 CPU 的耗时分布，单位为秒。 |
 |  | `sglang:evicted_tokens_total` | 淘汰 Token 总数 | Counter | Unified / Prefill / Decode | Prefix Cache 与路由键 | 累计从 GPU 淘汰到 CPU 的 Token 数。 |
 |  | `sglang:load_back_duration_seconds` | KV Cache 回载耗时 | Histogram | Unified / Prefill / Decode | Prefix Cache 与路由键 | 将 KV Cache 从 CPU 回载到 GPU 的耗时分布，单位为秒。 |
@@ -171,12 +171,17 @@
 | 选择 | Prometheus 指标名 | 指标名称中文翻译候选 | 类型 | 角色范围 | 分类候选 | 简介 |
 |---|---|---|---|---|---|---|
 |  | `smg_http_requests_total` | Router HTTP 请求总数 | Counter | Router | 关键 Router 指标 | 按 HTTP 方法和路径累计 Router 收到的请求数。 |
+|  | `smg_http_responses_total` | Router HTTP 响应总数 | Counter | Router | 关键 Router 指标 | 按状态码和错误码累计 Router 返回的 HTTP 响应数。 |
+|  | `smg_http_rate_limit_total` | HTTP 限流决策总数 | Counter | Router | 关键 Router 指标 | 按允许或拒绝结果累计 HTTP 限流决策次数。 |
 |  | `smg_http_connections_active` | Router 活跃 HTTP 连接数 | Gauge | Router | 关键 Router 指标 | Router 当前活跃的 HTTP 连接数。 |
 |  | `smg_router_requests_total` | 路由请求总数 | Counter | Router | 关键 Router 指标 | 按 Router 类型、后端类型、连接模式、模型、接口和流式模式累计路由请求数。 |
 |  | `smg_router_request_errors_total` | 路由请求错误总数 | Counter | Router | 关键 Router 指标 | 按 Router、后端、连接模式、模型、接口和错误类型累计路由错误数。 |
 |  | `smg_worker_pool_size` | Worker 池规模 | Gauge | Router | 关键 Router 指标 | 按 Worker 类型、连接模式和模型统计当前 Worker 数量。 |
 |  | `smg_worker_requests_active` | Worker 活跃请求数 | Gauge | Router | 关键 Router 指标 | 每个 Worker 当前正在运行的请求数。 |
 |  | `smg_worker_health` | Worker 健康状态 | Gauge | Router | 关键 Router 指标 | Worker 当前健康状态；健康为 1，不健康为 0。 |
+|  | `smg_worker_retries_total` | Worker 重试总数 | Counter | Router | 关键 Router 指标 | 按 Worker 类型和接口累计重试次数。 |
+|  | `smg_worker_retries_exhausted_total` | Worker 重试耗尽请求总数 | Counter | Router | 关键 Router 指标 | 按 Worker 类型和接口累计已耗尽全部重试机会的请求数。 |
+|  | `smg_worker_cb_state` | Worker 熔断器状态 | Gauge | Router | 关键 Router 指标 | 每个 Worker 的熔断器状态：0 为关闭、1 为打开、2 为半开。 |
 |  | `smg_http_request_duration_seconds` | Router HTTP 请求耗时 | Histogram | Router | Router 请求全链路时延 | 按 HTTP 方法和路径统计 Router 请求耗时分布，单位为秒。 |
 |  | `smg_router_request_duration_seconds` | 路由请求耗时 | Histogram | Router | Router 请求全链路时延 | 按 Router 类型、后端类型、连接模式、模型和接口统计请求耗时分布。 |
 |  | `smg_router_stage_duration_seconds` | Router 流水线阶段耗时 | Histogram | Router | Router 请求全链路时延 | gRPC Router 各流水线阶段的耗时分布。 |
@@ -184,8 +189,6 @@
 |  | `smg_router_tpot_seconds` | Router 单输出 Token 耗时 | Histogram | Router | Router 请求全链路时延 | gRPC Router 观测的每个输出 Token 平均耗时分布，单位为秒。 |
 |  | `smg_router_generation_duration_seconds` | Router 生成总耗时 | Histogram | Router | Router 请求全链路时延 | gRPC Router 观测的完整生成过程耗时分布，单位为秒。 |
 |  | `smg_http_inflight_request_age_count` | 处理中请求时长分布 | Gauge | Router | HTTP 与 Router 请求 | 按请求已处理时长划分的当前在途请求数；区间非累积，由 gt 和 le 标识。 |
-|  | `smg_http_responses_total` | Router HTTP 响应总数 | Counter | Router | HTTP 与 Router 请求 | 按状态码和错误码累计 Router 返回的 HTTP 响应数。 |
-|  | `smg_http_rate_limit_total` | HTTP 限流决策总数 | Counter | Router | HTTP 与 Router 请求 | 按允许或拒绝结果累计 HTTP 限流决策次数。 |
 |  | `smg_router_upstream_responses_total` | 上游响应总数 | Counter | Router | HTTP 与 Router 请求 | 按 Router 类型、HTTP 状态码和错误码累计上游后端响应数。 |
 |  | `smg_router_tokens_total` | Router 处理 Token 总数 | Counter | Router | HTTP 与 Router 请求 | gRPC Router 按输入或输出类型累计处理的 Token 数。 |
 |  | `smg_worker_connections_active` | Worker 活跃连接数 | Gauge | Router | Worker 池与健康状态 | 按 Worker 类型和连接模式统计当前活跃连接数。 |
@@ -197,13 +200,10 @@
 |  | `smg_manual_policy_branch_total` | 手动路由策略分支总数 | Counter | Router | 路由策略、熔断与重试 | 按分支累计手动路由策略的决策次数。 |
 |  | `smg_consistent_hashing_policy_branch_total` | 一致性哈希策略分支总数 | Counter | Router | 路由策略、熔断与重试 | 按分支累计一致性哈希路由策略的决策次数。 |
 |  | `smg_prefix_hash_policy_branch_total` | 前缀哈希策略分支总数 | Counter | Router | 路由策略、熔断与重试 | 按分支累计前缀哈希路由策略的决策次数。 |
-|  | `smg_worker_cb_state` | Worker 熔断器状态 | Gauge | Router | 路由策略、熔断与重试 | 每个 Worker 的熔断器状态：0 为关闭、1 为打开、2 为半开。 |
 |  | `smg_worker_cb_transitions_total` | 熔断器状态转换总数 | Counter | Router | 路由策略、熔断与重试 | 按 Worker、原状态和目标状态累计熔断器状态转换次数。 |
 |  | `smg_worker_cb_outcomes_total` | 熔断器请求结果总数 | Counter | Router | 路由策略、熔断与重试 | 按 Worker 和成功或失败结果累计熔断器观测次数。 |
 |  | `smg_worker_cb_consecutive_failures` | Worker 连续失败次数 | Gauge | Router | 路由策略、熔断与重试 | 每个 Worker 当前连续失败次数。 |
 |  | `smg_worker_cb_consecutive_successes` | Worker 连续成功次数 | Gauge | Router | 路由策略、熔断与重试 | 每个 Worker 当前连续成功次数。 |
-|  | `smg_worker_retries_total` | Worker 重试总数 | Counter | Router | 路由策略、熔断与重试 | 按 Worker 类型和接口累计重试次数。 |
-|  | `smg_worker_retries_exhausted_total` | Worker 重试耗尽请求总数 | Counter | Router | 路由策略、熔断与重试 | 按 Worker 类型和接口累计已耗尽全部重试机会的请求数。 |
 |  | `smg_worker_retry_backoff_seconds` | Worker 重试退避耗时 | Histogram | Router | 路由策略、熔断与重试 | 按重试次数统计退避等待时间分布，单位为秒。 |
 |  | `smg_discovery_registrations_total` | Worker 注册尝试总数 | Counter | Router | 服务发现、MCP 与持久化 | 按发现来源和结果累计 Worker 注册尝试次数。 |
 |  | `smg_discovery_deregistrations_total` | Worker 注销总数 | Counter | Router | 服务发现、MCP 与持久化 | 按发现来源和原因累计 Worker 注销事件数。 |

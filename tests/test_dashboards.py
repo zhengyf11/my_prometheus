@@ -330,18 +330,33 @@ class DashboardTests(unittest.TestCase):
                 panel = self.panels_for_metric(dashboard, item["name"])[0]
                 self.assertNotIn("总数", panel["title"])
                 self.assertNotIn("总量", panel["title"])
-                self.assertIn("使用 `rate()` 展示每秒速率", panel["description"])
+                if item["name"] == "smg_http_responses_total":
+                    self.assertIn("各状态响应速率", panel["description"])
+                    self.assertEqual(panel["fieldConfig"]["defaults"]["unit"], "percentunit")
+                else:
+                    self.assertIn("使用 `rate()` 展示每秒速率", panel["description"])
                 self.assertTrue(
                     all("rate(" in target["expr"] for target in panel["targets"])
                 )
                 if item["name"] in expected_titles:
                     self.assertEqual(panel["title"], expected_titles[item["name"]])
 
-    def test_histograms_show_only_p95_and_mean(self):
+    def test_histograms_use_approved_summary_statistics(self):
         special_histograms = {
             "sglang:prompt_tokens_histogram",
             "sglang:uncached_prompt_tokens_histogram",
             "sglang:generation_tokens_histogram",
+        }
+        slo_latency_histograms = {
+            "sglang:time_to_first_token_seconds",
+            "sglang:inter_token_latency_seconds",
+            "sglang:e2e_request_latency_seconds",
+            "sglang:kv_transfer_latency_ms",
+            "smg_http_request_duration_seconds",
+            "smg_router_request_duration_seconds",
+            "smg_router_ttft_seconds",
+            "smg_router_tpot_seconds",
+            "smg_router_generation_duration_seconds",
         }
         for dashboard in self.dashboards.values():
             expressions = [
@@ -357,8 +372,55 @@ class DashboardTests(unittest.TestCase):
                 self.assertFalse(any("histogram_quantile(0.80" in expr for expr in matching))
                 if name not in special_histograms:
                     self.assertTrue(any("histogram_quantile(0.95" in expr for expr in matching))
-                    self.assertTrue(any(name + "_sum" in expr for expr in matching))
-                    self.assertTrue(any(name + "_count" in expr for expr in matching))
+                    if name in slo_latency_histograms:
+                        self.assertTrue(any("histogram_quantile(0.50" in expr for expr in matching))
+                        self.assertTrue(any("histogram_quantile(0.99" in expr for expr in matching))
+                        self.assertFalse(any(name + "_sum" in expr for expr in matching))
+                    else:
+                        self.assertTrue(any(name + "_sum" in expr for expr in matching))
+                        self.assertTrue(any(name + "_count" in expr for expr in matching))
+
+    def test_operations_overviews_cover_engine_and_router_slo_signals(self):
+        expected_counts = {
+            "关键引擎指标 (Key Engine Metrics)": 15,
+            "关键 Router 指标 (Key Router Metrics)": 12,
+        }
+        split_rows = [
+            panel for panel in self.dashboards["split"]["panels"]
+            if panel["type"] == "row"
+        ]
+        business_rows = [
+            panel for panel in split_rows if panel.get("x-panelKind") != "scrape-health"
+        ]
+        self.assertEqual(
+            [panel["title"] for panel in business_rows[:2]],
+            list(expected_counts),
+        )
+        for title, expected_count in expected_counts.items():
+            row_index = next(
+                index for index, panel in enumerate(self.dashboards["split"]["panels"])
+                if panel["type"] == "row" and panel["title"] == title
+            )
+            next_row_index = next(
+                (index for index in range(row_index + 1, len(self.dashboards["split"]["panels"]))
+                 if self.dashboards["split"]["panels"][index]["type"] == "row"),
+                len(self.dashboards["split"]["panels"]),
+            )
+            panels = self.dashboards["split"]["panels"][row_index + 1:next_row_index]
+            self.assertEqual(len(panels), expected_count)
+            self.assertTrue(all(panel["gridPos"]["w"] == 8 for panel in panels))
+
+        response_panel = self.panels_for_metric(
+            self.dashboards["split"], "smg_http_responses_total"
+        )[0]
+        self.assertEqual(len(response_panel["targets"]), 3)
+        self.assertTrue(all("status_code=~" in target["expr"] for target in response_panel["targets"]))
+
+        health_panel = self.panels_for_metric(
+            self.dashboards["split"], "smg_worker_health"
+        )[0]
+        self.assertEqual(health_panel["type"], "stat")
+        self.assertIn("sum by (role, instance)", health_panel["targets"][0]["expr"])
 
     def test_token_histograms_use_default_sglang_bucket_ranges(self):
         expected = {

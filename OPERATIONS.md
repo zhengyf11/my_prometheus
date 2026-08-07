@@ -392,12 +392,12 @@ Counter 原指标表示进程启动以来的累计值，但趋势面板统一使
 
 模型级 Engine 指标严格使用 `model_name=~"$model"`，并按 `role, instance, model_name` 聚合。HTTP、进程等实例级指标没有 `model_name` 标签，查询不添加模型过滤，只按 `role, instance` 聚合；这些面板不受模型 (Model) 下拉框影响。Router 当前至少保留 `role, instance`，更细的 `model`、`worker`、`endpoint` 和错误类型维度由对应专项面板处理。
 
-普通 Histogram 面板只使用两类查询：
+普通 Histogram 面板使用两类查询：
 
 - P95：`histogram_quantile(0.95, ...)`
 - 平均值：`rate(<metric>_sum) / rate(<metric>_count)`
 
-所有 P80 查询已删除。每个普通指标独占一个面板，避免把语义或单位不同的指标画在同一纵轴上。生成器根据指标语义设置 Grafana 单位，例如延迟使用 `s` 或 `ms`、KV 传输量使用 `MB`、带宽使用 `GB/s`、比例使用 `0-100%`、Token 吞吐使用 `Token/s`。启动容量、页大小、上下文长度和其他启动后通常不变化的指标使用 Stat 数字面板，并通过 instant query 读取当前值。
+TTFT、ITL、端到端延迟、KV 传输延迟以及 Router 核心时延属于值班 SLO 指标，改为同时展示 P50、P95、P99，不展示平均值。所有 P80 查询已删除。每个普通指标独占一个面板，避免把语义或单位不同的指标画在同一纵轴上。生成器根据指标语义设置 Grafana 单位，例如延迟使用 `s` 或 `ms`、KV 传输量使用 `MB`、带宽使用 `GB/s`、比例使用 `0-100%`、Token 吞吐使用 `Token/s`。启动容量、页大小、上下文长度和其他启动后通常不变化的指标使用 Stat 数字面板，并通过 instant query 读取当前值。
 
 输入 Token 长度分段为：
 
@@ -431,7 +431,11 @@ Counter 原指标表示进程启动以来的累计值，但趋势面板统一使
 
 对于 Counter，结构化翻译仍描述原始累计指标，面板标题则根据 `rate()` 查询派生为速率语义；Panel description 会明确写出“每秒速率，不是累计总数”。
 
-生成器将高频观察项放在 `关键引擎指标`、`关键 Router 指标` 分组，将请求路径中的各阶段耗时集中放在 `请求全链路时延`、`Router 请求全链路时延` 分组。指标只从原分类移动到这些优先分组，不会重复生成。
+生成器将 15 个 Engine 值班项放在 `关键引擎指标`，将 12 个 Router 值班项放在 `关键 Router 指标`。PD 分离与 Router 看板中这两个分组连续排列且使用三列紧凑布局；其余请求阶段耗时仍集中在 `请求全链路时延`、`Router 请求全链路时延`。指标只从原分类移动到这些优先分组，不会重复生成。
+
+Router HTTP 响应面板只使用 `smg_http_responses_total`，先按 `status_code` 计算 2xx、5xx、429 的速率，再除以全部响应速率得到占比。健康 Worker 面板对 `smg_worker_health` 求和。当前该指标没有 `worker_type` 或模型标签，因此只能展示健康 Worker 总数，不能可靠拆成健康 Prefill/Decode Worker 数。
+
+SGLang 指标中的 `sglang:utilization` 表示引擎调度利用率，不是 GPU 利用率；`sglang:startup_available_gpu_memory_gb` 只是启动时可用显存，不是运行时显存。真实 GPU 利用率和显存面板需要额外接入 DCGM Exporter 或 NVIDIA GPU Exporter，本项目当前没有这类数据源，因此不生成伪 GPU 面板。
 
 ### 6.7 翻译和重新生成
 
