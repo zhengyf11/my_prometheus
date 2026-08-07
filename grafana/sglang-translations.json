@@ -1,0 +1,765 @@
+{
+  "categories": {
+    "CUDA, Tokens and MFU Runtime": "CUDA、Token 与 MFU 运行时",
+    "Discovery, MCP and Persistence": "服务发现、MCP 与持久化",
+    "Engine Capacity and Startup": "引擎容量与启动",
+    "Grammar": "Grammar 结构化输出",
+    "HTTP and Router Requests": "HTTP 与 Router 请求",
+    "HTTP, Process and Functions": "HTTP、进程与函数",
+    "KV, SWA and Mamba Pools": "KV、SWA 与 Mamba 资源池",
+    "Optional LoRA, HiCache, Streaming and EPLB": "可选 LoRA、HiCache、流式会话与 EPLB",
+    "PD Queues and KV Transfer": "PD 队列与 KV 传输",
+    "Policies, Circuit Breaker and Retries": "路由策略、熔断与重试",
+    "Prefix Cache and Routing Keys": "Prefix Cache 与路由键",
+    "Requests, Tokens and User Latency": "请求、Token 与用户延迟",
+    "Retraction, Queue and Stage Latency": "回退、队列与阶段延迟",
+    "Router Mesh": "Router Mesh 集群",
+    "Scheduler State": "调度器状态",
+    "Speculative Decoding and Prefill Delayer": "投机解码与 Prefill 延迟器",
+    "Worker Pool and Health": "Worker 池与健康状态"
+  },
+  "dashboards": {
+    "SGLang PD Disaggregated and Router Metrics": {
+      "description": "通过 Role 下拉框单选、多选或选择 All 查看 Prefill、Decode 和 Router，共覆盖 183 个指标族。",
+      "title": "SGLang PD 分离与 Router 指标"
+    },
+    "SGLang PD Unified Metrics": {
+      "description": "展示 unified engine 的 122 个指标族。",
+      "title": "SGLang PD 合部指标"
+    }
+  },
+  "metrics": {
+    "router_lb_drift_ratio": {
+      "description": "实际负载分配相对于预期分配的漂移比，按模型区分。",
+      "title": "负载均衡漂移比"
+    },
+    "router_mesh_batches_total": {
+      "description": "按发送或接收方向及对端累计状态更新批次数。",
+      "title": "Mesh 状态更新批次总数"
+    },
+    "router_mesh_bytes_total": {
+      "description": "按发送或接收方向及对端累计 Mesh 传输字节数。",
+      "title": "Mesh 传输字节总数"
+    },
+    "router_mesh_convergence_ms": {
+      "description": "Router 状态在 Mesh 中完成收敛的耗时分布，单位为毫秒。",
+      "title": "Mesh 状态收敛耗时"
+    },
+    "router_mesh_peer_ack_total": {
+      "description": "按对端和成功或失败状态累计 ACK 消息数。",
+      "title": "Mesh ACK 总数"
+    },
+    "router_mesh_peer_connections": {
+      "description": "每个 Mesh 对端的连接状态；已连接为 1，未连接为 0。",
+      "title": "Mesh 对端连接状态"
+    },
+    "router_mesh_peer_nack_total": {
+      "description": "按对端累计 NACK 消息数。",
+      "title": "Mesh NACK 总数"
+    },
+    "router_mesh_peer_reconnects_total": {
+      "description": "按对端累计 Mesh 重连次数。",
+      "title": "Mesh 对端重连总数"
+    },
+    "router_mesh_snapshot_bytes_total": {
+      "description": "按存储和传输方向累计快照字节数。",
+      "title": "Mesh 快照字节总数"
+    },
+    "router_mesh_snapshot_duration_seconds": {
+      "description": "按存储统计生成并发送快照的耗时分布，单位为秒。",
+      "title": "Mesh 快照处理耗时"
+    },
+    "router_mesh_snapshot_trigger_total": {
+      "description": "按存储和触发原因累计快照触发次数。",
+      "title": "Mesh 快照触发总数"
+    },
+    "router_mesh_store_cardinality": {
+      "description": "每类 Mesh 状态存储中的当前条目数。",
+      "title": "Mesh 存储条目数"
+    },
+    "router_mesh_store_hash": {
+      "description": "用于状态一致性检查的存储内容哈希值。",
+      "title": "Mesh 存储状态哈希"
+    },
+    "router_rl_drift_ratio": {
+      "description": "实际限流状态相对于预期状态的漂移比，按限流键区分。",
+      "title": "限流漂移比"
+    },
+    "sglang:backup_bandwidth": {
+      "description": "向分层存储备份数据的带宽分布，单位为 GB/s。",
+      "title": "备份带宽"
+    },
+    "sglang:backup_pgs": {
+      "description": "每批次备份到分层存储的页面数量分布。",
+      "title": "备份页数分布"
+    },
+    "sglang:backuped_tokens_total": {
+      "description": "累计备份到分层存储的 Token 数。",
+      "title": "备份 Token 总数"
+    },
+    "sglang:cache_hit_rate": {
+      "description": "Prefix Cache 的命中率。",
+      "title": "前缀缓存命中率"
+    },
+    "sglang:cached_tokens_total": {
+      "description": "累计由设备、主机或存储缓存命中的输入 Token 数，按 cache_source 区分来源。",
+      "title": "缓存命中 Token 总数"
+    },
+    "sglang:context_len": {
+      "description": "模型支持的最大上下文长度，单位为 Token。",
+      "title": "最大上下文长度"
+    },
+    "sglang:cuda_graph_passes_total": {
+      "description": "按执行模式累计前向计算次数，用于区分 CUDA Graph 与普通执行。",
+      "title": "CUDA Graph 前向次数"
+    },
+    "sglang:decode_sum_seq_lens": {
+      "description": "当前 Decode 批次中所有序列长度之和。",
+      "title": "Decode 序列总长度"
+    },
+    "sglang:dp_cooperation_forward_execution_seconds_total": {
+      "description": "按 Prefill rank 数和执行类别累计 DP Attention 协同前向耗时，单位为秒。",
+      "title": "DP 协同前向累计耗时"
+    },
+    "sglang:dp_cooperation_realtime_tokens_total": {
+      "description": "按 Prefill rank 数和处理模式累计 DP Attention 协同处理的 Token 数。",
+      "title": "DP 协同处理 Token 总数"
+    },
+    "sglang:e2e_request_latency_seconds": {
+      "description": "请求从进入服务到完成的端到端耗时分布，单位为秒。",
+      "title": "请求端到端延迟"
+    },
+    "sglang:engine_load_weights_time": {
+      "description": "引擎启动期间加载模型权重所花费的时间。",
+      "title": "引擎权重加载耗时"
+    },
+    "sglang:engine_startup_time": {
+      "description": "引擎完成启动所花费的时间。",
+      "title": "引擎启动耗时"
+    },
+    "sglang:eplb_balancedness": {
+      "description": "专家并行中 MoE 专家负载的均衡程度，按前向模式区分。",
+      "title": "EPLB 负载均衡度"
+    },
+    "sglang:eplb_gpu_physical_count": {
+      "description": "各层、各 GPU rank 被选中的物理专家数量分布。",
+      "title": "EPLB 物理专家数分布"
+    },
+    "sglang:estimated_flops_per_gpu_total": {
+      "description": "每个 GPU 累计估算的浮点运算量，用于计算模型 FLOPs 利用率（MFU）。",
+      "title": "单 GPU 估算 FLOPs 总量"
+    },
+    "sglang:estimated_read_bytes_per_gpu_total": {
+      "description": "每个 GPU 累计估算的显存读取字节数，用于估算内存带宽利用情况。",
+      "title": "单 GPU 估算显存读取量"
+    },
+    "sglang:estimated_write_bytes_per_gpu_total": {
+      "description": "每个 GPU 累计估算的显存写入字节数，用于估算内存带宽利用情况。",
+      "title": "单 GPU 估算显存写入量"
+    },
+    "sglang:evicted_tokens_total": {
+      "description": "累计从 GPU 淘汰到 CPU 的 Token 数。",
+      "title": "淘汰 Token 总数"
+    },
+    "sglang:eviction_duration_seconds": {
+      "description": "将 KV Cache 从 GPU 淘汰到 CPU 的耗时分布，单位为秒。",
+      "title": "KV Cache 淘汰耗时"
+    },
+    "sglang:failed_session_recoveries_total": {
+      "description": "累计通过探测从黑名单恢复的 Mooncake session_id 数。",
+      "title": "Mooncake 会话恢复总数"
+    },
+    "sglang:forward_execution_seconds_total": {
+      "description": "按 Prefill、Decode 等类别累计前向计算耗时，单位为秒。",
+      "title": "前向计算累计耗时"
+    },
+    "sglang:full_token_usage": {
+      "description": "Full Attention 层 Token 内存池的使用率。",
+      "title": "全注意力 Token 池使用率"
+    },
+    "sglang:func_latency_seconds": {
+      "description": "被监控函数的执行耗时分布，单位为秒，按函数名区分。",
+      "title": "函数执行耗时"
+    },
+    "sglang:fwd_occupancy": {
+      "description": "前向计算期间的 GPU 占用百分比。",
+      "title": "前向计算 GPU 占用率"
+    },
+    "sglang:gen_throughput": {
+      "description": "当前生成吞吐量，单位为 Token/s。",
+      "title": "生成吞吐量"
+    },
+    "sglang:generation_tokens_histogram": {
+      "description": "每个请求的生成 Token 数量分布。",
+      "title": "生成 Token 长度分布"
+    },
+    "sglang:generation_tokens_total": {
+      "description": "累计处理的生成 Token 数。",
+      "title": "生成 Token 总数"
+    },
+    "sglang:get_loads_duration_seconds": {
+      "description": "处理 /v1/loads 请求所花费的时间分布，单位为秒。",
+      "title": "负载查询耗时"
+    },
+    "sglang:grammar_compilation_time_seconds": {
+      "description": "Grammar 编译耗时分布，单位为秒。",
+      "title": "Grammar 编译耗时"
+    },
+    "sglang:grammar_ebnf_size": {
+      "description": "Grammar EBNF 定义大小的分布。",
+      "title": "Grammar EBNF 大小分布"
+    },
+    "sglang:grammar_schema_count": {
+      "description": "单次 Grammar 处理涉及的 Schema 数量分布。",
+      "title": "Grammar Schema 数量分布"
+    },
+    "sglang:grammar_tree_traversal_time_avg": {
+      "description": "单次统计中 Grammar 树平均遍历耗时的分布，单位为秒。",
+      "title": "Grammar 树平均遍历耗时"
+    },
+    "sglang:grammar_tree_traversal_time_max": {
+      "description": "单次统计中 Grammar 树最大遍历耗时的分布，单位为秒。",
+      "title": "Grammar 树最大遍历耗时"
+    },
+    "sglang:hicache_host_total_tokens": {
+      "description": "主机端 KV Cache 可容纳的 Token 总数。",
+      "title": "HiCache 主机 Token 容量"
+    },
+    "sglang:hicache_host_used_tokens": {
+      "description": "主机端 KV Cache 当前已使用的 Token 数。",
+      "title": "HiCache 主机已用 Token 数"
+    },
+    "sglang:http_requests_active": {
+      "description": "当前正在处理的 HTTP 请求数，按接口和方法区分。",
+      "title": "活跃 HTTP 请求数"
+    },
+    "sglang:http_requests_total": {
+      "description": "按接口和方法累计收到的 HTTP 请求数。",
+      "title": "HTTP 请求总数"
+    },
+    "sglang:http_responses_total": {
+      "description": "按接口、方法和状态码累计返回的 HTTP 响应数。",
+      "title": "HTTP 响应总数"
+    },
+    "sglang:inter_token_latency_seconds": {
+      "description": "相邻输出 Token 之间的耗时分布，单位为秒。",
+      "title": "Token 间延迟（ITL）"
+    },
+    "sglang:is_cuda_graph": {
+      "description": "当前批次是否使用 CUDA Graph；使用为 1，否则为 0。",
+      "title": "CUDA Graph 使用状态"
+    },
+    "sglang:kv_available_tokens": {
+      "description": "KV Cache 池中空闲的 Token 槽位数。",
+      "title": "KV Cache 可用 Token 槽位"
+    },
+    "sglang:kv_evictable_tokens": {
+      "description": "KV Cache 池中可从 Radix Cache 淘汰的 Token 槽位数。",
+      "title": "KV Cache 可淘汰 Token 槽位"
+    },
+    "sglang:kv_transfer_alloc_ms": {
+      "description": "KV 传输等待内存分配的耗时分布，单位为毫秒。",
+      "title": "KV 传输分配等待耗时"
+    },
+    "sglang:kv_transfer_bootstrap_ms": {
+      "description": "KV 传输 Bootstrap 阶段耗时分布，单位为毫秒。",
+      "title": "KV 传输 Bootstrap 耗时"
+    },
+    "sglang:kv_transfer_latency_ms": {
+      "description": "KV Cache 传输耗时分布，单位为毫秒。",
+      "title": "KV Cache 传输延迟"
+    },
+    "sglang:kv_transfer_speed_gb_s": {
+      "description": "KV Cache 传输速度分布，单位为 GB/s。",
+      "title": "KV Cache 传输速度"
+    },
+    "sglang:kv_transfer_total_mb": {
+      "description": "单次 KV Cache 传输数据量分布，单位为 MB。",
+      "title": "KV Cache 传输数据量"
+    },
+    "sglang:kv_used_tokens": {
+      "description": "KV Cache 池中被活跃请求占用的 Token 槽位数。",
+      "title": "KV Cache 活跃 Token 槽位"
+    },
+    "sglang:load_back_duration_seconds": {
+      "description": "将 KV Cache 从 CPU 回载到 GPU 的耗时分布，单位为秒。",
+      "title": "KV Cache 回载耗时"
+    },
+    "sglang:load_back_tokens_total": {
+      "description": "累计从 CPU 回载到 GPU 的 Token 数。",
+      "title": "回载 Token 总数"
+    },
+    "sglang:lora_pool_slots_total": {
+      "description": "可用的 LoRA Adapter 槽位总数，即 max_loras_per_batch。",
+      "title": "LoRA 槽位总数"
+    },
+    "sglang:lora_pool_slots_used": {
+      "description": "GPU 内存中当前已占用的 LoRA Adapter 槽位数。",
+      "title": "LoRA 已用槽位数"
+    },
+    "sglang:lora_pool_utilization": {
+      "description": "LoRA 已用槽位数与总槽位数之比，1 表示已满。",
+      "title": "LoRA 槽位使用率"
+    },
+    "sglang:mamba_available_tokens": {
+      "description": "混合 SSM 模型的 Mamba 状态池中空闲槽位数。",
+      "title": "Mamba 可用状态槽位"
+    },
+    "sglang:mamba_evictable_tokens": {
+      "description": "Mamba 状态池中可从 Radix Cache 淘汰的状态槽位数。",
+      "title": "Mamba 可淘汰状态槽位"
+    },
+    "sglang:mamba_usage": {
+      "description": "Mamba/SSM 状态内存池的使用率。",
+      "title": "Mamba 状态池使用率"
+    },
+    "sglang:mamba_used_tokens": {
+      "description": "Mamba 状态池中被活跃请求占用的状态槽位数。",
+      "title": "Mamba 活跃状态槽位"
+    },
+    "sglang:max_running_requests_under_SLO": {
+      "description": "在目标 SLO 约束下估算的最大运行中请求数。",
+      "title": "SLO 下最大并发请求数"
+    },
+    "sglang:max_total_num_tokens": {
+      "description": "KV Cache 池可容纳的最大 Token 总数。",
+      "title": "KV Cache 最大 Token 容量"
+    },
+    "sglang:new_token_ratio": {
+      "description": "调度器当前使用的新 Token 比例。",
+      "title": "新 Token 比例"
+    },
+    "sglang:num_aborted_requests_total": {
+      "description": "累计被中止的请求数。",
+      "title": "中止请求总数"
+    },
+    "sglang:num_bootstrap_failed_reqs_total": {
+      "description": "累计 Bootstrap 失败的请求数。",
+      "title": "Bootstrap 失败请求总数"
+    },
+    "sglang:num_decode_prealloc_queue_reqs": {
+      "description": "Decode 节点等待 KV Cache 预分配的请求数。",
+      "title": "Decode 预分配队列请求数"
+    },
+    "sglang:num_decode_transfer_queue_reqs": {
+      "description": "Decode 节点等待或进行 KV Cache 传输的请求数。",
+      "title": "Decode 传输队列请求数"
+    },
+    "sglang:num_grammar_aborted_total": {
+      "description": "累计因 Grammar 处理而中止的请求数。",
+      "title": "Grammar 中止请求总数"
+    },
+    "sglang:num_grammar_cache_hit_total": {
+      "description": "累计命中 Grammar 缓存的次数。",
+      "title": "Grammar 缓存命中总数"
+    },
+    "sglang:num_grammar_queue_reqs": {
+      "description": "等待 Grammar 处理的请求数。",
+      "title": "Grammar 等待队列请求数"
+    },
+    "sglang:num_grammar_timeout_total": {
+      "description": "累计发生的 Grammar 超时次数。",
+      "title": "Grammar 超时总数"
+    },
+    "sglang:num_grammar_total": {
+      "description": "累计处理的 Grammar 约束请求数。",
+      "title": "Grammar 请求总数"
+    },
+    "sglang:num_pages": {
+      "description": "KV Cache 中的页面总数。",
+      "title": "KV Cache 页数"
+    },
+    "sglang:num_paused_reqs": {
+      "description": "因异步权重同步而暂停的请求数。",
+      "title": "暂停请求数"
+    },
+    "sglang:num_prefill_bootstrap_queue_reqs": {
+      "description": "Prefill 节点 Bootstrap 队列中的请求数。",
+      "title": "Prefill Bootstrap 队列请求数"
+    },
+    "sglang:num_prefill_inflight_queue_reqs": {
+      "description": "Prefill 节点已进入处理或 KV 传输流程的请求数。",
+      "title": "Prefill 传输中请求数"
+    },
+    "sglang:num_prefill_retries_total": {
+      "description": "累计执行的 Prefill 重试次数。",
+      "title": "Prefill 重试总数"
+    },
+    "sglang:num_queue_reqs": {
+      "description": "调度器普通等待队列中的请求数。",
+      "title": "等待队列请求数"
+    },
+    "sglang:num_requests_total": {
+      "description": "累计处理完成的推理请求数。",
+      "title": "已处理请求总数"
+    },
+    "sglang:num_retracted_input_tokens_total": {
+      "description": "累计随请求回退的输入 Token 数。",
+      "title": "回退输入 Token 总数"
+    },
+    "sglang:num_retracted_output_tokens_total": {
+      "description": "累计随请求回退的输出 Token 数。",
+      "title": "回退输出 Token 总数"
+    },
+    "sglang:num_retracted_reqs": {
+      "description": "当前统计周期内因资源不足等原因被调度器回退的请求数。",
+      "title": "本周期回退请求数"
+    },
+    "sglang:num_retracted_requests_total": {
+      "description": "累计被调度器回退的请求数。",
+      "title": "回退请求总数"
+    },
+    "sglang:num_running_reqs": {
+      "description": "调度器当前正在运行的请求数。",
+      "title": "运行中请求数"
+    },
+    "sglang:num_so_requests_total": {
+      "description": "累计处理的结构化输出请求数。",
+      "title": "结构化输出请求总数"
+    },
+    "sglang:num_streaming_sessions": {
+      "description": "当前流式会话数量。",
+      "title": "流式会话数"
+    },
+    "sglang:num_transfer_failed_reqs_total": {
+      "description": "累计 KV Cache 传输失败的请求数。",
+      "title": "KV 传输失败请求总数"
+    },
+    "sglang:num_unique_running_routing_keys": {
+      "description": "当前运行批次中的唯一路由键数量。",
+      "title": "运行中唯一路由键数"
+    },
+    "sglang:num_used_tokens": {
+      "description": "Token 内存池中已使用的 Token 数。",
+      "title": "已用 Token 数"
+    },
+    "sglang:page_size": {
+      "description": "每个 KV Cache 页包含的 Token 数。",
+      "title": "KV Cache 页大小"
+    },
+    "sglang:pending_prealloc_token_usage": {
+      "description": "尚未实际完成预分配的待处理 Token 使用量；源码未明确其量纲。",
+      "title": "待预分配 Token 使用量"
+    },
+    "sglang:per_stage_req_latency_seconds": {
+      "description": "请求各处理阶段的耗时分布，按 stage 标签区分，单位为秒。",
+      "title": "请求阶段耗时"
+    },
+    "sglang:prefetch_bandwidth": {
+      "description": "从分层存储预取数据的带宽分布，单位为 GB/s。",
+      "title": "预取带宽"
+    },
+    "sglang:prefetch_pgs": {
+      "description": "每批次从分层存储预取的页面数量分布。",
+      "title": "预取页数分布"
+    },
+    "sglang:prefetched_tokens_total": {
+      "description": "累计从分层存储预取的输入 Token 数。",
+      "title": "预取 Token 总数"
+    },
+    "sglang:prefill_delayer_outcomes_total": {
+      "description": "按输入估算方式和是否放行累计 Prefill 延迟器的决策结果。",
+      "title": "Prefill 延迟器结果总数"
+    },
+    "sglang:prefill_delayer_wait_forward_passes": {
+      "description": "Prefill 延迟器在放行前等待的前向计算次数分布。",
+      "title": "Prefill 延迟器等待前向次数"
+    },
+    "sglang:prefill_delayer_wait_seconds": {
+      "description": "Prefill 延迟器的等待时间分布，单位为秒。",
+      "title": "Prefill 延迟器等待耗时"
+    },
+    "sglang:process_cpu_seconds_total": {
+      "description": "各组件进程累计消耗的用户态与内核态 CPU 时间，单位为秒。",
+      "title": "进程 CPU 时间"
+    },
+    "sglang:prompt_tokens_histogram": {
+      "description": "每个请求的输入 Token 数量分布。",
+      "title": "输入 Token 长度分布"
+    },
+    "sglang:prompt_tokens_total": {
+      "description": "累计处理的输入（Prefill）Token 数。",
+      "title": "Prefill Token 总数"
+    },
+    "sglang:queue_time_seconds": {
+      "description": "请求在调度队列中等待的时间分布，单位为秒。",
+      "title": "请求排队耗时"
+    },
+    "sglang:realtime_tokens_total": {
+      "description": "按日志周期累计处理的 Token 数，区分 Prefill 计算、Prefill 缓存命中和 Decode。",
+      "title": "实时处理 Token 总数"
+    },
+    "sglang:routing_key_all_req_count": {
+      "description": "按每个路由键关联的运行中与等待请求总数划分的非累积区间分布。",
+      "title": "路由键全部请求数分布"
+    },
+    "sglang:routing_key_running_req_count": {
+      "description": "按每个路由键关联的运行中请求数划分的非累积区间分布，区间由 gt 和 le 标识。",
+      "title": "路由键运行请求数分布"
+    },
+    "sglang:routing_keys_active": {
+      "description": "当前存在活跃请求的唯一路由键数量。",
+      "title": "活跃路由键数"
+    },
+    "sglang:spec_accept_length": {
+      "description": "每次验证平均接受的长度，包括已接受草稿 Token 和奖励 Token。",
+      "title": "投机解码平均接受长度"
+    },
+    "sglang:spec_accept_rate": {
+      "description": "批次内已接受草稿 Token 数与提议草稿 Token 数之比。",
+      "title": "投机解码接受率"
+    },
+    "sglang:spec_block_accept_length": {
+      "description": "每次验证未受 cap 限制的完整块平均接受长度。",
+      "title": "投机解码整块接受长度"
+    },
+    "sglang:spec_cap_length": {
+      "description": "DSpark 置信度调度下每次验证的平均窗口长度，包含奖励槽位。",
+      "title": "投机解码验证窗口长度"
+    },
+    "sglang:spec_num_draft_tokens": {
+      "description": "当前每轮投机解码使用的草稿 Token 数。",
+      "title": "投机解码草稿 Token 数"
+    },
+    "sglang:spec_num_steps": {
+      "description": "当前启用的 speculative_num_steps 配置值。",
+      "title": "投机解码步数"
+    },
+    "sglang:spec_verify_calls_total": {
+      "description": "累计执行的投机解码验证调用次数。",
+      "title": "投机解码验证调用总数"
+    },
+    "sglang:startup_available_gpu_memory_gb": {
+      "description": "引擎启动时检测到的可用 GPU 显存，单位为 GB。",
+      "title": "启动时可用 GPU 显存"
+    },
+    "sglang:streaming_session_held_tokens": {
+      "description": "流式会话槽位当前保留的 KV Token 数。",
+      "title": "流式会话持有 Token 数"
+    },
+    "sglang:swa_available_tokens": {
+      "description": "混合 SWA 模型的 SWA 池中空闲 Token 槽位数。",
+      "title": "SWA 可用 Token 槽位"
+    },
+    "sglang:swa_evictable_tokens": {
+      "description": "SWA 池中可从 Radix Cache 淘汰的 Token 槽位数。",
+      "title": "SWA 可淘汰 Token 槽位"
+    },
+    "sglang:swa_token_usage": {
+      "description": "滑动窗口注意力（SWA）层 Token 内存池的使用率。",
+      "title": "SWA Token 池使用率"
+    },
+    "sglang:swa_used_tokens": {
+      "description": "SWA 池中被活跃请求占用的 Token 槽位数。",
+      "title": "SWA 活跃 Token 槽位"
+    },
+    "sglang:time_to_first_token_seconds": {
+      "description": "从请求进入到生成首个 Token 的耗时分布，单位为秒。",
+      "title": "首 Token 延迟（TTFT）"
+    },
+    "sglang:token_usage": {
+      "description": "Token 内存池的总体使用率。",
+      "title": "Token 池使用率"
+    },
+    "sglang:uncached_prompt_tokens_histogram": {
+      "description": "每个请求实际需要计算、未由缓存命中的输入 Token 数量分布。",
+      "title": "未缓存输入 Token 长度分布"
+    },
+    "sglang:utilization": {
+      "description": "调度器计算得到的当前引擎利用率。",
+      "title": "引擎利用率"
+    },
+    "sglang:weight_load_duration_seconds": {
+      "description": "最近一次在线更新权重操作的墙钟耗时，单位为秒，按加载来源区分。",
+      "title": "最近一次在线权重加载耗时"
+    },
+    "smg_consistent_hashing_policy_branch_total": {
+      "description": "按分支累计一致性哈希路由策略的决策次数。",
+      "title": "一致性哈希策略分支总数"
+    },
+    "smg_db_connections_active": {
+      "description": "按存储类型统计当前活跃的数据库连接数。",
+      "title": "数据库活跃连接数"
+    },
+    "smg_db_items_stored": {
+      "description": "按存储类型累计写入的条目数；该指标虽无 _total 后缀，类型仍为 Counter。",
+      "title": "数据库存储条目总数"
+    },
+    "smg_db_operation_duration_seconds": {
+      "description": "按存储类型和操作统计数据库操作耗时分布，单位为秒。",
+      "title": "数据库操作耗时"
+    },
+    "smg_db_operations_total": {
+      "description": "按存储类型、操作和结果累计数据库操作次数。",
+      "title": "数据库操作总数"
+    },
+    "smg_discovery_deregistrations_total": {
+      "description": "按发现来源和原因累计 Worker 注销事件数。",
+      "title": "Worker 注销总数"
+    },
+    "smg_discovery_registrations_total": {
+      "description": "按发现来源和结果累计 Worker 注册尝试次数。",
+      "title": "Worker 注册尝试总数"
+    },
+    "smg_discovery_sync_duration_seconds": {
+      "description": "按发现来源统计服务发现同步耗时分布，单位为秒。",
+      "title": "服务发现同步耗时"
+    },
+    "smg_discovery_workers_discovered": {
+      "description": "按发现来源统计当前已发现的 Worker 数量。",
+      "title": "服务发现 Worker 数"
+    },
+    "smg_http_connections_active": {
+      "description": "Router 当前活跃的 HTTP 连接数。",
+      "title": "Router 活跃 HTTP 连接数"
+    },
+    "smg_http_inflight_request_age_count": {
+      "description": "按请求已处理时长划分的当前在途请求数；区间非累积，由 gt 和 le 标识。",
+      "title": "处理中请求时长分布"
+    },
+    "smg_http_rate_limit_total": {
+      "description": "按允许或拒绝结果累计 HTTP 限流决策次数。",
+      "title": "HTTP 限流决策总数"
+    },
+    "smg_http_request_duration_seconds": {
+      "description": "按 HTTP 方法和路径统计 Router 请求耗时分布，单位为秒。",
+      "title": "Router HTTP 请求耗时"
+    },
+    "smg_http_requests_total": {
+      "description": "按 HTTP 方法和路径累计 Router 收到的请求数。",
+      "title": "Router HTTP 请求总数"
+    },
+    "smg_http_responses_total": {
+      "description": "按状态码和错误码累计 Router 返回的 HTTP 响应数。",
+      "title": "Router HTTP 响应总数"
+    },
+    "smg_manual_policy_branch_total": {
+      "description": "按分支累计手动路由策略的决策次数。",
+      "title": "手动路由策略分支总数"
+    },
+    "smg_manual_policy_cache_entries": {
+      "description": "手动路由策略缓存中的当前路由条目数。",
+      "title": "手动路由策略缓存条目数"
+    },
+    "smg_mcp_servers_active": {
+      "description": "当前活跃的 MCP Server 连接数。",
+      "title": "活跃 MCP Server 数"
+    },
+    "smg_mcp_tool_calls_total": {
+      "description": "按模型、工具名和结果累计 MCP 工具调用次数。",
+      "title": "MCP 工具调用总数"
+    },
+    "smg_mcp_tool_duration_seconds": {
+      "description": "按模型和工具名统计 MCP 工具执行耗时分布，单位为秒。",
+      "title": "MCP 工具执行耗时"
+    },
+    "smg_mcp_tool_iterations_total": {
+      "description": "按模型累计 Responses API 工具循环的迭代次数。",
+      "title": "MCP 工具循环迭代总数"
+    },
+    "smg_prefix_hash_policy_branch_total": {
+      "description": "按分支累计前缀哈希路由策略的决策次数。",
+      "title": "前缀哈希策略分支总数"
+    },
+    "smg_router_generation_duration_seconds": {
+      "description": "gRPC Router 观测的完整生成过程耗时分布，单位为秒。",
+      "title": "Router 生成总耗时"
+    },
+    "smg_router_request_duration_seconds": {
+      "description": "按 Router 类型、后端类型、连接模式、模型和接口统计请求耗时分布。",
+      "title": "路由请求耗时"
+    },
+    "smg_router_request_errors_total": {
+      "description": "按 Router、后端、连接模式、模型、接口和错误类型累计路由错误数。",
+      "title": "路由请求错误总数"
+    },
+    "smg_router_requests_total": {
+      "description": "按 Router 类型、后端类型、连接模式、模型、接口和流式模式累计路由请求数。",
+      "title": "路由请求总数"
+    },
+    "smg_router_stage_duration_seconds": {
+      "description": "gRPC Router 各流水线阶段的耗时分布。",
+      "title": "Router 流水线阶段耗时"
+    },
+    "smg_router_tokens_total": {
+      "description": "gRPC Router 按输入或输出类型累计处理的 Token 数。",
+      "title": "Router 处理 Token 总数"
+    },
+    "smg_router_tpot_seconds": {
+      "description": "gRPC Router 观测的每个输出 Token 平均耗时分布，单位为秒。",
+      "title": "Router 单输出 Token 耗时"
+    },
+    "smg_router_ttft_seconds": {
+      "description": "gRPC Router 观测的首 Token 延迟分布，单位为秒。",
+      "title": "Router 首 Token 延迟"
+    },
+    "smg_router_upstream_responses_total": {
+      "description": "按 Router 类型、HTTP 状态码和错误码累计上游后端响应数。",
+      "title": "上游响应总数"
+    },
+    "smg_worker_cb_consecutive_failures": {
+      "description": "每个 Worker 当前连续失败次数。",
+      "title": "Worker 连续失败次数"
+    },
+    "smg_worker_cb_consecutive_successes": {
+      "description": "每个 Worker 当前连续成功次数。",
+      "title": "Worker 连续成功次数"
+    },
+    "smg_worker_cb_outcomes_total": {
+      "description": "按 Worker 和成功或失败结果累计熔断器观测次数。",
+      "title": "熔断器请求结果总数"
+    },
+    "smg_worker_cb_state": {
+      "description": "每个 Worker 的熔断器状态：0 为关闭、1 为打开、2 为半开。",
+      "title": "Worker 熔断器状态"
+    },
+    "smg_worker_cb_transitions_total": {
+      "description": "按 Worker、原状态和目标状态累计熔断器状态转换次数。",
+      "title": "熔断器状态转换总数"
+    },
+    "smg_worker_connections_active": {
+      "description": "按 Worker 类型和连接模式统计当前活跃连接数。",
+      "title": "Worker 活跃连接数"
+    },
+    "smg_worker_errors_total": {
+      "description": "按 Worker 类型、连接模式和错误类型累计 Worker 级错误数。",
+      "title": "Worker 错误总数"
+    },
+    "smg_worker_health": {
+      "description": "Worker 当前健康状态；健康为 1，不健康为 0。",
+      "title": "Worker 健康状态"
+    },
+    "smg_worker_health_checks_total": {
+      "description": "按 Worker 类型和检查结果累计健康检查次数。",
+      "title": "Worker 健康检查总数"
+    },
+    "smg_worker_pool_size": {
+      "description": "按 Worker 类型、连接模式和模型统计当前 Worker 数量。",
+      "title": "Worker 池规模"
+    },
+    "smg_worker_requests_active": {
+      "description": "每个 Worker 当前正在运行的请求数。",
+      "title": "Worker 活跃请求数"
+    },
+    "smg_worker_retries_exhausted_total": {
+      "description": "按 Worker 类型和接口累计已耗尽全部重试机会的请求数。",
+      "title": "Worker 重试耗尽请求总数"
+    },
+    "smg_worker_retries_total": {
+      "description": "按 Worker 类型和接口累计重试次数。",
+      "title": "Worker 重试总数"
+    },
+    "smg_worker_retry_backoff_seconds": {
+      "description": "按重试次数统计退避等待时间分布，单位为秒。",
+      "title": "Worker 重试退避耗时"
+    },
+    "smg_worker_routing_keys_active": {
+      "description": "每个 Worker 当前关联的活跃路由键数量。",
+      "title": "Worker 活跃路由键数"
+    },
+    "smg_worker_selection_total": {
+      "description": "按 Worker 类型、连接模式、模型和策略累计 Worker 选择次数。",
+      "title": "Worker 选择总数"
+    }
+  }
+}

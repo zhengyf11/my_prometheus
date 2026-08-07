@@ -139,15 +139,16 @@ sudo python3 install.py --yes --reset-grafana-admin-password --grafana-admin-pas
 - 安装状态：`/var/lib/my_prometheus/install-state.json`
 - 自动生成的 Grafana 凭据：`/var/lib/my_prometheus/grafana-admin-credentials.json`
 
-两套 SGLang Dashboard 由 `tools/generate_sglang_dashboards.py` 中的分类指标清单生成。PD 分离看板的 `Role` 下拉框支持单选、多选和 All，可组合查看 Prefill、Decode 与 Router。修改指标分类、类型或看板结构后执行：
+两套 SGLang Dashboard 由 `tools/generate_sglang_dashboards.py` 中的分类指标清单生成，并从 `grafana/sglang-translations.json` 读取中文名称和简介。PD 分离看板的 `Role` 下拉框支持单选、多选和 All，可组合查看 Prefill、Decode 与 Router。修改指标、分类、翻译或看板结构后执行：
 
 ```bash
 python3 tools/generate_sglang_dashboards.py
+python3 tools/generate_sglang_translation_catalog.py
 ```
 
 生成后应同时提交脚本和两个 JSON。测试会校验 PD 合部的 122 个 Engine 指标族，以及 PD 分离与 Router 合并看板的 183 个指标族均被 PromQL 覆盖；Histogram 指标统一展示 P80、P95 和平均值。
 
-中文名称候选清单位于 `docs/SGLang_Dashboard_中文翻译候选.md`。修改候选生成规则后执行 `python3 tools/generate_sglang_translation_catalog.py`，该清单仅用于评审，不会自动修改 Grafana 页面。
+SGLang 看板采用“中文名称 (英文原文/Prometheus 原指标名)”格式。结构化翻译源是 `grafana/sglang-translations.json`，`docs/SGLang_Dashboard_中文翻译候选.md` 是由它生成的评审视图。只有需要将人工编辑过的 Markdown 重新导入时，才执行 `python3 tools/import_sglang_translation_catalog.py`；正常维护应直接编辑 JSON，避免双向修改冲突。
 
 安装器会创建四个默认不可达的 SGLang 占位目标，分别使用 `sglang-unified`、`sglang-prefill`、`sglang-decode` 和 `sglang-router` 角色。它们与 Linux 指标共用 Prometheus 数据源，但会显示为 `DOWN`；接入实际进程时，编辑 `/etc/prometheus/targets/sglang-dashboards.yml`，把占位地址替换为真实 metrics 地址即可。
 

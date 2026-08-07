@@ -438,6 +438,27 @@ templating.list[]
   multi/includeAll/allValue  是否支持多选和 All
 ```
 
+SGLang Dashboard 的中文显示由仓库文件 `grafana/sglang-translations.json` 统一维护：
+
+| 界面位置 | 显示格式 | 不变的技术标识 |
+|---|---|---|
+| Dashboard 标题 | `中文名称 (英文名称)` | Dashboard UID、JSON 文件名 |
+| Row 和面板标题 | `中文分类 (英文分类)` | panel ID、布局和查询 |
+| 指标图例 | `中文指标名 (Prometheus 原指标名)` | `panels[].targets[].expr` 中的指标名 |
+| 变量标签 | `角色 (Role)`、`实例 (Instance)`、`模型 (Model)` | `$role`、`$instance`、`$model` 变量名 |
+| 面板说明 | 中文指标简介 | PromQL、标签名和标签值 |
+
+翻译维护与重新生成命令：
+
+```bash
+vi grafana/sglang-translations.json
+python3 tools/generate_sglang_dashboards.py
+python3 tools/generate_sglang_translation_catalog.py
+python3 -m unittest discover -s tests -v
+```
+
+`docs/SGLang_Dashboard_中文翻译候选.md` 是从结构化 JSON 生成的评审视图。仅当需要把人工编辑过的 Markdown 导回 JSON 时，才运行 `python3 tools/import_sglang_translation_catalog.py`；不要日常同时编辑 JSON 和 Markdown。
+
 #### 2.3.1 面板使用哪个数据源
 
 每个面板的 `datasource` 指向 Grafana 数据源 UID：

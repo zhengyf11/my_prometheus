@@ -5,10 +5,13 @@ import json
 from collections import OrderedDict
 from pathlib import Path
 
+from sglang_translation_catalog import bilingual, load_catalog, validate_catalog as validate_translations
+
 
 DATASOURCE_UID = "Prometheus"
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT_DIR = ROOT / "grafana" / "dashboards"
+TRANSLATIONS = load_catalog()
 
 
 def metric(name, metric_type):
@@ -248,6 +251,15 @@ def datasource():
     return {"type": "prometheus", "uid": DATASOURCE_UID}
 
 
+def category_title(original):
+    return bilingual(TRANSLATIONS["categories"][original], original)
+
+
+def metric_title(item):
+    translation = TRANSLATIONS["metrics"][item["name"]]
+    return bilingual(translation["title"], item["name"])
+
+
 def selector(item, kind):
     if item["name"].startswith(("smg_", "router_")):
         return 'instance=~"$instance"'
@@ -289,7 +301,7 @@ def row_panel(title, panel_id, y):
         "gridPos": {"h": 1, "w": 24, "x": 0, "y": y},
         "id": panel_id,
         "panels": [],
-        "title": title,
+        "title": category_title(title),
         "type": "row",
     }
 
@@ -297,10 +309,10 @@ def row_panel(title, panel_id, y):
 def chart_panel(title, items, panel_id, x, y, width, kind):
     metric_type = items[0]["type"]
     suffix = {
-        "counter": "Rate",
-        "gauge": "Current State",
-        "histogram": "P80 / P95 / Mean",
-        "summary": "Quantiles",
+        "counter": "速率 (Rate)",
+        "gauge": "当前值 (Current State)",
+        "histogram": "P80 / P95 / 平均值 (Mean)",
+        "summary": "分位数 (Quantiles)",
     }[metric_type]
     targets = []
     for item in items:
@@ -308,28 +320,32 @@ def chart_panel(title, items, panel_id, x, y, width, kind):
             histogram_queries = (
                 ("P80", histogram_quantile_expression(item, kind, "0.80")),
                 ("P95", histogram_quantile_expression(item, kind, "0.95")),
-                ("Mean", histogram_mean_expression(item, kind)),
+                ("平均值 (Mean)", histogram_mean_expression(item, kind)),
             )
             for label, query in histogram_queries:
                 targets.append({
                     "datasource": datasource(),
                     "expr": query,
-                    "legendFormat": "{{{{instance}}}} {0} {1}".format(item["name"], label),
+                    "legendFormat": "{0} {{{{instance}}}} {1}".format(metric_title(item), label),
                     "refId": ref_id(len(targets)),
                 })
         else:
             targets.append({
                 "datasource": datasource(),
                 "expr": expression(item, kind),
-                "legendFormat": "{{{{instance}}}} {0}".format(item["name"]),
+                "legendFormat": "{0} {{{{instance}}}}".format(metric_title(item)),
                 "refId": ref_id(len(targets)),
             })
     return {
         "datasource": datasource(),
-        "description": (
-            "Complete metric-family coverage for this module. Counter panels show rate, "
-            "histogram panels show p80, p95, and mean, and gauges show the current value. Feature-gated "
-            "or event-created metrics can legitimately return no data."
+        "description": "\n".join(
+            ["本面板包含以下指标；功能未启用或事件尚未发生时显示 No data 属于正常现象。", ""]
+            + [
+                "- {0}: {1}".format(
+                    metric_title(item), TRANSLATIONS["metrics"][item["name"]]["description"]
+                )
+                for item in items
+            ]
         ),
         "fieldConfig": {
             "defaults": {
@@ -357,24 +373,25 @@ def chart_panel(title, items, panel_id, x, y, width, kind):
             "tooltip": {"mode": "multi", "sort": "desc"},
         },
         "targets": targets,
-        "title": "{0} - {1}".format(title, suffix),
+        "title": suffix,
         "type": "timeseries",
     }
 
 
 def info_panel(title, role_text, metric_count, panel_id, y):
+    translation = TRANSLATIONS["dashboards"][title]
+    display_title = bilingual(translation["title"], title)
     content = (
         "# {0}\n\n"
-        "This dashboard covers **{1} metric families** for {2}. "
-        "It uses the shared Prometheus data source `{3}` and selects scrape targets by their "
-        "SGLang role label. Placeholder targets can be DOWN until the corresponding process "
-        "is started. Metrics are lazily registered, so feature-gated metrics may show no data."
-    ).format(title, metric_count, role_text, DATASOURCE_UID)
+        "本看板覆盖 **{1} 个指标族**。{2} "
+        "看板使用共享 Prometheus 数据源 `{3}`，并通过 SGLang `role` 标签选择采集目标。"
+        "占位目标在对应进程启动前可以是 DOWN；指标按功能或事件延迟注册时，No data 属于正常现象。"
+    ).format(display_title, metric_count, translation["description"], DATASOURCE_UID)
     return {
         "gridPos": {"h": 5, "w": 24, "x": 0, "y": y},
         "id": panel_id,
         "options": {"content": content, "mode": "markdown"},
-        "title": "Dashboard Scope",
+        "title": "看板范围 (Dashboard Scope)",
         "type": "text",
     }
 
@@ -387,7 +404,7 @@ def query_variable(name, label, query, multi=True):
         "definition": query,
         "hide": 0,
         "includeAll": multi,
-        "label": label,
+        "label": bilingual({"Role": "角色", "Instance": "实例", "Model": "模型"}[label], label),
         "multi": multi,
         "name": name,
         "options": [],
@@ -457,9 +474,9 @@ def build_dashboard(kind, title, uid, groups, role_text):
 
     return {
         "annotations": {"list": []},
-        "description": (
-            "Complete SGLang metrics dashboard generated from the PD and Router metric catalogs. "
-            "It uses the shared Prometheus data source and role-specific scrape targets."
+        "description": "{0} {1} 使用共享 Prometheus 数据源和按角色区分的采集目标。".format(
+            bilingual(TRANSLATIONS["dashboards"][title]["title"], title),
+            TRANSLATIONS["dashboards"][title]["description"],
         ),
         "editable": True,
         "fiscalYearStartMonth": 0,
@@ -475,7 +492,7 @@ def build_dashboard(kind, title, uid, groups, role_text):
         "time": {"from": "now-6h", "to": "now"},
         "timepicker": {},
         "timezone": "browser",
-        "title": title,
+        "title": bilingual(TRANSLATIONS["dashboards"][title]["title"], title),
         "uid": uid,
         "version": 1,
         "weekStart": "",
@@ -503,6 +520,12 @@ def validate_catalog(groups, expected_count):
 def main():
     validate_catalog(ENGINE_GROUPS, 122)
     validate_catalog(ROUTER_GROUPS, 61)
+    validate_translations(
+        TRANSLATIONS,
+        ("SGLang PD Unified Metrics", "SGLang PD Disaggregated and Router Metrics"),
+        list(ENGINE_GROUPS) + list(ROUTER_GROUPS),
+        [item["name"] for item in flatten(ENGINE_GROUPS) + flatten(ROUTER_GROUPS)],
+    )
     write_dashboard(
         "sglang-pd-unified.json",
         build_dashboard(

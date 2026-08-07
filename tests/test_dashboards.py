@@ -1,4 +1,5 @@
 import json
+import re
 import unittest
 from pathlib import Path
 
@@ -6,7 +7,8 @@ from pathlib import Path
 class DashboardTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        dashboard_dir = Path(__file__).resolve().parent.parent / "grafana/dashboards"
+        grafana_dir = Path(__file__).resolve().parent.parent / "grafana"
+        dashboard_dir = grafana_dir / "dashboards"
         cls.paths = {
             "unified": dashboard_dir / "sglang-pd-unified.json",
             "split": dashboard_dir / "sglang-pd-disaggregated.json",
@@ -15,6 +17,8 @@ class DashboardTests(unittest.TestCase):
         for name, path in cls.paths.items():
             with open(str(path), "r") as handle:
                 cls.dashboards[name] = json.load(handle)
+        with open(str(grafana_dir / "sglang-translations.json"), "r") as handle:
+            cls.translations = json.load(handle)
 
     def test_dashboard_has_stable_identity_and_unique_panel_ids(self):
         expected = {
@@ -50,6 +54,25 @@ class DashboardTests(unittest.TestCase):
                     "{0} is not queried by {1}".format(item["name"], name),
                 )
 
+    def test_translation_catalog_matches_dashboard_catalogs(self):
+        metric_names = {
+            item["name"]
+            for dashboard in self.dashboards.values()
+            for item in dashboard["x-metricsCatalog"]
+        }
+        category_names = {
+            panel["title"].rsplit(" (", 1)[-1].rstrip(")")
+            for dashboard in self.dashboards.values()
+            for panel in dashboard["panels"]
+            if panel["type"] == "row"
+        }
+        self.assertEqual(set(self.translations["metrics"]), metric_names)
+        self.assertEqual(set(self.translations["categories"]), category_names)
+        self.assertEqual(len(self.translations["dashboards"]), 2)
+        for translation in self.translations["metrics"].values():
+            self.assertTrue(translation["title"])
+            self.assertTrue(translation["description"])
+
     def test_dashboards_use_shared_prometheus_datasource(self):
         for dashboard in self.dashboards.values():
             for variable in dashboard["templating"]["list"]:
@@ -83,7 +106,7 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(role["allValue"], ".*")
 
     def test_engine_dashboards_have_expected_sections(self):
-        expected = {
+        original_sections = {
             "HTTP, Process and Functions",
             "Requests, Tokens and User Latency",
             "Scheduler State",
@@ -107,9 +130,44 @@ class DashboardTests(unittest.TestCase):
             for panel in self.dashboards["split"]["panels"]
             if panel["type"] == "row"
         }
+        expected = {
+            "{0} ({1})".format(self.translations["categories"][name], name)
+            for name in original_sections
+        }
         self.assertEqual(unified_sections, expected)
         self.assertTrue(expected.issubset(split_sections))
-        self.assertIn("Router Mesh", split_sections)
+        self.assertIn("Router Mesh 集群 (Router Mesh)", split_sections)
+
+    def test_dashboards_use_bilingual_display_names(self):
+        original_titles = {
+            "unified": "SGLang PD Unified Metrics",
+            "split": "SGLang PD Disaggregated and Router Metrics",
+        }
+        for name, dashboard in self.dashboards.items():
+            original = original_titles[name]
+            translated = self.translations["dashboards"][original]["title"]
+            self.assertEqual(dashboard["title"], "{0} ({1})".format(translated, original))
+
+            for variable in dashboard["templating"]["list"]:
+                self.assertRegex(variable["label"], r"^.+ \((Role|Instance|Model)\)$")
+
+            metric_names = [item["name"] for item in dashboard["x-metricsCatalog"]]
+            for panel in dashboard["panels"]:
+                for target in panel.get("targets", []):
+                    matching = [
+                        metric for metric in metric_names
+                        if re.search(
+                            re.escape(metric) + r"(?:_(?:bucket|sum|count))?\{",
+                            target["expr"],
+                        )
+                    ]
+                    self.assertEqual(len(matching), 1)
+                    metric_name = matching[0]
+                    translated_metric = self.translations["metrics"][metric_name]
+                    expected_label = "{0} ({1})".format(translated_metric["title"], metric_name)
+                    self.assertTrue(target["legendFormat"].startswith(expected_label))
+                    self.assertIn(expected_label, panel["description"])
+                    self.assertIn(translated_metric["description"], panel["description"])
 
     def test_histograms_show_p80_p95_and_mean(self):
         for dashboard in self.dashboards.values():

@@ -1,6 +1,6 @@
 # SGLang Dashboard 中文翻译候选清单
 
-本文用于评审 Grafana 界面中文化范围，当前 Dashboard JSON **尚未应用这些中文名**。在“选择”列标记需要采用或需要调整的项即可。Prometheus 原始指标标识保持不变；“指标名称中文翻译候选”用于未来的面板标题、图例或说明文字。
+本文是 Grafana 中文界面使用的翻译目录评审视图。Prometheus 原始指标标识保持不变；中文名称用于 Dashboard 标题、分类、面板图例和说明文字。
 
 ## 1. Dashboard 名称
 
