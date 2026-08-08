@@ -20,6 +20,7 @@ class InstallContext(object):
         self.generated_grafana_password = False
         self.reset_grafana_admin_password = args.reset_grafana_admin_password
         self.grafana_password_changed = False
+        self.grafana_preexisting = None
         self.listen_address = args.listen_address
         self.prometheus_listen_address = args.prometheus_listen_address or args.listen_address
         self.node_exporter_listen_address = args.node_exporter_listen_address

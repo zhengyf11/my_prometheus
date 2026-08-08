@@ -53,6 +53,8 @@ def run(ctx, cmd, check=True, capture=False, input_text=None, secrets=None, time
             env.setdefault("HTTPS_PROXY", proxy)
             env.setdefault("http_proxy", proxy)
             env.setdefault("https_proxy", proxy)
+        if os.path.basename(cmd[0]) == "apt-get":
+            env.setdefault("DEBIAN_FRONTEND", "noninteractive")
         proc = subprocess.run(
             cmd,
             shell=False,
@@ -68,7 +70,7 @@ def run(ctx, cmd, check=True, capture=False, input_text=None, secrets=None, time
     except subprocess.TimeoutExpired:
         raise RuntimeError("command timed out: {0}".format(" ".join(safe_cmd)))
     if check and proc.returncode != 0:
-        raise CommandError(cmd, proc.returncode, proc.stdout, proc.stderr)
+        raise CommandError(safe_cmd, proc.returncode, proc.stdout, proc.stderr)
     return proc
 
 

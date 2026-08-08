@@ -22,6 +22,7 @@ def write_state(ctx):
         "grafana_version": ctx.grafana_version,
         "grafana_admin_user": ctx.grafana_admin_user,
         "grafana_admin_password_initialized": ctx.grafana_password_changed,
+        "grafana_preexisting": ctx.grafana_preexisting,
         "with_alertmanager": ctx.with_alertmanager,
         "config_dir": str(ctx.config_dir),
         "prometheus_data_dir": str(ctx.prometheus_data_dir),

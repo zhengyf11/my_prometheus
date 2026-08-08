@@ -9,7 +9,7 @@ import urllib.request
 from .command import command_exists, run
 from .files import backup_file, copy_file, ensure_dir, write_managed_file
 from .packages import install_grafana_package
-from .state import read_grafana_credentials, write_grafana_credentials
+from .state import read_grafana_credentials, read_state, write_grafana_credentials
 from .systemd import enable_now, restart
 
 
@@ -19,6 +19,8 @@ LOG = logging.getLogger(__name__)
 def install_grafana(ctx):
     LOG.info("installing Grafana %s", ctx.grafana_version)
     was_installed = install_grafana_package(ctx)
+    previous_state = read_state(ctx)
+    ctx.grafana_preexisting = previous_state.get("grafana_preexisting", was_installed)
     ensure_dir(ctx, ctx.grafana_provisioning_dir / "datasources")
     ensure_dir(ctx, ctx.grafana_provisioning_dir / "dashboards")
     ensure_dir(ctx, ctx.grafana_dashboard_dir, owner="grafana", group="grafana")
@@ -167,6 +169,10 @@ datasources:
 
 
 def provision_dashboards(ctx):
+    linux_dashboard_dir = ctx.grafana_dashboard_dir / "linux"
+    sglang_dashboard_dir = ctx.grafana_dashboard_dir / "sglang"
+    ensure_dir(ctx, linux_dashboard_dir, owner="grafana", group="grafana")
+    ensure_dir(ctx, sglang_dashboard_dir, owner="grafana", group="grafana")
     provider = """apiVersion: 1
 
 providers:
@@ -178,7 +184,16 @@ providers:
     updateIntervalSeconds: 30
     allowUiUpdates: true
     options:
-      path: /var/lib/grafana/dashboards
+      path: /var/lib/grafana/dashboards/linux
+  - name: my-prometheus-sglang
+    orgId: 1
+    folder: SGLang
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/sglang
 """
     write_managed_file(
         ctx,
@@ -191,11 +206,39 @@ providers:
     copy_file(
         ctx,
         ctx.grafana_assets_dir / "dashboards" / "node-overview.json",
-        ctx.grafana_dashboard_dir / "node-overview.json",
+        linux_dashboard_dir / "node-overview.json",
         mode=0o644,
         owner="grafana",
         group="grafana",
     )
+    for name in (
+        "sglang-pd-unified.json",
+        "sglang-pd-disaggregated.json",
+    ):
+        copy_file(
+            ctx,
+            ctx.grafana_assets_dir / "dashboards" / name,
+            sglang_dashboard_dir / name,
+            mode=0o644,
+            owner="grafana",
+            group="grafana",
+        )
+    obsolete_dashboards = (
+        "sglang-router.json",
+        "sglang-service-overview.json",
+        "sglang-pd-pipeline.json",
+        "sglang-engine-scheduler.json",
+        "sglang-router-worker.json",
+        "sglang-kv-capacity.json",
+        "sglang-optional-features.json",
+    )
+    for name in obsolete_dashboards:
+        obsolete = sglang_dashboard_dir / name
+        if getattr(ctx, "dry_run", False):
+            LOG.info("[dry-run] remove obsolete dashboard %s", obsolete)
+        elif obsolete.exists():
+            obsolete.unlink()
+            LOG.info("removed obsolete dashboard %s", obsolete)
 
 
 def wait_for_grafana(ctx, timeout=90):
@@ -215,10 +258,23 @@ def wait_for_grafana(ctx, timeout=90):
 
 def set_admin_password(ctx):
     ctx.ensure_grafana_admin_password()
-    if command_exists("grafana-cli"):
+    if ctx.dry_run:
+        LOG.info("[dry-run] reset Grafana admin password")
+        return
+    if command_exists("grafana"):
+        cmd = [
+            "grafana",
+            "cli",
+            "--homepath",
+            "/usr/share/grafana",
+            "--config",
+            "/etc/grafana/grafana.ini",
+            "admin",
+            "reset-admin-password",
+            ctx.grafana_admin_password,
+        ]
+    elif command_exists("grafana-cli"):
         cmd = ["grafana-cli", "admin", "reset-admin-password", ctx.grafana_admin_password]
-    elif command_exists("grafana"):
-        cmd = ["grafana", "cli", "admin", "reset-admin-password", ctx.grafana_admin_password]
     else:
         raise RuntimeError("grafana-cli was not found after installing Grafana")
     run(ctx, cmd, secrets=[ctx.grafana_admin_password])
