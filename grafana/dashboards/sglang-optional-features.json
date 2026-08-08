@@ -111,7 +111,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "max by (role, instance) (up{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"})",
+          "expr": "max by (role, instance) (up{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=~\"$role\"})",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01",
           "instant": true
@@ -141,44 +141,14 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "\u4f7f\u7528 `absent(up)` \u5224\u65ad\u6240\u9009 Role/Instance \u662f\u5426\u5b8c\u5168\u6ca1\u6709\u5339\u914d\u76ee\u6807\u3002\u503c\u4e3a 1 \u65f6\u5e94\u68c0\u67e5 target \u6587\u4ef6\u3001\u6807\u7b7e\u548c\u53d8\u91cf\u9009\u62e9\u3002",
+      "description": "\u7edf\u8ba1\u5e26\u6709 `expected=\"true\"` \u4e14\u5339\u914d\u5f53\u524d\u53d8\u91cf\u7684 SGLang target\u3002Prometheus \u65e0\u6cd5\u77e5\u9053\u672a\u5199\u5165\u670d\u52a1\u53d1\u73b0\u6587\u4ef6\u7684\u5916\u90e8\u671f\u671b\u6570\u91cf\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "min": 0,
-          "unit": "short",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "green",
-                  "index": 0,
-                  "text": "\u5df2\u53d1\u73b0"
-                },
-                "1": {
-                  "color": "red",
-                  "index": 1,
-                  "text": "\u7f3a\u5931"
-                }
-              },
-              "type": "value"
-            }
-          ]
+          "unit": "short"
         },
         "overrides": []
       },
@@ -195,13 +165,13 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_max(absent(up{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"}), 1) or on() (count(up{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"}) * 0)",
-          "legendFormat": "\u76ee\u6807\u7f3a\u5931\u72b6\u6001",
+          "expr": "count(up{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=~\"$role\"})",
+          "legendFormat": "\u7eb3\u7ba1",
           "refId": "Q01",
           "instant": true
         }
       ],
-      "title": "\u91c7\u96c6\u76ee\u6807\u7f3a\u5931\u72b6\u6001\uff081 \u4e3a\u7f3a\u5931\uff0c0 \u4e3a\u5df2\u53d1\u73b0\uff09",
+      "title": "\u7eb3\u7ba1\u76ee\u6807\u6570",
       "type": "stat",
       "x-panelKind": "scrape-health",
       "options": {
@@ -229,10 +199,27 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "min": 0,
-          "unit": "s"
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "red",
+                "value": 60
+              }
+            ]
+          }
         },
         "overrides": []
       },
@@ -249,13 +236,13 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "time() - max_over_time(timestamp((up{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"} == 1))[24h:])",
+          "expr": "time() - max_over_time(timestamp((up{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=~\"$role\"} == 1))[24h:])",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01",
           "instant": true
         }
       ],
-      "title": "\u6700\u8fd1\u6210\u529f\u91c7\u96c6\u8ddd\u4eca\u65f6\u95f4\uff0824 \u5c0f\u65f6\u5185\u6700\u540e\u4e00\u6b21 UP \u8ddd\u4eca\u79d2\u6570\uff09",
+      "title": "\u6700\u8fd1\u6210\u529f\u91c7\u96c6\u8ddd\u4eca\u65f6\u95f4",
       "type": "stat",
       "x-panelKind": "scrape-health",
       "options": {
@@ -310,7 +297,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "max by (role, instance) (scrape_samples_scraped{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"})",
+          "expr": "max by (role, instance) (scrape_samples_scraped{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=~\"$role\"})",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01"
         }
@@ -370,7 +357,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "max by (role, instance) (scrape_duration_seconds{job=\"file_sd_nodes\",instance=~\"$instance\",role=~\"$role\"})",
+          "expr": "max by (role, instance) (scrape_duration_seconds{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=~\"$role\"})",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01"
         }
@@ -395,14 +382,135 @@
       }
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Prometheus \u81ea\u76d1\u63a7\u6307\u6807 `prometheus_rule_group_rules`\u3002\u5f53\u524d\u89c4\u5219\u6a21\u677f\u5e94\u62a5\u544a 41 \u6761\uff1b\u8fd9\u6bd4\u7edf\u8ba1\u8f93\u51fa\u65f6\u5e8f\u66f4\u80fd\u8bc6\u522b\u89c4\u5219\u7ec4\u662f\u5426\u52a0\u8f7d\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0,
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "id": 8,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max(prometheus_rule_group_rules{rule_group=~\".*;sglang[.]recording\"})",
+          "legendFormat": "\u89c4\u5219\u6570",
+          "refId": "Q01",
+          "instant": true
+        }
+      ],
+      "title": "SGLang \u8bb0\u5f55\u89c4\u5219\u6570\u91cf",
+      "type": "stat",
+      "x-panelKind": "scrape-health",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "\u6700\u8fd1 5 \u5206\u949f SGLang recording rule \u8bc4\u4f30\u5931\u8d25\u6b21\u6570\u30020 \u4e3a\u6b63\u5e38\uff1b\u5927\u4e8e 0 \u65f6\u5e94\u68c0\u67e5 Prometheus Rules \u9875\u9762\u548c\u65e5\u5fd7\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "min": 0,
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "id": 9,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum(increase(prometheus_rule_evaluation_failures_total{rule_group=~\".*;sglang[.]recording\"}[5m]))",
+          "legendFormat": "\u5931\u8d25\u6b21\u6570",
+          "refId": "Q01",
+          "instant": true
+        }
+      ],
+      "title": "\u89c4\u5219\u8bc4\u4f30\u5931\u8d25\u589e\u91cf",
+      "type": "stat",
+      "x-panelKind": "scrape-health",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
       "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 30
       },
-      "id": 8,
+      "id": 10,
       "panels": [
         {
           "datasource": {
@@ -431,9 +539,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 23
+            "y": 31
           },
-          "id": 9,
+          "id": 11,
           "targets": [
             {
               "datasource": {
@@ -499,9 +607,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 23
+            "y": 31
           },
-          "id": 10,
+          "id": 12,
           "targets": [
             {
               "datasource": {
@@ -558,9 +666,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 39
           },
-          "id": 11,
+          "id": 13,
           "targets": [
             {
               "datasource": {
@@ -617,9 +725,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 39
           },
-          "id": 12,
+          "id": 14,
           "targets": [
             {
               "datasource": {
@@ -676,9 +784,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 39
+            "y": 47
           },
-          "id": 13,
+          "id": 15,
           "targets": [
             {
               "datasource": {
@@ -735,9 +843,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 39
+            "y": 47
           },
-          "id": 14,
+          "id": 16,
           "targets": [
             {
               "datasource": {
@@ -803,9 +911,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 47
+            "y": 55
           },
-          "id": 15,
+          "id": 17,
           "targets": [
             {
               "datasource": {
@@ -871,9 +979,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 47
+            "y": 55
           },
-          "id": 16,
+          "id": 18,
           "targets": [
             {
               "datasource": {
@@ -939,9 +1047,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 55
+            "y": 63
           },
-          "id": 17,
+          "id": 19,
           "targets": [
             {
               "datasource": {
@@ -990,9 +1098,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 71
       },
-      "id": 18,
+      "id": 20,
       "panels": [
         {
           "datasource": {
@@ -1021,9 +1129,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 64
+            "y": 72
           },
-          "id": 19,
+          "id": 21,
           "targets": [
             {
               "datasource": {
@@ -1081,9 +1189,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 64
+            "y": 72
           },
-          "id": 20,
+          "id": 22,
           "targets": [
             {
               "datasource": {
@@ -1140,9 +1248,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 72
+            "y": 80
           },
-          "id": 21,
+          "id": 23,
           "targets": [
             {
               "datasource": {
@@ -1199,9 +1307,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 72
+            "y": 80
           },
-          "id": 22,
+          "id": 24,
           "targets": [
             {
               "datasource": {
@@ -1251,9 +1359,9 @@
             "h": 8,
             "w": 6,
             "x": 0,
-            "y": 80
+            "y": 88
           },
-          "id": 23,
+          "id": 25,
           "targets": [
             {
               "datasource": {
@@ -1304,9 +1412,9 @@
             "h": 8,
             "w": 6,
             "x": 6,
-            "y": 80
+            "y": 88
           },
-          "id": 24,
+          "id": 26,
           "targets": [
             {
               "datasource": {
@@ -1364,9 +1472,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 80
+            "y": 88
           },
-          "id": 25,
+          "id": 27,
           "targets": [
             {
               "datasource": {
@@ -1432,9 +1540,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 88
+            "y": 96
           },
-          "id": 26,
+          "id": 28,
           "targets": [
             {
               "datasource": {
@@ -1474,9 +1582,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 96
+        "y": 104
       },
-      "id": 27,
+      "id": 29,
       "panels": [
         {
           "datasource": {
@@ -1505,9 +1613,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 97
+            "y": 105
           },
-          "id": 28,
+          "id": 30,
           "targets": [
             {
               "datasource": {
@@ -1557,9 +1665,9 @@
             "h": 8,
             "w": 6,
             "x": 12,
-            "y": 97
+            "y": 105
           },
-          "id": 29,
+          "id": 31,
           "targets": [
             {
               "datasource": {
@@ -1618,9 +1726,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 105
+            "y": 113
           },
-          "id": 30,
+          "id": 32,
           "targets": [
             {
               "datasource": {
@@ -1677,9 +1785,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 105
+            "y": 113
           },
-          "id": 31,
+          "id": 33,
           "targets": [
             {
               "datasource": {
@@ -1729,9 +1837,9 @@
             "h": 8,
             "w": 6,
             "x": 0,
-            "y": 113
+            "y": 121
           },
-          "id": 32,
+          "id": 34,
           "targets": [
             {
               "datasource": {
@@ -1789,9 +1897,9 @@
             "h": 8,
             "w": 12,
             "x": 6,
-            "y": 113
+            "y": 121
           },
-          "id": 33,
+          "id": 35,
           "targets": [
             {
               "datasource": {
@@ -1848,9 +1956,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 121
+            "y": 129
           },
-          "id": 34,
+          "id": 36,
           "targets": [
             {
               "datasource": {
@@ -1907,9 +2015,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 121
+            "y": 129
           },
-          "id": 35,
+          "id": 37,
           "targets": [
             {
               "datasource": {
@@ -1966,9 +2074,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 129
+            "y": 137
           },
-          "id": 36,
+          "id": 38,
           "targets": [
             {
               "datasource": {
@@ -2025,9 +2133,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 129
+            "y": 137
           },
-          "id": 37,
+          "id": 39,
           "targets": [
             {
               "datasource": {
@@ -2093,9 +2201,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 137
+            "y": 145
           },
-          "id": 38,
+          "id": 40,
           "targets": [
             {
               "datasource": {
@@ -2161,9 +2269,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 137
+            "y": 145
           },
-          "id": 39,
+          "id": 41,
           "targets": [
             {
               "datasource": {
@@ -2229,9 +2337,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 145
+            "y": 153
           },
-          "id": 40,
+          "id": 42,
           "targets": [
             {
               "datasource": {
@@ -2297,9 +2405,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 145
+            "y": 153
           },
-          "id": 41,
+          "id": 43,
           "targets": [
             {
               "datasource": {
@@ -2366,9 +2474,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 153
+            "y": 161
           },
-          "id": 42,
+          "id": 44,
           "targets": [
             {
               "datasource": {
@@ -2425,9 +2533,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 153
+            "y": 161
           },
-          "id": 43,
+          "id": 45,
           "targets": [
             {
               "datasource": {
@@ -2467,9 +2575,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 161
+        "y": 169
       },
-      "id": 44,
+      "id": 46,
       "panels": [
         {
           "datasource": {
@@ -2498,9 +2606,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 162
+            "y": 170
           },
-          "id": 45,
+          "id": 47,
           "targets": [
             {
               "datasource": {
@@ -2557,9 +2665,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 162
+            "y": 170
           },
-          "id": 46,
+          "id": 48,
           "targets": [
             {
               "datasource": {
@@ -2616,9 +2724,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 170
+            "y": 178
           },
-          "id": 47,
+          "id": 49,
           "targets": [
             {
               "datasource": {
@@ -2684,9 +2792,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 170
+            "y": 178
           },
-          "id": 48,
+          "id": 50,
           "targets": [
             {
               "datasource": {
@@ -2743,9 +2851,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 178
+            "y": 186
           },
-          "id": 49,
+          "id": 51,
           "targets": [
             {
               "datasource": {
@@ -2802,9 +2910,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 178
+            "y": 186
           },
-          "id": 50,
+          "id": 52,
           "targets": [
             {
               "datasource": {
@@ -2870,9 +2978,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 186
+            "y": 194
           },
-          "id": 51,
+          "id": 53,
           "targets": [
             {
               "datasource": {
@@ -2929,9 +3037,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 186
+            "y": 194
           },
-          "id": 52,
+          "id": 54,
           "targets": [
             {
               "datasource": {
@@ -2988,9 +3096,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 194
+            "y": 202
           },
-          "id": 53,
+          "id": 55,
           "targets": [
             {
               "datasource": {
@@ -3047,9 +3155,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 194
+            "y": 202
           },
-          "id": 54,
+          "id": 56,
           "targets": [
             {
               "datasource": {
@@ -3115,9 +3223,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 202
+            "y": 210
           },
-          "id": 55,
+          "id": 57,
           "targets": [
             {
               "datasource": {
@@ -3174,9 +3282,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 202
+            "y": 210
           },
-          "id": 56,
+          "id": 58,
           "targets": [
             {
               "datasource": {
@@ -3216,9 +3324,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 210
+        "y": 218
       },
-      "id": 57,
+      "id": 59,
       "panels": [
         {
           "datasource": {
@@ -3247,9 +3355,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 211
+            "y": 219
           },
-          "id": 58,
+          "id": 60,
           "targets": [
             {
               "datasource": {
@@ -3315,9 +3423,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 211
+            "y": 219
           },
-          "id": 59,
+          "id": 61,
           "targets": [
             {
               "datasource": {
@@ -3374,9 +3482,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 219
+            "y": 227
           },
-          "id": 60,
+          "id": 62,
           "targets": [
             {
               "datasource": {
@@ -3433,9 +3541,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 219
+            "y": 227
           },
-          "id": 61,
+          "id": 63,
           "targets": [
             {
               "datasource": {
@@ -3492,9 +3600,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 227
+            "y": 235
           },
-          "id": 62,
+          "id": 64,
           "targets": [
             {
               "datasource": {
@@ -3560,9 +3668,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 227
+            "y": 235
           },
-          "id": 63,
+          "id": 65,
           "targets": [
             {
               "datasource": {
@@ -3619,9 +3727,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 235
+            "y": 243
           },
-          "id": 64,
+          "id": 66,
           "targets": [
             {
               "datasource": {
@@ -3678,9 +3786,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 235
+            "y": 243
           },
-          "id": 65,
+          "id": 67,
           "targets": [
             {
               "datasource": {
@@ -3737,9 +3845,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 243
+            "y": 251
           },
-          "id": 66,
+          "id": 68,
           "targets": [
             {
               "datasource": {
@@ -3796,9 +3904,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 243
+            "y": 251
           },
-          "id": 67,
+          "id": 69,
           "targets": [
             {
               "datasource": {
@@ -3855,9 +3963,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 251
+            "y": 259
           },
-          "id": 68,
+          "id": 70,
           "targets": [
             {
               "datasource": {
@@ -3914,9 +4022,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 251
+            "y": 259
           },
-          "id": 69,
+          "id": 71,
           "targets": [
             {
               "datasource": {
@@ -3974,9 +4082,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 259
+            "y": 267
           },
-          "id": 70,
+          "id": 72,
           "targets": [
             {
               "datasource": {
@@ -4034,9 +4142,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 259
+            "y": 267
           },
-          "id": 71,
+          "id": 73,
           "targets": [
             {
               "datasource": {
@@ -4088,7 +4196,7 @@
           "type": "prometheus",
           "uid": "Prometheus"
         },
-        "definition": "label_values(up{job=\"file_sd_nodes\",role=~\"sglang-prefill|sglang-decode|sglang-router\"}, role)",
+        "definition": "label_values(up{job=\"file_sd_nodes\",expected=\"true\",role=~\"sglang-prefill|sglang-decode|sglang-router\"}, role)",
         "hide": 0,
         "includeAll": true,
         "label": "\u89d2\u8272 (Role)",
@@ -4096,7 +4204,7 @@
         "name": "role",
         "options": [],
         "query": {
-          "query": "label_values(up{job=\"file_sd_nodes\",role=~\"sglang-prefill|sglang-decode|sglang-router\"}, role)",
+          "query": "label_values(up{job=\"file_sd_nodes\",expected=\"true\",role=~\"sglang-prefill|sglang-decode|sglang-router\"}, role)",
           "refId": "Variable-role"
         },
         "refresh": 1,
@@ -4112,7 +4220,7 @@
           "type": "prometheus",
           "uid": "Prometheus"
         },
-        "definition": "label_values(up{job=\"file_sd_nodes\",role=~\"$role\"}, instance)",
+        "definition": "label_values(up{job=\"file_sd_nodes\",expected=\"true\",role=~\"$role\"}, instance)",
         "hide": 0,
         "includeAll": true,
         "label": "\u5b9e\u4f8b (Instance)",
@@ -4120,7 +4228,7 @@
         "name": "instance",
         "options": [],
         "query": {
-          "query": "label_values(up{job=\"file_sd_nodes\",role=~\"$role\"}, instance)",
+          "query": "label_values(up{job=\"file_sd_nodes\",expected=\"true\",role=~\"$role\"}, instance)",
           "refId": "Variable-instance"
         },
         "refresh": 1,

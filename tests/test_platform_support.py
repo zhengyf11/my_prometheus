@@ -194,6 +194,7 @@ class SGLangTargetTemplateTests(unittest.TestCase):
         ):
             self.assertEqual(content.count("role: {0}".format(role)), 1)
         self.assertEqual(content.count("127.0.0.1:3900"), 4)
+        self.assertEqual(content.count('expected: "false"'), 4)
 
 
 if __name__ == "__main__":

@@ -135,6 +135,8 @@ class DashboardTests(unittest.TestCase):
 
         self.assertIn('role="sglang-unified"', definitions["unified"])
         self.assertIn('role=~"$role"', definitions["split"])
+        self.assertIn('expected="true"', definitions["unified"])
+        self.assertIn('expected="true"', definitions["split"])
 
         role = next(
             item for item in self.dashboards["split"]["templating"]["list"]
@@ -160,7 +162,7 @@ class DashboardTests(unittest.TestCase):
         for panel in self.metric_panels(self.dashboards["split"]):
             for target in panel["targets"]:
                 self.assertIn('role=~"$role"', target["expr"])
-        for panel in self.data_panels(self.dashboards["unified"]):
+        for panel in self.metric_panels(self.dashboards["unified"]):
             for target in panel["targets"]:
                 self.assertIn('role="sglang-unified"', target["expr"])
 
@@ -274,7 +276,7 @@ class DashboardTests(unittest.TestCase):
                 self.assertRegex(variable["label"], r"^.+ \((Role|Instance|Model)\)$")
 
             metric_names = [item["name"] for item in dashboard["x-metricsCatalog"]]
-            for panel in self.data_panels(dashboard):
+            for panel in self.metric_panels(dashboard):
                 self.assertRegex(panel["title"], r"^.+（.+）$")
                 for metric_name in metric_names:
                     self.assertNotIn(metric_name, panel["title"])
@@ -296,6 +298,14 @@ class DashboardTests(unittest.TestCase):
             "sglang:prompt_tokens_histogram",
             "sglang:uncached_prompt_tokens_histogram",
         }
+        allowed_zero_baselines = {
+            frozenset(("sglang:num_aborted_requests_total", "sglang:num_requests_total")),
+            frozenset(("sglang:num_transfer_failed_reqs_total", "sglang:num_requests_total")),
+            frozenset(("sglang:num_bootstrap_failed_reqs_total", "sglang:num_requests_total")),
+            frozenset(("sglang:num_prefill_retries_total", "sglang:num_requests_total")),
+            frozenset(("smg_router_request_errors_total", "smg_router_requests_total")),
+            frozenset(("smg_worker_retries_exhausted_total", "smg_router_requests_total")),
+        }
         for dashboard in self.dashboards.values():
             metric_names = [item["name"] for item in dashboard["x-metricsCatalog"]]
             for panel in self.metric_panels(dashboard):
@@ -311,7 +321,9 @@ class DashboardTests(unittest.TestCase):
                 }
                 self.assertTrue(matching)
                 self.assertTrue(
-                    len(matching) == 1 or matching == allowed_calculated_sources,
+                    len(matching) == 1
+                    or matching == allowed_calculated_sources
+                    or frozenset(matching) in allowed_zero_baselines,
                     "{0}: {1}".format(panel["title"], sorted(matching)),
                 )
 
@@ -321,30 +333,39 @@ class DashboardTests(unittest.TestCase):
                 panel for panel in self.all_panels(dashboard)
                 if panel.get("x-panelKind") == "scrape-health"
             ]
-            self.assertEqual(len(health_panels), 6)
+            self.assertEqual(len(health_panels), 8)
             expressions = "\n".join(
                 target["expr"]
                 for panel in health_panels
                 for target in panel.get("targets", [])
             )
             self.assertIn("up{", expressions)
-            self.assertIn("absent(up{", expressions)
             self.assertIn("count(up{", expressions)
+            self.assertIn('expected="true"', expressions)
             self.assertIn("max_over_time(timestamp((up{", expressions)
             self.assertIn("scrape_samples_scraped{", expressions)
             self.assertIn("scrape_duration_seconds{", expressions)
+            self.assertIn("prometheus_rule_group_rules", expressions)
+            self.assertIn("prometheus_rule_evaluation_failures_total", expressions)
 
             status_panels = [panel for panel in health_panels if panel["type"] == "stat"]
-            self.assertEqual(len(status_panels), 3)
+            self.assertEqual(len(status_panels), 5)
             self.assertEqual(
                 status_panels[0]["fieldConfig"]["defaults"]["mappings"][0]["options"]["0"]["text"],
                 "DOWN",
             )
-            self.assertEqual(
-                status_panels[1]["fieldConfig"]["defaults"]["mappings"][0]["options"]["1"]["text"],
-                "缺失",
+            freshness = next(
+                panel for panel in status_panels
+                if panel["title"] == "最近成功采集距今时间"
             )
-            self.assertNotIn("thresholds", status_panels[2]["fieldConfig"]["defaults"])
+            self.assertEqual(
+                freshness["fieldConfig"]["defaults"]["thresholds"]["steps"],
+                [
+                    {"color": "green", "value": None},
+                    {"color": "yellow", "value": 30},
+                    {"color": "red", "value": 60},
+                ],
+            )
 
             info = next(panel for panel in self.all_panels(dashboard) if panel["type"] == "text")
             self.assertIn("抓取失败", info["options"]["content"])
@@ -354,6 +375,23 @@ class DashboardTests(unittest.TestCase):
                 if panel["type"] == "timeseries":
                     custom = panel["fieldConfig"]["defaults"]["custom"]
                     self.assertFalse(custom["spanNulls"])
+
+    def test_lazy_error_counters_use_zero_baselines(self):
+        for dashboard in self.dashboards.values():
+            for metric_name in (
+                "sglang:num_aborted_requests_total",
+                "sglang:num_transfer_failed_reqs_total",
+                "sglang:num_bootstrap_failed_reqs_total",
+                "sglang:num_prefill_retries_total",
+                "smg_router_request_errors_total",
+                "smg_worker_retries_exhausted_total",
+            ):
+                panels = self.panels_for_metric(dashboard, metric_name)
+                if not panels:
+                    continue
+                expression = panels[0]["targets"][0]["expr"]
+                self.assertIn(" or ", expression)
+                self.assertIn(" * 0", expression)
 
     def test_counter_panels_are_named_and_documented_as_rates(self):
         expected_titles = {

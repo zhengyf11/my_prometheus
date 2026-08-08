@@ -111,7 +111,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "max by (role, instance) (up{job=\"file_sd_nodes\",instance=~\"$instance\",role=\"sglang-unified\"})",
+          "expr": "max by (role, instance) (up{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=\"sglang-unified\"})",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01",
           "instant": true
@@ -141,44 +141,14 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "\u4f7f\u7528 `absent(up)` \u5224\u65ad\u6240\u9009 Role/Instance \u662f\u5426\u5b8c\u5168\u6ca1\u6709\u5339\u914d\u76ee\u6807\u3002\u503c\u4e3a 1 \u65f6\u5e94\u68c0\u67e5 target \u6587\u4ef6\u3001\u6807\u7b7e\u548c\u53d8\u91cf\u9009\u62e9\u3002",
+      "description": "\u7edf\u8ba1\u5e26\u6709 `expected=\"true\"` \u4e14\u5339\u914d\u5f53\u524d\u53d8\u91cf\u7684 SGLang target\u3002Prometheus \u65e0\u6cd5\u77e5\u9053\u672a\u5199\u5165\u670d\u52a1\u53d1\u73b0\u6587\u4ef6\u7684\u5916\u90e8\u671f\u671b\u6570\u91cf\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "min": 0,
-          "unit": "short",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
-          "mappings": [
-            {
-              "options": {
-                "0": {
-                  "color": "green",
-                  "index": 0,
-                  "text": "\u5df2\u53d1\u73b0"
-                },
-                "1": {
-                  "color": "red",
-                  "index": 1,
-                  "text": "\u7f3a\u5931"
-                }
-              },
-              "type": "value"
-            }
-          ]
+          "unit": "short"
         },
         "overrides": []
       },
@@ -195,13 +165,13 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "clamp_max(absent(up{job=\"file_sd_nodes\",instance=~\"$instance\",role=\"sglang-unified\"}), 1) or on() (count(up{job=\"file_sd_nodes\",instance=~\"$instance\",role=\"sglang-unified\"}) * 0)",
-          "legendFormat": "\u76ee\u6807\u7f3a\u5931\u72b6\u6001",
+          "expr": "count(up{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=\"sglang-unified\"})",
+          "legendFormat": "\u7eb3\u7ba1",
           "refId": "Q01",
           "instant": true
         }
       ],
-      "title": "\u91c7\u96c6\u76ee\u6807\u7f3a\u5931\u72b6\u6001\uff081 \u4e3a\u7f3a\u5931\uff0c0 \u4e3a\u5df2\u53d1\u73b0\uff09",
+      "title": "\u7eb3\u7ba1\u76ee\u6807\u6570",
       "type": "stat",
       "x-panelKind": "scrape-health",
       "options": {
@@ -229,10 +199,27 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "min": 0,
-          "unit": "s"
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "red",
+                "value": 60
+              }
+            ]
+          }
         },
         "overrides": []
       },
@@ -249,13 +236,13 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "time() - max_over_time(timestamp((up{job=\"file_sd_nodes\",instance=~\"$instance\",role=\"sglang-unified\"} == 1))[24h:])",
+          "expr": "time() - max_over_time(timestamp((up{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=\"sglang-unified\"} == 1))[24h:])",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01",
           "instant": true
         }
       ],
-      "title": "\u6700\u8fd1\u6210\u529f\u91c7\u96c6\u8ddd\u4eca\u65f6\u95f4\uff0824 \u5c0f\u65f6\u5185\u6700\u540e\u4e00\u6b21 UP \u8ddd\u4eca\u79d2\u6570\uff09",
+      "title": "\u6700\u8fd1\u6210\u529f\u91c7\u96c6\u8ddd\u4eca\u65f6\u95f4",
       "type": "stat",
       "x-panelKind": "scrape-health",
       "options": {
@@ -310,7 +297,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "max by (role, instance) (scrape_samples_scraped{job=\"file_sd_nodes\",instance=~\"$instance\",role=\"sglang-unified\"})",
+          "expr": "max by (role, instance) (scrape_samples_scraped{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=\"sglang-unified\"})",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01"
         }
@@ -370,7 +357,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "max by (role, instance) (scrape_duration_seconds{job=\"file_sd_nodes\",instance=~\"$instance\",role=\"sglang-unified\"})",
+          "expr": "max by (role, instance) (scrape_duration_seconds{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=\"sglang-unified\"})",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01"
         }
@@ -395,14 +382,135 @@
       }
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "Prometheus \u81ea\u76d1\u63a7\u6307\u6807 `prometheus_rule_group_rules`\u3002\u5f53\u524d\u89c4\u5219\u6a21\u677f\u5e94\u62a5\u544a 41 \u6761\uff1b\u8fd9\u6bd4\u7edf\u8ba1\u8f93\u51fa\u65f6\u5e8f\u66f4\u80fd\u8bc6\u522b\u89c4\u5219\u7ec4\u662f\u5426\u52a0\u8f7d\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "min": 0,
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "id": 8,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "max(prometheus_rule_group_rules{rule_group=~\".*;sglang[.]recording\"})",
+          "legendFormat": "\u89c4\u5219\u6570",
+          "refId": "Q01",
+          "instant": true
+        }
+      ],
+      "title": "SGLang \u8bb0\u5f55\u89c4\u5219\u6570\u91cf",
+      "type": "stat",
+      "x-panelKind": "scrape-health",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      },
+      "description": "\u6700\u8fd1 5 \u5206\u949f SGLang recording rule \u8bc4\u4f30\u5931\u8d25\u6b21\u6570\u30020 \u4e3a\u6b63\u5e38\uff1b\u5927\u4e8e 0 \u65f6\u5e94\u68c0\u67e5 Prometheus Rules \u9875\u9762\u548c\u65e5\u5fd7\u3002",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "min": 0,
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 22
+      },
+      "id": 9,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Prometheus"
+          },
+          "expr": "sum(increase(prometheus_rule_evaluation_failures_total{rule_group=~\".*;sglang[.]recording\"}[5m]))",
+          "legendFormat": "\u5931\u8d25\u6b21\u6570",
+          "refId": "Q01",
+          "instant": true
+        }
+      ],
+      "title": "\u89c4\u5219\u8bc4\u4f30\u5931\u8d25\u589e\u91cf",
+      "type": "stat",
+      "x-panelKind": "scrape-health",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      }
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 30
       },
-      "id": 8,
+      "id": 10,
       "panels": [],
       "title": "\u5173\u952e\u5f15\u64ce\u6307\u6807 (Key Engine Metrics)",
       "type": "row"
@@ -434,9 +542,9 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 23
+        "y": 31
       },
-      "id": 9,
+      "id": 11,
       "targets": [
         {
           "datasource": {
@@ -493,9 +601,9 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 23
+        "y": 31
       },
-      "id": 10,
+      "id": 12,
       "targets": [
         {
           "datasource": {
@@ -552,9 +660,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 23
+        "y": 31
       },
-      "id": 11,
+      "id": 13,
       "targets": [
         {
           "datasource": {
@@ -611,16 +719,16 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 31
+        "y": 39
       },
-      "id": 12,
+      "id": 14,
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:num_aborted_requests_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
+          "expr": "(sum by (role, instance, model_name) (rate(sglang:num_aborted_requests_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))) or (sum by (role, instance, model_name) (rate(sglang:num_requests_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])) * 0)",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -670,9 +778,9 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 31
+        "y": 39
       },
-      "id": 13,
+      "id": 15,
       "targets": [
         {
           "datasource": {
@@ -729,9 +837,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 31
+        "y": 39
       },
-      "id": 14,
+      "id": 16,
       "targets": [
         {
           "datasource": {
@@ -789,9 +897,9 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 39
+        "y": 47
       },
-      "id": 15,
+      "id": 17,
       "targets": [
         {
           "datasource": {
@@ -849,9 +957,9 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 39
+        "y": 47
       },
-      "id": 16,
+      "id": 18,
       "targets": [
         {
           "datasource": {
@@ -908,9 +1016,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 39
+        "y": 47
       },
-      "id": 17,
+      "id": 19,
       "targets": [
         {
           "datasource": {
@@ -986,9 +1094,9 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 47
+        "y": 55
       },
-      "id": 18,
+      "id": 20,
       "targets": [
         {
           "datasource": {
@@ -1064,9 +1172,9 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 47
+        "y": 55
       },
-      "id": 19,
+      "id": 21,
       "targets": [
         {
           "datasource": {
@@ -1142,9 +1250,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 47
+        "y": 55
       },
-      "id": 20,
+      "id": 22,
       "targets": [
         {
           "datasource": {
@@ -1220,16 +1328,16 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 55
+        "y": 63
       },
-      "id": 21,
+      "id": 23,
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:num_transfer_failed_reqs_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
+          "expr": "(sum by (role, instance, model_name) (rate(sglang:num_transfer_failed_reqs_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))) or (sum by (role, instance, model_name) (rate(sglang:num_requests_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])) * 0)",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -1279,16 +1387,16 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 55
+        "y": 63
       },
-      "id": 22,
+      "id": 24,
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:num_bootstrap_failed_reqs_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
+          "expr": "(sum by (role, instance, model_name) (rate(sglang:num_bootstrap_failed_reqs_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))) or (sum by (role, instance, model_name) (rate(sglang:num_requests_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])) * 0)",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -1338,16 +1446,16 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 55
+        "y": 63
       },
-      "id": 23,
+      "id": 25,
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:num_prefill_retries_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))",
+          "expr": "(sum by (role, instance, model_name) (rate(sglang:num_prefill_retries_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval]))) or (sum by (role, instance, model_name) (rate(sglang:num_requests_total{instance=~\"$instance\",role=\"sglang-unified\",model_name=~\"$model\"}[$__rate_interval])) * 0)",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -1376,9 +1484,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 71
       },
-      "id": 24,
+      "id": 26,
       "panels": [],
       "title": "\u8bf7\u6c42\u5168\u94fe\u8def\u65f6\u5ef6 (Request Latency Pipeline)",
       "type": "row"
@@ -1410,9 +1518,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 64
+        "y": 72
       },
-      "id": 25,
+      "id": 27,
       "targets": [
         {
           "datasource": {
@@ -1478,9 +1586,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 64
+        "y": 72
       },
-      "id": 26,
+      "id": 28,
       "targets": [
         {
           "datasource": {
@@ -1546,9 +1654,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 72
+        "y": 80
       },
-      "id": 27,
+      "id": 29,
       "targets": [
         {
           "datasource": {
@@ -1614,9 +1722,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 72
+        "y": 80
       },
-      "id": 28,
+      "id": 30,
       "targets": [
         {
           "datasource": {
@@ -1682,9 +1790,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 80
+        "y": 88
       },
-      "id": 29,
+      "id": 31,
       "targets": [
         {
           "datasource": {
@@ -1729,9 +1837,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 88
+        "y": 96
       },
-      "id": 30,
+      "id": 32,
       "panels": [
         {
           "datasource": {
@@ -1760,9 +1868,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 89
+            "y": 97
           },
-          "id": 31,
+          "id": 33,
           "targets": [
             {
               "datasource": {
@@ -1819,9 +1927,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 89
+            "y": 97
           },
-          "id": 32,
+          "id": 34,
           "targets": [
             {
               "datasource": {
@@ -1878,9 +1986,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 97
+            "y": 105
           },
-          "id": 33,
+          "id": 35,
           "targets": [
             {
               "datasource": {
@@ -1937,9 +2045,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 97
+            "y": 105
           },
-          "id": 34,
+          "id": 36,
           "targets": [
             {
               "datasource": {
@@ -1996,9 +2104,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 105
+            "y": 113
           },
-          "id": 35,
+          "id": 37,
           "targets": [
             {
               "datasource": {
@@ -2055,9 +2163,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 105
+            "y": 113
           },
-          "id": 36,
+          "id": 38,
           "targets": [
             {
               "datasource": {
@@ -2106,9 +2214,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 113
+        "y": 121
       },
-      "id": 37,
+      "id": 39,
       "panels": [
         {
           "datasource": {
@@ -2137,9 +2245,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 114
+            "y": 122
           },
-          "id": 38,
+          "id": 40,
           "targets": [
             {
               "datasource": {
@@ -2189,9 +2297,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 114
+            "y": 122
           },
-          "id": 39,
+          "id": 41,
           "targets": [
             {
               "datasource": {
@@ -2299,9 +2407,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 122
+            "y": 130
           },
-          "id": 40,
+          "id": 42,
           "targets": [
             {
               "datasource": {
@@ -2351,9 +2459,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 122
+            "y": 130
           },
-          "id": 41,
+          "id": 43,
           "targets": [
             {
               "datasource": {
@@ -2460,9 +2568,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 130
+            "y": 138
           },
-          "id": 42,
+          "id": 44,
           "targets": [
             {
               "datasource": {
@@ -2519,9 +2627,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 130
+            "y": 138
           },
-          "id": 43,
+          "id": 45,
           "targets": [
             {
               "datasource": {
@@ -2587,9 +2695,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 138
+            "y": 146
           },
-          "id": 44,
+          "id": 46,
           "targets": [
             {
               "datasource": {
@@ -2629,9 +2737,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 146
+        "y": 154
       },
-      "id": 45,
+      "id": 47,
       "panels": [
         {
           "datasource": {
@@ -2660,9 +2768,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 147
+            "y": 155
           },
-          "id": 46,
+          "id": 48,
           "targets": [
             {
               "datasource": {
@@ -2719,9 +2827,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 147
+            "y": 155
           },
-          "id": 47,
+          "id": 49,
           "targets": [
             {
               "datasource": {
@@ -2779,9 +2887,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 155
+            "y": 163
           },
-          "id": 48,
+          "id": 50,
           "targets": [
             {
               "datasource": {
@@ -2838,9 +2946,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 155
+            "y": 163
           },
-          "id": 49,
+          "id": 51,
           "targets": [
             {
               "datasource": {
@@ -2898,9 +3006,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 163
+            "y": 171
           },
-          "id": 50,
+          "id": 52,
           "targets": [
             {
               "datasource": {
@@ -2958,9 +3066,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 163
+            "y": 171
           },
-          "id": 51,
+          "id": 53,
           "targets": [
             {
               "datasource": {
@@ -3017,9 +3125,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 171
+            "y": 179
           },
-          "id": 52,
+          "id": 54,
           "targets": [
             {
               "datasource": {
@@ -3059,9 +3167,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 179
+        "y": 187
       },
-      "id": 53,
+      "id": 55,
       "panels": [
         {
           "datasource": {
@@ -3091,9 +3199,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 180
+            "y": 188
           },
-          "id": 54,
+          "id": 56,
           "targets": [
             {
               "datasource": {
@@ -3151,9 +3259,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 180
+            "y": 188
           },
-          "id": 55,
+          "id": 57,
           "targets": [
             {
               "datasource": {
@@ -3211,9 +3319,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 188
+            "y": 196
           },
-          "id": 56,
+          "id": 58,
           "targets": [
             {
               "datasource": {
@@ -3270,9 +3378,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 188
+            "y": 196
           },
-          "id": 57,
+          "id": 59,
           "targets": [
             {
               "datasource": {
@@ -3329,9 +3437,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 196
+            "y": 204
           },
-          "id": 58,
+          "id": 60,
           "targets": [
             {
               "datasource": {
@@ -3388,9 +3496,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 196
+            "y": 204
           },
-          "id": 59,
+          "id": 61,
           "targets": [
             {
               "datasource": {
@@ -3447,9 +3555,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 204
+            "y": 212
           },
-          "id": 60,
+          "id": 62,
           "targets": [
             {
               "datasource": {
@@ -3506,9 +3614,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 204
+            "y": 212
           },
-          "id": 61,
+          "id": 63,
           "targets": [
             {
               "datasource": {
@@ -3565,9 +3673,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 212
+            "y": 220
           },
-          "id": 62,
+          "id": 64,
           "targets": [
             {
               "datasource": {
@@ -3624,9 +3732,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 212
+            "y": 220
           },
-          "id": 63,
+          "id": 65,
           "targets": [
             {
               "datasource": {
@@ -3683,9 +3791,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 220
+            "y": 228
           },
-          "id": 64,
+          "id": 66,
           "targets": [
             {
               "datasource": {
@@ -3742,9 +3850,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 220
+            "y": 228
           },
-          "id": 65,
+          "id": 67,
           "targets": [
             {
               "datasource": {
@@ -3801,9 +3909,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 228
+            "y": 236
           },
-          "id": 66,
+          "id": 68,
           "targets": [
             {
               "datasource": {
@@ -3843,9 +3951,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 236
+        "y": 244
       },
-      "id": 67,
+      "id": 69,
       "panels": [
         {
           "datasource": {
@@ -3874,9 +3982,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 237
+            "y": 245
           },
-          "id": 68,
+          "id": 70,
           "targets": [
             {
               "datasource": {
@@ -3933,9 +4041,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 237
+            "y": 245
           },
-          "id": 69,
+          "id": 71,
           "targets": [
             {
               "datasource": {
@@ -3992,9 +4100,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 245
+            "y": 253
           },
-          "id": 70,
+          "id": 72,
           "targets": [
             {
               "datasource": {
@@ -4051,9 +4159,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 245
+            "y": 253
           },
-          "id": 71,
+          "id": 73,
           "targets": [
             {
               "datasource": {
@@ -4110,9 +4218,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 253
+            "y": 261
           },
-          "id": 72,
+          "id": 74,
           "targets": [
             {
               "datasource": {
@@ -4169,9 +4277,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 253
+            "y": 261
           },
-          "id": 73,
+          "id": 75,
           "targets": [
             {
               "datasource": {
@@ -4228,9 +4336,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 261
+            "y": 269
           },
-          "id": 74,
+          "id": 76,
           "targets": [
             {
               "datasource": {
@@ -4287,9 +4395,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 261
+            "y": 269
           },
-          "id": 75,
+          "id": 77,
           "targets": [
             {
               "datasource": {
@@ -4329,9 +4437,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 269
+        "y": 277
       },
-      "id": 76,
+      "id": 78,
       "panels": [
         {
           "datasource": {
@@ -4353,9 +4461,9 @@
             "h": 8,
             "w": 6,
             "x": 0,
-            "y": 270
+            "y": 278
           },
-          "id": 77,
+          "id": 79,
           "targets": [
             {
               "datasource": {
@@ -4406,9 +4514,9 @@
             "h": 8,
             "w": 6,
             "x": 6,
-            "y": 270
+            "y": 278
           },
-          "id": 78,
+          "id": 80,
           "targets": [
             {
               "datasource": {
@@ -4459,9 +4567,9 @@
             "h": 8,
             "w": 6,
             "x": 12,
-            "y": 270
+            "y": 278
           },
-          "id": 79,
+          "id": 81,
           "targets": [
             {
               "datasource": {
@@ -4512,9 +4620,9 @@
             "h": 8,
             "w": 6,
             "x": 18,
-            "y": 270
+            "y": 278
           },
-          "id": 80,
+          "id": 82,
           "targets": [
             {
               "datasource": {
@@ -4565,9 +4673,9 @@
             "h": 8,
             "w": 6,
             "x": 0,
-            "y": 278
+            "y": 286
           },
-          "id": 81,
+          "id": 83,
           "targets": [
             {
               "datasource": {
@@ -4618,9 +4726,9 @@
             "h": 8,
             "w": 6,
             "x": 6,
-            "y": 278
+            "y": 286
           },
-          "id": 82,
+          "id": 84,
           "targets": [
             {
               "datasource": {
@@ -4671,9 +4779,9 @@
             "h": 8,
             "w": 6,
             "x": 12,
-            "y": 278
+            "y": 286
           },
-          "id": 83,
+          "id": 85,
           "targets": [
             {
               "datasource": {
@@ -4724,9 +4832,9 @@
             "h": 8,
             "w": 6,
             "x": 18,
-            "y": 278
+            "y": 286
           },
-          "id": 84,
+          "id": 86,
           "targets": [
             {
               "datasource": {
@@ -4784,9 +4892,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 286
+            "y": 294
           },
-          "id": 85,
+          "id": 87,
           "targets": [
             {
               "datasource": {
@@ -4826,9 +4934,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 294
+        "y": 302
       },
-      "id": 86,
+      "id": 88,
       "panels": [
         {
           "datasource": {
@@ -4857,9 +4965,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 295
+            "y": 303
           },
-          "id": 87,
+          "id": 89,
           "targets": [
             {
               "datasource": {
@@ -4916,9 +5024,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 295
+            "y": 303
           },
-          "id": 88,
+          "id": 90,
           "targets": [
             {
               "datasource": {
@@ -4975,9 +5083,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 303
+            "y": 311
           },
-          "id": 89,
+          "id": 91,
           "targets": [
             {
               "datasource": {
@@ -5034,9 +5142,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 303
+            "y": 311
           },
-          "id": 90,
+          "id": 92,
           "targets": [
             {
               "datasource": {
@@ -5093,9 +5201,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 311
+            "y": 319
           },
-          "id": 91,
+          "id": 93,
           "targets": [
             {
               "datasource": {
@@ -5135,9 +5243,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 319
+        "y": 327
       },
-      "id": 92,
+      "id": 94,
       "panels": [
         {
           "datasource": {
@@ -5166,9 +5274,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 320
+            "y": 328
           },
-          "id": 93,
+          "id": 95,
           "targets": [
             {
               "datasource": {
@@ -5234,9 +5342,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 320
+            "y": 328
           },
-          "id": 94,
+          "id": 96,
           "targets": [
             {
               "datasource": {
@@ -5293,9 +5401,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 328
+            "y": 336
           },
-          "id": 95,
+          "id": 97,
           "targets": [
             {
               "datasource": {
@@ -5352,9 +5460,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 328
+            "y": 336
           },
-          "id": 96,
+          "id": 98,
           "targets": [
             {
               "datasource": {
@@ -5411,9 +5519,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 336
+            "y": 344
           },
-          "id": 97,
+          "id": 99,
           "targets": [
             {
               "datasource": {
@@ -5470,9 +5578,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 336
+            "y": 344
           },
-          "id": 98,
+          "id": 100,
           "targets": [
             {
               "datasource": {
@@ -5538,9 +5646,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 344
+            "y": 352
           },
-          "id": 99,
+          "id": 101,
           "targets": [
             {
               "datasource": {
@@ -5606,9 +5714,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 344
+            "y": 352
           },
-          "id": 100,
+          "id": 102,
           "targets": [
             {
               "datasource": {
@@ -5674,9 +5782,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 352
+            "y": 360
           },
-          "id": 101,
+          "id": 103,
           "targets": [
             {
               "datasource": {
@@ -5725,9 +5833,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 360
+        "y": 368
       },
-      "id": 102,
+      "id": 104,
       "panels": [
         {
           "datasource": {
@@ -5756,9 +5864,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 361
+            "y": 369
           },
-          "id": 103,
+          "id": 105,
           "targets": [
             {
               "datasource": {
@@ -5816,9 +5924,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 361
+            "y": 369
           },
-          "id": 104,
+          "id": 106,
           "targets": [
             {
               "datasource": {
@@ -5875,9 +5983,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 369
+            "y": 377
           },
-          "id": 105,
+          "id": 107,
           "targets": [
             {
               "datasource": {
@@ -5934,9 +6042,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 369
+            "y": 377
           },
-          "id": 106,
+          "id": 108,
           "targets": [
             {
               "datasource": {
@@ -5986,9 +6094,9 @@
             "h": 8,
             "w": 6,
             "x": 0,
-            "y": 377
+            "y": 385
           },
-          "id": 107,
+          "id": 109,
           "targets": [
             {
               "datasource": {
@@ -6039,9 +6147,9 @@
             "h": 8,
             "w": 6,
             "x": 6,
-            "y": 377
+            "y": 385
           },
-          "id": 108,
+          "id": 110,
           "targets": [
             {
               "datasource": {
@@ -6099,9 +6207,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 377
+            "y": 385
           },
-          "id": 109,
+          "id": 111,
           "targets": [
             {
               "datasource": {
@@ -6167,9 +6275,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 385
+            "y": 393
           },
-          "id": 110,
+          "id": 112,
           "targets": [
             {
               "datasource": {
@@ -6209,9 +6317,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 393
+        "y": 401
       },
-      "id": 111,
+      "id": 113,
       "panels": [
         {
           "datasource": {
@@ -6240,9 +6348,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 394
+            "y": 402
           },
-          "id": 112,
+          "id": 114,
           "targets": [
             {
               "datasource": {
@@ -6299,9 +6407,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 394
+            "y": 402
           },
-          "id": 113,
+          "id": 115,
           "targets": [
             {
               "datasource": {
@@ -6358,9 +6466,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 402
+            "y": 410
           },
-          "id": 114,
+          "id": 116,
           "targets": [
             {
               "datasource": {
@@ -6417,9 +6525,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 402
+            "y": 410
           },
-          "id": 115,
+          "id": 117,
           "targets": [
             {
               "datasource": {
@@ -6476,9 +6584,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 410
+            "y": 418
           },
-          "id": 116,
+          "id": 118,
           "targets": [
             {
               "datasource": {
@@ -6535,9 +6643,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 410
+            "y": 418
           },
-          "id": 117,
+          "id": 119,
           "targets": [
             {
               "datasource": {
@@ -6603,9 +6711,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 418
+            "y": 426
           },
-          "id": 118,
+          "id": 120,
           "targets": [
             {
               "datasource": {
@@ -6654,9 +6762,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 426
+        "y": 434
       },
-      "id": 119,
+      "id": 121,
       "panels": [
         {
           "datasource": {
@@ -6685,9 +6793,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 427
+            "y": 435
           },
-          "id": 120,
+          "id": 122,
           "targets": [
             {
               "datasource": {
@@ -6753,9 +6861,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 427
+            "y": 435
           },
-          "id": 121,
+          "id": 123,
           "targets": [
             {
               "datasource": {
@@ -6812,9 +6920,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 435
+            "y": 443
           },
-          "id": 122,
+          "id": 124,
           "targets": [
             {
               "datasource": {
@@ -6880,9 +6988,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 435
+            "y": 443
           },
-          "id": 123,
+          "id": 125,
           "targets": [
             {
               "datasource": {
@@ -6939,9 +7047,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 443
+            "y": 451
           },
-          "id": 124,
+          "id": 126,
           "targets": [
             {
               "datasource": {
@@ -6998,9 +7106,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 443
+            "y": 451
           },
-          "id": 125,
+          "id": 127,
           "targets": [
             {
               "datasource": {
@@ -7057,9 +7165,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 451
+            "y": 459
           },
-          "id": 126,
+          "id": 128,
           "targets": [
             {
               "datasource": {
@@ -7099,9 +7207,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 459
+        "y": 467
       },
-      "id": 127,
+      "id": 129,
       "panels": [
         {
           "datasource": {
@@ -7130,9 +7238,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 460
+            "y": 468
           },
-          "id": 128,
+          "id": 130,
           "targets": [
             {
               "datasource": {
@@ -7182,9 +7290,9 @@
             "h": 8,
             "w": 6,
             "x": 12,
-            "y": 460
+            "y": 468
           },
-          "id": 129,
+          "id": 131,
           "targets": [
             {
               "datasource": {
@@ -7243,9 +7351,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 468
+            "y": 476
           },
-          "id": 130,
+          "id": 132,
           "targets": [
             {
               "datasource": {
@@ -7302,9 +7410,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 468
+            "y": 476
           },
-          "id": 131,
+          "id": 133,
           "targets": [
             {
               "datasource": {
@@ -7354,9 +7462,9 @@
             "h": 8,
             "w": 6,
             "x": 0,
-            "y": 476
+            "y": 484
           },
-          "id": 132,
+          "id": 134,
           "targets": [
             {
               "datasource": {
@@ -7414,9 +7522,9 @@
             "h": 8,
             "w": 12,
             "x": 6,
-            "y": 476
+            "y": 484
           },
-          "id": 133,
+          "id": 135,
           "targets": [
             {
               "datasource": {
@@ -7473,9 +7581,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 484
+            "y": 492
           },
-          "id": 134,
+          "id": 136,
           "targets": [
             {
               "datasource": {
@@ -7532,9 +7640,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 484
+            "y": 492
           },
-          "id": 135,
+          "id": 137,
           "targets": [
             {
               "datasource": {
@@ -7591,9 +7699,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 492
+            "y": 500
           },
-          "id": 136,
+          "id": 138,
           "targets": [
             {
               "datasource": {
@@ -7650,9 +7758,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 492
+            "y": 500
           },
-          "id": 137,
+          "id": 139,
           "targets": [
             {
               "datasource": {
@@ -7718,9 +7826,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 500
+            "y": 508
           },
-          "id": 138,
+          "id": 140,
           "targets": [
             {
               "datasource": {
@@ -7786,9 +7894,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 500
+            "y": 508
           },
-          "id": 139,
+          "id": 141,
           "targets": [
             {
               "datasource": {
@@ -7854,9 +7962,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 508
+            "y": 516
           },
-          "id": 140,
+          "id": 142,
           "targets": [
             {
               "datasource": {
@@ -7922,9 +8030,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 508
+            "y": 516
           },
-          "id": 141,
+          "id": 143,
           "targets": [
             {
               "datasource": {
@@ -7991,9 +8099,9 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 516
+            "y": 524
           },
-          "id": 142,
+          "id": 144,
           "targets": [
             {
               "datasource": {
@@ -8050,9 +8158,9 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 516
+            "y": 524
           },
-          "id": 143,
+          "id": 145,
           "targets": [
             {
               "datasource": {
@@ -8104,7 +8212,7 @@
           "type": "prometheus",
           "uid": "Prometheus"
         },
-        "definition": "label_values(up{job=\"file_sd_nodes\",role=\"sglang-unified\"}, instance)",
+        "definition": "label_values(up{job=\"file_sd_nodes\",expected=\"true\",role=\"sglang-unified\"}, instance)",
         "hide": 0,
         "includeAll": true,
         "label": "\u5b9e\u4f8b (Instance)",
@@ -8112,7 +8220,7 @@
         "name": "instance",
         "options": [],
         "query": {
-          "query": "label_values(up{job=\"file_sd_nodes\",role=\"sglang-unified\"}, instance)",
+          "query": "label_values(up{job=\"file_sd_nodes\",expected=\"true\",role=\"sglang-unified\"}, instance)",
           "refId": "Variable-instance"
         },
         "refresh": 1,

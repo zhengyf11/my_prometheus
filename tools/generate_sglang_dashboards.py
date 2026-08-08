@@ -406,6 +406,16 @@ SPLIT_ROLE_METRICS = {
     "sglang:uncached_prompt_tokens_histogram": "sglang-prefill",
     "sglang:generation_tokens_total": "sglang-decode",
     "sglang:generation_tokens_histogram": "sglang-decode",
+    "sglang:num_prefill_retries_total": "sglang-prefill",
+}
+
+LAZY_COUNTER_BASELINES = {
+    "sglang:num_aborted_requests_total": "sglang:num_requests_total",
+    "sglang:num_transfer_failed_reqs_total": "sglang:num_requests_total",
+    "sglang:num_bootstrap_failed_reqs_total": "sglang:num_requests_total",
+    "sglang:num_prefill_retries_total": "sglang:num_requests_total",
+    "smg_router_request_errors_total": "smg_router_requests_total",
+    "smg_worker_retries_exhausted_total": "smg_router_requests_total",
 }
 
 INPUT_TOKEN_BUCKETS = (
@@ -615,9 +625,16 @@ def expression(item, kind):
     metric_type = item["type"]
     labels = selector(item, kind)
     if metric_type == "counter":
-        return "sum by ({0}) (rate({1}{{{2}}}[$__rate_interval]))".format(
+        rate_expression = "sum by ({0}) (rate({1}{{{2}}}[$__rate_interval]))".format(
             aggregation_labels(item), name, labels
         )
+        baseline = LAZY_COUNTER_BASELINES.get(name)
+        if baseline:
+            baseline_expression = "sum by ({0}) (rate({1}{{{2}}}[$__rate_interval])) * 0".format(
+                aggregation_labels(item), baseline, labels
+            )
+            return "({0}) or ({1})".format(rate_expression, baseline_expression)
+        return rate_expression
     if metric_type == "summary":
         return "max by ({0}) ({1}{{{2}}})".format(
             aggregation_labels(item, include_quantile=True), name, labels
@@ -841,10 +858,23 @@ def topk_table_panel(item, panel_id, x, y, width, kind):
         "\n- 展示口径：按单条原始标签序列计算每秒速率，仅展示当前值最高的 10 条；"
         "表格保留 Worker、模型、接口和错误类型等 exporter 实际提供的标签。"
     )
+    raw_expression = "topk(10, rate({0}{{{1}}}[$__rate_interval]))".format(
+        item["name"], selector(item, kind)
+    )
+    baseline = LAZY_COUNTER_BASELINES.get(item["name"])
+    if baseline:
+        raw_expression = "({0}) or ({1})".format(
+            raw_expression,
+            "sum by ({0}) (rate({1}{{{2}}}[$__rate_interval])) * 0".format(
+                aggregation_labels(item), baseline, selector(item, kind)
+            ),
+        )
+        panel["description"] += (
+            "\n- 零值语义：原 Counter 未注册但基准请求 Counter 存在时显示 0；"
+            "两者都不存在时仍显示 No data，应检查采集健康或版本支持。"
+        )
     query = target(
-        "topk(10, rate({0}{{{1}}}[$__rate_interval]))".format(
-            item["name"], selector(item, kind)
-        ),
+        raw_expression,
         legend_format(item),
         0,
         instant=True,
@@ -991,7 +1021,7 @@ def row_panel(title, panel_id, y):
 
 
 def health_selector(kind):
-    labels = ['job="file_sd_nodes"', 'instance=~"$instance"']
+    labels = ['job="file_sd_nodes"', 'expected="true"', 'instance=~"$instance"']
     if kind == "unified":
         labels.append('role="sglang-unified"')
     elif kind == "split-router":
@@ -1071,23 +1101,23 @@ def health_panels(kind, first_panel_id, y):
             }, "type": "value"}],
         ),
         health_panel(
-            "采集目标缺失状态（1 为缺失，0 为已发现）",
-            "使用 `absent(up)` 判断所选 Role/Instance 是否完全没有匹配目标。值为 1 时应检查 target 文件、标签和变量选择。",
-            "clamp_max(absent(up{{{0}}}), 1) or on() (count(up{{{0}}}) * 0)".format(labels),
-            "目标缺失状态",
+            "纳管目标数",
+            "统计带有 `expected=\"true\"` 且匹配当前变量的 SGLang target。Prometheus 无法知道未写入服务发现文件的外部期望数量。",
+            "count(up{{{0}}})".format(labels),
+            "纳管",
             first_panel_id + 2, 6, y + 1, 6, panel_type="stat", instant=True,
-            thresholds=[{"color": "green", "value": None}, {"color": "red", "value": 1}],
-            mappings=[{"options": {
-                "0": {"color": "green", "index": 0, "text": "已发现"},
-                "1": {"color": "red", "index": 1, "text": "缺失"},
-            }, "type": "value"}],
         ),
         health_panel(
-            "最近成功采集距今时间（24 小时内最后一次 UP 距今秒数）",
+            "最近成功采集距今时间",
             "根据最近 24 小时 `up == 1` 的样本计算。持续增大表示成功采集中断；No data 表示最近 24 小时没有成功样本。",
             "time() - max_over_time(timestamp((up{{{0}}} == 1))[24h:])".format(labels),
             role_instance,
             first_panel_id + 3, 12, y + 1, 12, unit="s", panel_type="stat", instant=True,
+            thresholds=[
+                {"color": "green", "value": None},
+                {"color": "yellow", "value": 30},
+                {"color": "red", "value": 60},
+            ],
         ),
         health_panel(
             "每次采集样本数（Prometheus 单次抓取接收的样本数量）",
@@ -1102,6 +1132,21 @@ def health_panels(kind, first_panel_id, y):
             "max by (role, instance) (scrape_duration_seconds{{{0}}})".format(labels),
             role_instance,
             first_panel_id + 5, 12, y + 9, 12, unit="s",
+        ),
+        health_panel(
+            "SGLang 记录规则数量",
+            "Prometheus 自监控指标 `prometheus_rule_group_rules`。当前规则模板应报告 41 条；这比统计输出时序更能识别规则组是否加载。",
+            'max(prometheus_rule_group_rules{rule_group=~".*;sglang[.]recording"})',
+            "规则数",
+            first_panel_id + 6, 0, y + 17, 12, panel_type="stat", instant=True,
+        ),
+        health_panel(
+            "规则评估失败增量",
+            "最近 5 分钟 SGLang recording rule 评估失败次数。0 为正常；大于 0 时应检查 Prometheus Rules 页面和日志。",
+            'sum(increase(prometheus_rule_evaluation_failures_total{rule_group=~".*;sglang[.]recording"}[5m]))',
+            "失败次数",
+            first_panel_id + 7, 12, y + 17, 12, panel_type="stat", instant=True,
+            thresholds=[{"color": "green", "value": None}, {"color": "red", "value": 1}],
         ),
     ]
     return panels
@@ -1326,7 +1371,7 @@ def variables(kind):
         return [
             query_variable(
                 "instance", "Instance",
-                'label_values(up{job="file_sd_nodes",role="sglang-unified"}, instance)',
+                'label_values(up{job="file_sd_nodes",expected="true",role="sglang-unified"}, instance)',
             ),
             query_variable(
                 "model", "Model",
@@ -1337,11 +1382,11 @@ def variables(kind):
         return [
             query_variable(
                 "role", "Role",
-                'label_values(up{job="file_sd_nodes",role=~"sglang-prefill|sglang-decode|sglang-router"}, role)',
+                'label_values(up{job="file_sd_nodes",expected="true",role=~"sglang-prefill|sglang-decode|sglang-router"}, role)',
             ),
             query_variable(
                 "instance", "Instance",
-                'label_values(up{job="file_sd_nodes",role=~"$role"}, instance)',
+                'label_values(up{job="file_sd_nodes",expected="true",role=~"$role"}, instance)',
             ),
             query_variable(
                 "model", "Model",
@@ -1365,7 +1410,7 @@ def build_dashboard(kind, title, uid, groups, role_text, expanded_groups=None,
     scrape_health_panels = health_panels(kind, panel_id, y)
     panels.extend(scrape_health_panels)
     panel_id += len(scrape_health_panels)
-    y += 17
+    y += 25
 
     for group_title, items in groups.items():
         row = row_panel(group_title, panel_id, y)

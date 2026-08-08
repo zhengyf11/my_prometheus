@@ -4,6 +4,7 @@
     - 127.0.0.1:39000
   labels:
     role: sglang-unified
+    expected: "false"
     node: placeholder
     endpoint: placeholder_unified
 
@@ -11,6 +12,7 @@
     - 127.0.0.1:39001
   labels:
     role: sglang-prefill
+    expected: "false"
     node: placeholder
     endpoint: placeholder_prefill
 
@@ -18,6 +20,7 @@
     - 127.0.0.1:39002
   labels:
     role: sglang-decode
+    expected: "false"
     node: placeholder
     endpoint: placeholder_decode
 
@@ -25,5 +28,6 @@
     - 127.0.0.1:39003
   labels:
     role: sglang-router
+    expected: "false"
     node: placeholder
     endpoint: placeholder_router
