@@ -25,14 +25,14 @@
   "panels": [
     {
       "gridPos": {
-        "h": 5,
+        "h": 3,
         "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "content": "# SGLang KV \u4e0e\u5bb9\u91cf (SGLang KV and Capacity)\n\n\u672c\u770b\u677f\u8986\u76d6 **44 \u4e2a\u6307\u6807\u65cf**\u3002\u5c55\u793a KV/SWA/Mamba \u8d44\u6e90\u6c60\u3001\u5f15\u64ce\u5bb9\u91cf\u3001PD \u4f20\u8f93\u548c\u8ba1\u7b97\u8fd0\u884c\u65f6\u6307\u6807\u3002 \u770b\u677f\u4f7f\u7528\u5171\u4eab Prometheus \u6570\u636e\u6e90 `Prometheus`\uff0c\u5e76\u901a\u8fc7 SGLang `role` \u6807\u7b7e\u9009\u62e9\u91c7\u96c6\u76ee\u6807\u3002\u9762\u677f\u663e\u793a No data \u65f6\uff0c\u5fc5\u987b\u5148\u67e5\u770b\u201c\u91c7\u96c6\u5065\u5eb7\u201d\u5206\u7ec4\uff1a\u5b83\u65e2\u53ef\u80fd\u8868\u793a\u89d2\u8272\u4e0d\u9002\u7528\u6216\u529f\u80fd\u672a\u542f\u7528\uff0c\u4e5f\u53ef\u80fd\u8868\u793a\u6293\u53d6\u5931\u8d25\u3001\u76ee\u6807\u6d88\u5931\u3001\u6807\u7b7e\u53d8\u5316\u6216\u5b9e\u4f8b\u9000\u51fa\u3002PD \u5206\u79bb\u4e0e Router \u770b\u677f\u4f1a\u628a Role \u76f4\u63a5\u52a0\u5165\u6bcf\u6761 PromQL\uff1b\u4e0d\u5339\u914d\u6240\u9009 Role \u7684\u6307\u6807\u9762\u677f\u4f1a\u663e\u793a No data\u3002",
+        "content": "# SGLang KV \u4e0e\u5bb9\u91cf (SGLang KV and Capacity)\n\n\u8986\u76d6 **44 \u4e2a\u6307\u6807\u65cf**\u3002\u5c55\u793a KV/SWA/Mamba \u8d44\u6e90\u6c60\u3001\u5f15\u64ce\u5bb9\u91cf\u3001PD \u4f20\u8f93\u548c\u8ba1\u7b97\u8fd0\u884c\u65f6\u6307\u6807\u3002 \u6570\u636e\u6e90\uff1a`Prometheus`\u3002\u5148\u7528\u201c\u91c7\u96c6\u5065\u5eb7\u201d\u533a\u5206\u6293\u53d6\u6545\u969c\uff0c\u518d\u5224\u65ad\u672a\u542f\u7528\u3001\u7248\u672c\u672a\u66b4\u9732\u6216\u96f6\u4e8b\u4ef6\u3002\u5c11\u6570\u8de8\u89d2\u8272\u6d3e\u751f\u6307\u6807\u4e0d\u53d7\u5168\u90e8\u53d8\u91cf\u63a7\u5236\uff0c\u5177\u4f53\u8303\u56f4\u89c1\u9762\u677f Tooltip\u3002",
         "mode": "markdown"
       },
       "title": "\u770b\u677f\u8303\u56f4 (Dashboard Scope)",
@@ -44,7 +44,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 3
       },
       "id": 2,
       "panels": [],
@@ -102,7 +102,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 6
+        "y": 4
       },
       "id": 3,
       "targets": [
@@ -156,7 +156,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 6
+        "y": 4
       },
       "id": 4,
       "targets": [
@@ -227,7 +227,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 6
+        "y": 4
       },
       "id": 5,
       "targets": [
@@ -288,7 +288,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 14
+        "y": 12
       },
       "id": 6,
       "targets": [
@@ -309,7 +309,7 @@
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -348,7 +348,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 12
       },
       "id": 7,
       "targets": [
@@ -369,7 +369,7 @@
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -401,7 +401,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 20
       },
       "id": 8,
       "targets": [
@@ -468,7 +468,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 20
       },
       "id": 9,
       "targets": [
@@ -508,7 +508,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 28
       },
       "id": 10,
       "panels": [],
@@ -543,7 +543,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 31
+        "y": 29
       },
       "id": 11,
       "targets": [
@@ -557,12 +557,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "\u5168\u6ce8\u610f\u529b Token \u6c60\u4f7f\u7528\u7387\uff08Full Attention \u5c42 Token \u5185\u5b58\u6c60\u7684\u4f7f\u7528\u7387\uff09",
+      "title": "\u5168\u6ce8\u610f\u529b Token \u6c60\u4f7f\u7528\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -603,7 +603,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 31
+        "y": 29
       },
       "id": 12,
       "targets": [
@@ -617,12 +617,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "SWA Token \u6c60\u4f7f\u7528\u7387\uff08\u6ed1\u52a8\u7a97\u53e3\u6ce8\u610f\u529b\uff08SWA\uff09\u5c42 Token \u5185\u5b58\u6c60\u7684\u4f7f\u7528\u7387\uff09",
+      "title": "SWA Token \u6c60\u4f7f\u7528\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -663,7 +663,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 39
+        "y": 37
       },
       "id": 13,
       "targets": [
@@ -677,12 +677,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Mamba \u72b6\u6001\u6c60\u4f7f\u7528\u7387\uff08Mamba/SSM \u72b6\u6001\u5185\u5b58\u6c60\u7684\u4f7f\u7528\u7387\uff09",
+      "title": "Mamba \u72b6\u6001\u6c60\u4f7f\u7528\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -722,7 +722,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 39
+        "y": 37
       },
       "id": 14,
       "targets": [
@@ -736,12 +736,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "\u5df2\u7528 Token \u6570\uff08Token \u5185\u5b58\u6c60\u4e2d\u5df2\u4f7f\u7528\u7684 Token \u6570\uff09",
+      "title": "\u5df2\u7528 Token \u6570",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -781,7 +781,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 47
+        "y": 45
       },
       "id": 15,
       "targets": [
@@ -795,12 +795,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "KV Cache \u53ef\u7528 Token \u69fd\u4f4d\uff08KV Cache \u6c60\u4e2d\u7a7a\u95f2\u7684 Token \u69fd\u4f4d\u6570\uff09",
+      "title": "KV Cache \u53ef\u7528 Token \u69fd\u4f4d",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -840,7 +840,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 47
+        "y": 45
       },
       "id": 16,
       "targets": [
@@ -854,12 +854,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "KV Cache \u53ef\u6dd8\u6c70 Token \u69fd\u4f4d\uff08KV Cache \u6c60\u4e2d\u53ef\u4ece Radix Cache \u6dd8\u6c70\u7684 Token \u69fd\u4f4d\u6570\uff09",
+      "title": "KV Cache \u53ef\u6dd8\u6c70 Token \u69fd\u4f4d",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -899,7 +899,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 55
+        "y": 53
       },
       "id": 17,
       "targets": [
@@ -913,12 +913,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "KV Cache \u6d3b\u8dc3 Token \u69fd\u4f4d\uff08KV Cache \u6c60\u4e2d\u88ab\u6d3b\u8dc3\u8bf7\u6c42\u5360\u7528\u7684 Token \u69fd\u4f4d\u6570\uff09",
+      "title": "KV Cache \u6d3b\u8dc3 Token \u69fd\u4f4d",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -958,7 +958,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 55
+        "y": 53
       },
       "id": 18,
       "targets": [
@@ -972,12 +972,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "SWA \u53ef\u7528 Token \u69fd\u4f4d\uff08\u6df7\u5408 SWA \u6a21\u578b\u7684 SWA \u6c60\u4e2d\u7a7a\u95f2 Token \u69fd\u4f4d\u6570\uff09",
+      "title": "SWA \u53ef\u7528 Token \u69fd\u4f4d",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1017,7 +1017,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 63
+        "y": 61
       },
       "id": 19,
       "targets": [
@@ -1031,12 +1031,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "SWA \u53ef\u6dd8\u6c70 Token \u69fd\u4f4d\uff08SWA \u6c60\u4e2d\u53ef\u4ece Radix Cache \u6dd8\u6c70\u7684 Token \u69fd\u4f4d\u6570\uff09",
+      "title": "SWA \u53ef\u6dd8\u6c70 Token \u69fd\u4f4d",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1076,7 +1076,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 63
+        "y": 61
       },
       "id": 20,
       "targets": [
@@ -1090,12 +1090,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "SWA \u6d3b\u8dc3 Token \u69fd\u4f4d\uff08SWA \u6c60\u4e2d\u88ab\u6d3b\u8dc3\u8bf7\u6c42\u5360\u7528\u7684 Token \u69fd\u4f4d\u6570\uff09",
+      "title": "SWA \u6d3b\u8dc3 Token \u69fd\u4f4d",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1135,7 +1135,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 71
+        "y": 69
       },
       "id": 21,
       "targets": [
@@ -1149,12 +1149,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Mamba \u53ef\u7528\u72b6\u6001\u69fd\u4f4d\uff08\u6df7\u5408 SSM \u6a21\u578b\u7684 Mamba \u72b6\u6001\u6c60\u4e2d\u7a7a\u95f2\u69fd\u4f4d\u6570\uff09",
+      "title": "Mamba \u53ef\u7528\u72b6\u6001\u69fd\u4f4d",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1194,7 +1194,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 71
+        "y": 69
       },
       "id": 22,
       "targets": [
@@ -1208,12 +1208,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Mamba \u53ef\u6dd8\u6c70\u72b6\u6001\u69fd\u4f4d\uff08Mamba \u72b6\u6001\u6c60\u4e2d\u53ef\u4ece Radix Cache \u6dd8\u6c70\u7684\u72b6\u6001\u69fd\u4f4d\u6570\uff09",
+      "title": "Mamba \u53ef\u6dd8\u6c70\u72b6\u6001\u69fd\u4f4d",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1253,7 +1253,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 79
+        "y": 77
       },
       "id": 23,
       "targets": [
@@ -1267,12 +1267,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Mamba \u6d3b\u8dc3\u72b6\u6001\u69fd\u4f4d\uff08Mamba \u72b6\u6001\u6c60\u4e2d\u88ab\u6d3b\u8dc3\u8bf7\u6c42\u5360\u7528\u7684\u72b6\u6001\u69fd\u4f4d\u6570\uff09",
+      "title": "Mamba \u6d3b\u8dc3\u72b6\u6001\u69fd\u4f4d",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1291,7 +1291,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 87
+        "y": 85
       },
       "id": 24,
       "panels": [
@@ -1322,7 +1322,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 88
+            "y": 86
           },
           "id": 25,
           "targets": [
@@ -1336,12 +1336,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "CUDA Graph \u524d\u5411\u9891\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "CUDA Graph \u524d\u5411\u9891\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1381,7 +1381,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 88
+            "y": 86
           },
           "id": 26,
           "targets": [
@@ -1395,12 +1395,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u5b9e\u65f6\u5904\u7406 Token \u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "\u5b9e\u65f6\u5904\u7406 Token \u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1440,7 +1440,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 96
+            "y": 94
           },
           "id": 27,
           "targets": [
@@ -1454,12 +1454,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u524d\u5411\u8ba1\u7b97\u65f6\u95f4\u5360\u6bd4\uff08\u6bcf\u79d2\u7d2f\u8ba1\u7684\u524d\u5411\u8ba1\u7b97\u79d2\u6570\uff09",
+          "title": "\u524d\u5411\u8ba1\u7b97\u65f6\u95f4\u5360\u6bd4",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1499,7 +1499,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 96
+            "y": 94
           },
           "id": 28,
           "targets": [
@@ -1513,12 +1513,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u5355 GPU \u4f30\u7b97\u8ba1\u7b97\u541e\u5410\uff08\u6bcf\u4e2a GPU \u6bcf\u79d2\u4f30\u7b97\u7684\u6d6e\u70b9\u8fd0\u7b97\u91cf\uff09",
+          "title": "\u5355 GPU \u4f30\u7b97\u8ba1\u7b97\u541e\u5410",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1558,7 +1558,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 104
+            "y": 102
           },
           "id": 29,
           "targets": [
@@ -1572,12 +1572,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u5355 GPU \u4f30\u7b97\u663e\u5b58\u8bfb\u53d6\u5e26\u5bbd\uff08\u6bcf\u4e2a GPU \u6bcf\u79d2\u4f30\u7b97\u7684\u663e\u5b58\u8bfb\u53d6\u5b57\u8282\u6570\uff09",
+          "title": "\u5355 GPU \u4f30\u7b97\u663e\u5b58\u8bfb\u53d6\u5e26\u5bbd",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1617,7 +1617,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 104
+            "y": 102
           },
           "id": 30,
           "targets": [
@@ -1631,12 +1631,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u5355 GPU \u4f30\u7b97\u663e\u5b58\u5199\u5165\u5e26\u5bbd\uff08\u6bcf\u4e2a GPU \u6bcf\u79d2\u4f30\u7b97\u7684\u663e\u5b58\u5199\u5165\u5b57\u8282\u6570\uff09",
+          "title": "\u5355 GPU \u4f30\u7b97\u663e\u5b58\u5199\u5165\u5e26\u5bbd",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1676,7 +1676,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 112
+            "y": 110
           },
           "id": 31,
           "targets": [
@@ -1690,12 +1690,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "DP \u534f\u540c\u5904\u7406 Token \u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "DP \u534f\u540c\u5904\u7406 Token \u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1735,7 +1735,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 112
+            "y": 110
           },
           "id": 32,
           "targets": [
@@ -1749,12 +1749,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "DP \u534f\u540c\u524d\u5411\u65f6\u95f4\u5360\u6bd4\uff08\u6bcf\u79d2\u7d2f\u8ba1\u7684 DP \u534f\u540c\u524d\u5411\u8ba1\u7b97\u79d2\u6570\uff09",
+          "title": "DP \u534f\u540c\u524d\u5411\u65f6\u95f4\u5360\u6bd4",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1777,7 +1777,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 120
+        "y": 118
       },
       "id": 33,
       "panels": [
@@ -1801,7 +1801,7 @@
             "h": 8,
             "w": 6,
             "x": 0,
-            "y": 121
+            "y": 119
           },
           "id": 34,
           "targets": [
@@ -1816,7 +1816,7 @@
               "instant": true
             }
           ],
-          "title": "KV Cache \u6700\u5927 Token \u5bb9\u91cf\uff08KV Cache \u6c60\u53ef\u5bb9\u7eb3\u7684\u6700\u5927 Token \u603b\u6570\uff09",
+          "title": "KV Cache \u6700\u5927 Token \u5bb9\u91cf",
           "options": {
             "colorMode": "value",
             "graphMode": "none",
@@ -1854,7 +1854,7 @@
             "h": 8,
             "w": 6,
             "x": 6,
-            "y": 121
+            "y": 119
           },
           "id": 35,
           "targets": [
@@ -1869,7 +1869,7 @@
               "instant": true
             }
           ],
-          "title": "SLO \u4e0b\u6700\u5927\u5e76\u53d1\u8bf7\u6c42\u6570\uff08\u5728\u76ee\u6807 SLO \u7ea6\u675f\u4e0b\u4f30\u7b97\u7684\u6700\u5927\u8fd0\u884c\u4e2d\u8bf7\u6c42\u6570\uff09",
+          "title": "SLO \u4e0b\u6700\u5927\u5e76\u53d1\u8bf7\u6c42\u6570",
           "options": {
             "colorMode": "value",
             "graphMode": "none",
@@ -1907,7 +1907,7 @@
             "h": 8,
             "w": 6,
             "x": 12,
-            "y": 121
+            "y": 119
           },
           "id": 36,
           "targets": [
@@ -1922,7 +1922,7 @@
               "instant": true
             }
           ],
-          "title": "\u5f15\u64ce\u542f\u52a8\u8017\u65f6\uff08\u5f15\u64ce\u5b8c\u6210\u542f\u52a8\u6240\u82b1\u8d39\u7684\u65f6\u95f4\uff09",
+          "title": "\u5f15\u64ce\u542f\u52a8\u8017\u65f6",
           "options": {
             "colorMode": "value",
             "graphMode": "none",
@@ -1960,7 +1960,7 @@
             "h": 8,
             "w": 6,
             "x": 18,
-            "y": 121
+            "y": 119
           },
           "id": 37,
           "targets": [
@@ -1975,7 +1975,7 @@
               "instant": true
             }
           ],
-          "title": "\u5f15\u64ce\u6743\u91cd\u52a0\u8f7d\u8017\u65f6\uff08\u5f15\u64ce\u542f\u52a8\u671f\u95f4\u52a0\u8f7d\u6a21\u578b\u6743\u91cd\u6240\u82b1\u8d39\u7684\u65f6\u95f4\uff09",
+          "title": "\u5f15\u64ce\u6743\u91cd\u52a0\u8f7d\u8017\u65f6",
           "options": {
             "colorMode": "value",
             "graphMode": "none",
@@ -2013,7 +2013,7 @@
             "h": 8,
             "w": 6,
             "x": 0,
-            "y": 129
+            "y": 127
           },
           "id": 38,
           "targets": [
@@ -2028,7 +2028,7 @@
               "instant": true
             }
           ],
-          "title": "KV Cache \u9875\u5927\u5c0f\uff08\u6bcf\u4e2a KV Cache \u9875\u5305\u542b\u7684 Token \u6570\uff09",
+          "title": "KV Cache \u9875\u5927\u5c0f",
           "options": {
             "colorMode": "value",
             "graphMode": "none",
@@ -2066,7 +2066,7 @@
             "h": 8,
             "w": 6,
             "x": 6,
-            "y": 129
+            "y": 127
           },
           "id": 39,
           "targets": [
@@ -2081,7 +2081,7 @@
               "instant": true
             }
           ],
-          "title": "KV Cache \u9875\u6570\uff08KV Cache \u4e2d\u7684\u9875\u9762\u603b\u6570\uff09",
+          "title": "KV Cache \u9875\u6570",
           "options": {
             "colorMode": "value",
             "graphMode": "none",
@@ -2119,7 +2119,7 @@
             "h": 8,
             "w": 6,
             "x": 12,
-            "y": 129
+            "y": 127
           },
           "id": 40,
           "targets": [
@@ -2134,7 +2134,7 @@
               "instant": true
             }
           ],
-          "title": "\u6700\u5927\u4e0a\u4e0b\u6587\u957f\u5ea6\uff08\u6a21\u578b\u652f\u6301\u7684\u6700\u5927\u4e0a\u4e0b\u6587\u957f\u5ea6\uff09",
+          "title": "\u6700\u5927\u4e0a\u4e0b\u6587\u957f\u5ea6",
           "options": {
             "colorMode": "value",
             "graphMode": "none",
@@ -2172,7 +2172,7 @@
             "h": 8,
             "w": 6,
             "x": 18,
-            "y": 129
+            "y": 127
           },
           "id": 41,
           "targets": [
@@ -2187,7 +2187,7 @@
               "instant": true
             }
           ],
-          "title": "\u542f\u52a8\u65f6\u53ef\u7528 GPU \u663e\u5b58\uff08\u5f15\u64ce\u542f\u52a8\u65f6\u68c0\u6d4b\u5230\u7684\u53ef\u7528 GPU \u663e\u5b58\uff09",
+          "title": "\u542f\u52a8\u65f6\u53ef\u7528 GPU \u663e\u5b58",
           "options": {
             "colorMode": "value",
             "graphMode": "none",
@@ -2232,7 +2232,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 137
+            "y": 135
           },
           "id": 42,
           "targets": [
@@ -2246,12 +2246,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u6700\u8fd1\u4e00\u6b21\u5728\u7ebf\u6743\u91cd\u52a0\u8f7d\u8017\u65f6\uff08\u6700\u8fd1\u4e00\u6b21\u5728\u7ebf\u66f4\u65b0\u6743\u91cd\u64cd\u4f5c\u7684\u5899\u949f\u8017\u65f6\uff09",
+          "title": "\u6700\u8fd1\u4e00\u6b21\u5728\u7ebf\u6743\u91cd\u52a0\u8f7d\u8017\u65f6",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2274,7 +2274,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 145
+        "y": 143
       },
       "id": 43,
       "panels": [
@@ -2305,7 +2305,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 146
+            "y": 144
           },
           "id": 44,
           "targets": [
@@ -2319,12 +2319,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Prefill Bootstrap \u961f\u5217\u8bf7\u6c42\u6570\uff08Prefill \u8282\u70b9 Bootstrap \u961f\u5217\u4e2d\u7684\u8bf7\u6c42\u6570\uff09",
+          "title": "Prefill Bootstrap \u961f\u5217\u8bf7\u6c42\u6570",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2364,7 +2364,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 146
+            "y": 144
           },
           "id": 45,
           "targets": [
@@ -2378,12 +2378,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Prefill \u4f20\u8f93\u4e2d\u8bf7\u6c42\u6570\uff08Prefill \u8282\u70b9\u5df2\u8fdb\u5165\u5904\u7406\u6216 KV \u4f20\u8f93\u6d41\u7a0b\u7684\u8bf7\u6c42\u6570\uff09",
+          "title": "Prefill \u4f20\u8f93\u4e2d\u8bf7\u6c42\u6570",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2423,7 +2423,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 154
+            "y": 152
           },
           "id": 46,
           "targets": [
@@ -2437,12 +2437,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Decode \u9884\u5206\u914d\u961f\u5217\u8bf7\u6c42\u6570\uff08Decode \u8282\u70b9\u7b49\u5f85 KV Cache \u9884\u5206\u914d\u7684\u8bf7\u6c42\u6570\uff09",
+          "title": "Decode \u9884\u5206\u914d\u961f\u5217\u8bf7\u6c42\u6570",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2482,7 +2482,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 154
+            "y": 152
           },
           "id": 47,
           "targets": [
@@ -2496,12 +2496,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Decode \u4f20\u8f93\u961f\u5217\u8bf7\u6c42\u6570\uff08Decode \u8282\u70b9\u7b49\u5f85\u6216\u8fdb\u884c KV Cache \u4f20\u8f93\u7684\u8bf7\u6c42\u6570\uff09",
+          "title": "Decode \u4f20\u8f93\u961f\u5217\u8bf7\u6c42\u6570",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2541,7 +2541,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 162
+            "y": 160
           },
           "id": 48,
           "targets": [
@@ -2555,12 +2555,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u5f85\u9884\u5206\u914d Token \u4f7f\u7528\u91cf\uff08\u5c1a\u672a\u5b9e\u9645\u5b8c\u6210\u9884\u5206\u914d\u7684\u5f85\u5904\u7406 Token \u4f7f\u7528\u91cf\uff09",
+          "title": "\u5f85\u9884\u5206\u914d Token \u4f7f\u7528\u91cf",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2600,7 +2600,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 162
+            "y": 160
           },
           "id": 49,
           "targets": [
@@ -2623,12 +2623,12 @@
               "refId": "Q02"
             }
           ],
-          "title": "KV Cache \u4f20\u8f93\u901f\u5ea6\uff08KV Cache \u4f20\u8f93\u901f\u5ea6\u5206\u5e03\uff09",
+          "title": "KV Cache \u4f20\u8f93\u901f\u5ea6",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2668,7 +2668,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 170
+            "y": 168
           },
           "id": 50,
           "targets": [
@@ -2691,12 +2691,12 @@
               "refId": "Q02"
             }
           ],
-          "title": "KV Cache \u4f20\u8f93\u6570\u636e\u91cf\uff08\u5355\u6b21 KV Cache \u4f20\u8f93\u6570\u636e\u91cf\u5206\u5e03\uff09",
+          "title": "KV Cache \u4f20\u8f93\u6570\u636e\u91cf",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2719,7 +2719,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 178
+        "y": 176
       },
       "id": 51,
       "panels": [
@@ -2750,7 +2750,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 179
+            "y": 177
           },
           "id": 52,
           "targets": [
@@ -2773,12 +2773,12 @@
               "refId": "Q02"
             }
           ],
-          "title": "KV Cache \u6dd8\u6c70\u8017\u65f6\uff08\u5c06 KV Cache \u4ece GPU \u6dd8\u6c70\u5230 CPU \u7684\u8017\u65f6\u5206\u5e03\uff09",
+          "title": "KV Cache \u6dd8\u6c70\u8017\u65f6",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2818,7 +2818,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 179
+            "y": 177
           },
           "id": 53,
           "targets": [
@@ -2832,12 +2832,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u6dd8\u6c70 Token \u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "\u6dd8\u6c70 Token \u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2877,7 +2877,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 187
+            "y": 185
           },
           "id": 54,
           "targets": [
@@ -2900,12 +2900,12 @@
               "refId": "Q02"
             }
           ],
-          "title": "KV Cache \u56de\u8f7d\u8017\u65f6\uff08\u5c06 KV Cache \u4ece CPU \u56de\u8f7d\u5230 GPU \u7684\u8017\u65f6\u5206\u5e03\uff09",
+          "title": "KV Cache \u56de\u8f7d\u8017\u65f6",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2945,7 +2945,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 187
+            "y": 185
           },
           "id": 55,
           "targets": [
@@ -2959,12 +2959,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u56de\u8f7d Token \u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "\u56de\u8f7d Token \u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -3004,7 +3004,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 195
+            "y": 193
           },
           "id": 56,
           "targets": [
@@ -3018,12 +3018,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u8fd0\u884c\u4e2d\u552f\u4e00\u8def\u7531\u952e\u6570\uff08\u5f53\u524d\u8fd0\u884c\u6279\u6b21\u4e2d\u7684\u552f\u4e00\u8def\u7531\u952e\u6570\u91cf\uff09",
+          "title": "\u8fd0\u884c\u4e2d\u552f\u4e00\u8def\u7531\u952e\u6570",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -3063,7 +3063,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 195
+            "y": 193
           },
           "id": 57,
           "targets": [
@@ -3077,12 +3077,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u8def\u7531\u952e\u8fd0\u884c\u8bf7\u6c42\u6570\u5206\u5e03\uff08\u6309\u6bcf\u4e2a\u8def\u7531\u952e\u5173\u8054\u7684\u8fd0\u884c\u4e2d\u8bf7\u6c42\u6570\u5212\u5206\u7684\u975e\u7d2f\u79ef\u533a\u95f4\u5206\u5e03\uff0c\u533a\u95f4\u7531 gt \u548c le \u6807\u8bc6\uff09",
+          "title": "\u8def\u7531\u952e\u8fd0\u884c\u8bf7\u6c42\u6570\u5206\u5e03",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -3122,7 +3122,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 203
+            "y": 201
           },
           "id": 58,
           "targets": [
@@ -3136,12 +3136,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u8def\u7531\u952e\u5168\u90e8\u8bf7\u6c42\u6570\u5206\u5e03\uff08\u6309\u6bcf\u4e2a\u8def\u7531\u952e\u5173\u8054\u7684\u8fd0\u884c\u4e2d\u4e0e\u7b49\u5f85\u8bf7\u6c42\u603b\u6570\u5212\u5206\u7684\u975e\u7d2f\u79ef\u533a\u95f4\u5206\u5e03\uff09",
+          "title": "\u8def\u7531\u952e\u5168\u90e8\u8bf7\u6c42\u6570\u5206\u5e03",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",

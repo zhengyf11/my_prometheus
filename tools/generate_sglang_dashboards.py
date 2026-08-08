@@ -521,10 +521,9 @@ def rate_display(item):
 
 def metric_title(item):
     if item["type"] == "counter":
-        title, explanation = rate_display(item)
-        return "{0}（{1}）".format(title, explanation)
-    translation = metric_translation(item)
-    return "{0}（{1}）".format(translation["title"], short_explanation(item))
+        title, _ = rate_display(item)
+        return title
+    return metric_translation(item)["title"]
 
 
 def metric_mapping(item):
@@ -736,7 +735,7 @@ def target(expression_value, legend, index, instant=False):
 def timeseries_options():
     return {
         "legend": {
-            "calcs": ["lastNotNull", "mean"],
+            "calcs": ["lastNotNull", "max"],
             "displayMode": "table",
             "placement": "bottom",
             "showLegend": True,
@@ -806,7 +805,7 @@ def token_distribution_panel(item, panel_id, x, y, width, kind, buckets):
 
 def cache_hit_panel(item, panel_id, x, y, width, kind):
     panel = panel_base(item, panel_id, x, y, width, "percentunit")
-    panel["title"] = "输入 Token 缓存命中率（由总输入与未缓存输入 Token 计算）"
+    panel["title"] = "输入 Token 缓存命中率"
     panel["description"] = "\n".join([
         "- 计算公式：`1 - 未缓存输入 Token / 总输入 Token`。",
         "- 被替代的 Prometheus 原指标族：`sglang:uncached_prompt_tokens_histogram`",
@@ -836,7 +835,7 @@ def router_response_ratio_expression(item, kind, status_pattern):
 
 def router_response_outcome_panel(item, panel_id, x, y, width, kind):
     panel = panel_base(item, panel_id, x, y, width, "percentunit")
-    panel["title"] = "Router HTTP 响应占比（按成功、5xx 与 429 分类）"
+    panel["title"] = "Router HTTP 响应占比"
     panel["description"] = panel["description"].replace(
         "- 面板口径：使用 `rate()` 展示每秒速率，不是累计总数。",
         "- 面板口径：先用 `rate()` 计算各状态响应速率，再除以全部响应速率得到占比。",
@@ -892,7 +891,7 @@ def topk_table_panel(item, panel_id, x, y, width, kind):
 
 def worker_health_panel(item, panel_id, x, y, width, kind):
     panel = panel_base(item, panel_id, x, y, width, "short")
-    panel["title"] = "健康 Worker 总数（Router 当前可用的后端 Worker 数量）"
+    panel["title"] = "健康 Worker 总数"
     panel["description"] += (
         "\n- 聚合口径：对 `smg_worker_health` 求和；当前 exporter 未提供 `worker_type` 和模型标签，"
         "因此不能准确拆分 Prefill/Decode 或模型。"
@@ -941,7 +940,7 @@ def metric_panel(item, panel_id, x, y, width, kind):
 
     panel = panel_base(item, panel_id, x, y, width, metric_unit(item))
     if kind == "split-router" and name == "sglang:num_requests_total":
-        panel["title"] = "阶段完成速率（Prefill/Decode 各阶段每秒完成请求数）"
+        panel["title"] = "阶段完成速率"
         panel["description"] += (
             "\n- PD 分离口径：这是各阶段完成速率，不是可相加的端到端客户 RPS；"
             "客户请求速率请查看 Router 的 `smg_router_requests_total`。"
@@ -1075,7 +1074,7 @@ def health_panel(title, description, expression_value, legend, panel_id, x, y, w
     return panel
 
 
-def health_panels(kind, first_panel_id, y):
+def health_panels(kind, first_panel_id, y, compact=False):
     labels = health_selector(kind)
     role_instance = "{{role}} / {{instance}}"
     panels = [
@@ -1149,6 +1148,12 @@ def health_panels(kind, first_panel_id, y):
             thresholds=[{"color": "green", "value": None}, {"color": "red", "value": 1}],
         ),
     ]
+    if compact:
+        panels = [panels[index] for index in (0, 1, 3, 7)]
+        for index, panel in enumerate(panels):
+            panel["id"] = first_panel_id + index
+        for index, panel in enumerate(panels[1:]):
+            panel["gridPos"].update({"x": index * 8, "y": y + 1, "w": 8})
     return panels
 
 
@@ -1209,54 +1214,54 @@ def derived_row(title, panel_id, y):
 def derived_panels(first_panel_id, y):
     pd_definitions = [
         {
-            "title": "Prefill/Decode 吞吐比（两阶段每秒完成请求数之比）",
+            "title": "Prefill/Decode 吞吐比",
             "description": "计算公式：Prefill 阶段完成速率 / Decode 阶段完成速率，按模型聚合；接近 1 通常表示两阶段吞吐匹配。该指标是跨角色全局指标，不受 Role/Instance 变量影响。优先查询 recording rule，旧时间窗自动回退原始 Counter。",
             "expr": 'my_prometheus:sglang_prefill_decode_throughput_ratio:5m{model_name=~"$model"}',
             "fallback": 'sum by (model_name) (rate(sglang:num_requests_total{role="sglang-prefill",model_name=~"$model"}[$__rate_interval])) / clamp_min(sum by (model_name) (rate(sglang:num_requests_total{role="sglang-decode",model_name=~"$model"}[$__rate_interval])), 1e-9)',
             "legend": "{{model_name}}",
         },
         {
-            "title": "Prefill/Decode Worker 容量比（Router 注册的两类 Worker 数量比）",
+            "title": "Prefill/Decode Worker 容量比",
             "description": "计算公式：Router 注册的 Prefill Worker 数 / Decode Worker 数；接近 1 表示两类 Worker 数量相当，但正常区间仍取决于单 Worker 容量。仅在 Role 选择包含 Router 时展示。",
             "expr": 'my_prometheus:sglang_prefill_decode_worker_capacity_ratio{role=~"$role",instance=~"$instance",model=~"$model"}',
             "fallback": 'sum by (role, instance, model) (smg_worker_pool_size{role=~"$role",role="sglang-router",instance=~"$instance",model=~"$model",worker_type="prefill"}) / clamp_min(sum by (role, instance, model) (smg_worker_pool_size{role=~"$role",role="sglang-router",instance=~"$instance",model=~"$model",worker_type="decode"}), 1)',
             "legend": "{{role}} / {{instance}} / {{model}}",
         },
         {
-            "title": "KV 传输失败率（失败请求占阶段完成请求的比例）",
-            "description": "Recording rule：`my_prometheus:sglang_kv_transfer_failure_ratio:5m`。分母为相同 Role/Instance/Model 的阶段完成请求速率。",
+            "title": "KV 传输失败率",
+            "description": "计算公式：KV 传输失败速率 / 相同 Role、Instance、Model 的阶段完成速率。0 表示窗口内无失败，越低越好；未配置业务告警阈值。旧时间窗回退原始 Counter。",
             "expr": 'my_prometheus:sglang_kv_transfer_failure_ratio:5m{role=~"$role",instance=~"$instance",model_name=~"$model"}',
             "fallback": '(sum by (role, instance, model_name) (rate(sglang:num_transfer_failed_reqs_total{role=~"$role",instance=~"$instance",model_name=~"$model"}[$__rate_interval])) or sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~"$role",instance=~"$instance",model_name=~"$model"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~"$role",instance=~"$instance",model_name=~"$model"}[$__rate_interval])), 1e-9)',
             "legend": "{{role}} / {{instance}} / {{model_name}}",
             "unit": "percentunit",
         },
         {
-            "title": "Bootstrap 失败率（失败请求占阶段完成请求的比例）",
-            "description": "Recording rule：`my_prometheus:sglang_bootstrap_failure_ratio:5m`。用于识别 PD Bootstrap 建链失败。",
+            "title": "Bootstrap 失败率",
+            "description": "计算公式：Bootstrap 失败速率 / 相同阶段完成速率。0 表示窗口内无失败，越低越好；未配置业务告警阈值。旧时间窗回退原始 Counter。",
             "expr": 'my_prometheus:sglang_bootstrap_failure_ratio:5m{role=~"$role",instance=~"$instance",model_name=~"$model"}',
             "fallback": '(sum by (role, instance, model_name) (rate(sglang:num_bootstrap_failed_reqs_total{role=~"$role",instance=~"$instance",model_name=~"$model"}[$__rate_interval])) or sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~"$role",instance=~"$instance",model_name=~"$model"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~"$role",instance=~"$instance",model_name=~"$model"}[$__rate_interval])), 1e-9)',
             "legend": "{{role}} / {{instance}} / {{model_name}}",
             "unit": "percentunit",
         },
         {
-            "title": "Prefill 重试率（重试次数占 Prefill 完成请求的比例）",
-            "description": "Recording rule：`my_prometheus:sglang_prefill_retry_ratio:5m`。仅 Prefill Role 有数据。",
+            "title": "Prefill 重试率",
+            "description": "计算公式：Prefill 重试速率 / Prefill 完成速率。0 表示窗口内无重试，越低越好；仅 Role 选择包含 Prefill 时展示。",
             "expr": 'my_prometheus:sglang_prefill_retry_ratio:5m{role=~"$role",instance=~"$instance",model_name=~"$model"}',
             "fallback": '(sum by (role, instance, model_name) (rate(sglang:num_prefill_retries_total{role=~"$role",role="sglang-prefill",instance=~"$instance",model_name=~"$model"}[$__rate_interval])) or sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~"$role",role="sglang-prefill",instance=~"$instance",model_name=~"$model"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~"$role",role="sglang-prefill",instance=~"$instance",model_name=~"$model"}[$__rate_interval])), 1e-9)',
             "legend": "{{role}} / {{instance}} / {{model_name}}",
             "unit": "percentunit",
         },
         {
-            "title": "KV 传输 P99 延迟（最近 5 分钟的长尾传输耗时）",
-            "description": "Recording rule：`my_prometheus:sglang_kv_transfer_latency_ms_p99:5m`，单位为毫秒。",
+            "title": "KV 传输 P99 延迟",
+            "description": "KV 传输耗时的 P99，单位毫秒，越低越好；具体健康区间需按链路 SLO 配置。旧时间窗回退原始 Histogram。",
             "expr": 'my_prometheus:sglang_kv_transfer_latency_ms_p99:5m{role=~"$role",instance=~"$instance",model_name=~"$model"}',
             "fallback": 'histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{role=~"$role",instance=~"$instance",model_name=~"$model"}[$__rate_interval])))',
             "legend": "{{role}} / {{instance}} / {{model_name}}",
             "unit": "ms",
         },
         {
-            "title": "KV 传输 P99 速度（最近 5 分钟的传输速度分位）",
-            "description": "Recording rule：`my_prometheus:sglang_kv_transfer_speed_gb_s_p99:5m`，单位为 GB/s。",
+            "title": "KV 传输 P99 速度",
+            "description": "KV 传输速度的 P99，单位 GB/s。应结合数据量和网络基线判断，不设置无依据的固定阈值；旧时间窗回退原始 Histogram。",
             "expr": 'my_prometheus:sglang_kv_transfer_speed_gb_s_p99:5m{role=~"$role",instance=~"$instance",model_name=~"$model"}',
             "fallback": 'histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_speed_gb_s_bucket{role=~"$role",instance=~"$instance",model_name=~"$model"}[$__rate_interval])))',
             "legend": "{{role}} / {{instance}} / {{model_name}}",
@@ -1265,39 +1270,39 @@ def derived_panels(first_panel_id, y):
     ]
     router_definitions = [
         {
-            "title": "Router 错误率（路由错误占 Router 请求的比例）",
-            "description": "Recording rule：`my_prometheus:sglang_router_error_ratio:5m`。",
+            "title": "Router 错误率",
+            "description": "计算公式：Router 路由错误速率 / Router 客户请求速率。0 表示窗口内无错误，越低越好；未配置业务告警阈值。",
             "expr": 'my_prometheus:sglang_router_error_ratio:5m{role=~"$role",instance=~"$instance"}',
             "fallback": '(sum by (role, instance) (rate(smg_router_request_errors_total{role=~"$role",role="sglang-router",instance=~"$instance"}[$__rate_interval])) or sum by (role, instance) (rate(smg_router_requests_total{role=~"$role",role="sglang-router",instance=~"$instance"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance) (rate(smg_router_requests_total{role=~"$role",role="sglang-router",instance=~"$instance"}[$__rate_interval])), 1e-9)',
             "legend": "{{role}} / {{instance}}",
             "unit": "percentunit",
         },
         {
-            "title": "重试耗尽率（耗尽全部重试的请求比例）",
-            "description": "Recording rule：`my_prometheus:sglang_router_retry_exhausted_ratio:5m`。",
+            "title": "重试耗尽率",
+            "description": "计算公式：重试耗尽速率 / Router 客户请求速率。0 表示窗口内无耗尽，越低越好。",
             "expr": 'my_prometheus:sglang_router_retry_exhausted_ratio:5m{role=~"$role",instance=~"$instance"}',
             "fallback": '(sum by (role, instance) (rate(smg_worker_retries_exhausted_total{role=~"$role",role="sglang-router",instance=~"$instance"}[$__rate_interval])) or sum by (role, instance) (rate(smg_router_requests_total{role=~"$role",role="sglang-router",instance=~"$instance"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance) (rate(smg_router_requests_total{role=~"$role",role="sglang-router",instance=~"$instance"}[$__rate_interval])), 1e-9)',
             "legend": "{{role}} / {{instance}}",
             "unit": "percentunit",
         },
         {
-            "title": "健康 Worker 总数（Router 当前可用后端数量）",
-            "description": "Recording rule：`my_prometheus:sglang_router_healthy_workers`。当前原指标无 Worker 类型和模型标签，只能准确展示总数。",
+            "title": "健康 Worker 总数",
+            "description": "计算公式：对 Router 上报的 `smg_worker_health` 求和。必须大于 0；期望数量由实际部署拓扑决定。当前原指标无 Worker 类型和模型标签，不能准确拆分角色或模型。",
             "expr": 'my_prometheus:sglang_router_healthy_workers{role=~"$role",instance=~"$instance"}',
             "fallback": 'sum by (role, instance) (smg_worker_health{role=~"$role",role="sglang-router",instance=~"$instance"})',
             "legend": "{{role}} / {{instance}}",
             "type": "stat",
         },
         {
-            "title": "打开的熔断器数量（状态为 Open 的 Worker 数）",
-            "description": "Recording rule：`my_prometheus:sglang_router_open_circuit_breakers`。原指标状态 0/1/2 分别表示 Closed/Open/Half-open。",
+            "title": "打开的熔断器数量",
+            "description": "计算公式：统计状态为 Open 的 Worker 熔断器。0 为正常；原指标状态 0/1/2 分别表示 Closed/Open/Half-open。",
             "expr": 'my_prometheus:sglang_router_open_circuit_breakers{role=~"$role",instance=~"$instance"}',
             "fallback": 'sum by (role, instance) (smg_worker_cb_state{role=~"$role",role="sglang-router",instance=~"$instance"} == bool 1)',
             "legend": "{{role}} / {{instance}}",
             "type": "stat",
         },
         {
-            "title": "Worker 负载偏斜（活跃请求数 Max/Avg）",
+            "title": "Worker 负载偏斜",
             "description": "Recording rule：`my_prometheus:sglang_router_worker_load_skew`。接近 1 表示较均衡，升高表示最忙 Worker 明显高于平均值。",
             "expr": 'my_prometheus:sglang_router_worker_load_skew{role=~"$role",instance=~"$instance"}',
             "fallback": 'max by (role, instance) (smg_worker_requests_active{role=~"$role",role="sglang-router",instance=~"$instance"}) / clamp_min(avg by (role, instance) (smg_worker_requests_active{role=~"$role",role="sglang-router",instance=~"$instance"}), 1e-9)',
@@ -1331,13 +1336,12 @@ def info_panel(title, role_text, metric_count, panel_id, y):
     display_title = bilingual(translation["title"], title)
     content = (
         "# {0}\n\n"
-        "本看板覆盖 **{1} 个指标族**。{2} "
-        "看板使用共享 Prometheus 数据源 `{3}`，并通过 SGLang `role` 标签选择采集目标。"
-        "面板显示 No data 时，必须先查看“采集健康”分组：它既可能表示角色不适用或功能未启用，也可能表示抓取失败、目标消失、标签变化或实例退出。"
-        "PD 分离与 Router 看板会把 Role 直接加入每条 PromQL；不匹配所选 Role 的指标面板会显示 No data。"
+        "覆盖 **{1} 个指标族**。{2} 数据源：`{3}`。"
+        "先用“采集健康”区分抓取故障，再判断未启用、版本未暴露或零事件。"
+        "少数跨角色派生指标不受全部变量控制，具体范围见面板 Tooltip。"
     ).format(display_title, metric_count, translation["description"], DATASOURCE_UID)
     return {
-        "gridPos": {"h": 5, "w": 24, "x": 0, "y": y},
+        "gridPos": {"h": 3, "w": 24, "x": 0, "y": y},
         "id": panel_id,
         "options": {"content": content, "mode": "markdown"},
         "title": "看板范围 (Dashboard Scope)",
@@ -1397,7 +1401,7 @@ def variables(kind):
 
 
 def build_dashboard(kind, title, uid, groups, role_text, expanded_groups=None,
-                    refresh="1m", include_derived=False):
+                    refresh="1m", include_derived=False, compact_health=False):
     catalog = flatten(groups)
     expanded_groups = set(expanded_groups or ())
     panels = []
@@ -1405,12 +1409,12 @@ def build_dashboard(kind, title, uid, groups, role_text, expanded_groups=None,
     y = 0
     panels.append(info_panel(title, role_text, len(catalog), panel_id, y))
     panel_id += 1
-    y += 5
+    y += 3
 
-    scrape_health_panels = health_panels(kind, panel_id, y)
+    scrape_health_panels = health_panels(kind, panel_id, y, compact=compact_health)
     panels.extend(scrape_health_panels)
     panel_id += len(scrape_health_panels)
-    y += 25
+    y += 9 if compact_health else 25
 
     for group_title, items in groups.items():
         row = row_panel(group_title, panel_id, y)
@@ -1503,6 +1507,17 @@ def selected_groups(*names):
     return OrderedDict((name, combined[name]) for name in names)
 
 
+def selected_metric_groups(*definitions):
+    lookup = {
+        item["name"]: item
+        for item in flatten(ENGINE_GROUPS) + flatten(ROUTER_GROUPS)
+    }
+    return OrderedDict(
+        (title, [lookup[name] for name in names])
+        for title, names in definitions
+    )
+
+
 def main():
     validate_catalog(ENGINE_GROUPS, 122)
     validate_catalog(ROUTER_GROUPS, 61)
@@ -1555,8 +1570,26 @@ def main():
         (
             "sglang-service-overview.json", "SGLang Service Overview",
             "my-prometheus-sglang-service-overview",
-            selected_groups("Key Engine Metrics", "Key Router Metrics"),
-            ("Key Engine Metrics", "Key Router Metrics"), "30s", True,
+            selected_metric_groups(
+                ("Key Engine Metrics", (
+                    "sglang:prompt_tokens_total",
+                    "sglang:generation_tokens_total",
+                    "sglang:num_aborted_requests_total",
+                    "sglang:num_running_reqs",
+                    "sglang:num_queue_reqs",
+                    "sglang:token_usage",
+                    "sglang:time_to_first_token_seconds",
+                    "sglang:inter_token_latency_seconds",
+                    "sglang:e2e_request_latency_seconds",
+                    "sglang:num_transfer_failed_reqs_total",
+                )),
+                ("Key Router Metrics", (
+                    "smg_router_requests_total",
+                    "smg_http_responses_total",
+                    "smg_worker_health",
+                )),
+            ),
+            ("Key Engine Metrics", "Key Router Metrics"), "30s", False,
         ),
         (
             "sglang-pd-pipeline.json", "SGLang PD Pipeline",
@@ -1613,6 +1646,7 @@ def main():
                 expanded_groups=expanded,
                 refresh=refresh,
                 include_derived=include_derived,
+                compact_health=filename == "sglang-service-overview.json",
             ),
         )
 

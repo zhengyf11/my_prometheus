@@ -25,14 +25,14 @@
   "panels": [
     {
       "gridPos": {
-        "h": 5,
+        "h": 3,
         "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "content": "# SGLang \u670d\u52a1\u603b\u89c8 (SGLang Service Overview)\n\n\u672c\u770b\u677f\u8986\u76d6 **27 \u4e2a\u6307\u6807\u65cf**\u3002\u7528\u4e8e\u503c\u73ed\u7684\u8bf7\u6c42\u3001Token\u3001\u6838\u5fc3\u5ef6\u8fdf\u3001\u9519\u8bef\u3001\u5065\u5eb7\u548c\u6d3e\u751f\u6307\u6807\u603b\u89c8\u3002 \u770b\u677f\u4f7f\u7528\u5171\u4eab Prometheus \u6570\u636e\u6e90 `Prometheus`\uff0c\u5e76\u901a\u8fc7 SGLang `role` \u6807\u7b7e\u9009\u62e9\u91c7\u96c6\u76ee\u6807\u3002\u9762\u677f\u663e\u793a No data \u65f6\uff0c\u5fc5\u987b\u5148\u67e5\u770b\u201c\u91c7\u96c6\u5065\u5eb7\u201d\u5206\u7ec4\uff1a\u5b83\u65e2\u53ef\u80fd\u8868\u793a\u89d2\u8272\u4e0d\u9002\u7528\u6216\u529f\u80fd\u672a\u542f\u7528\uff0c\u4e5f\u53ef\u80fd\u8868\u793a\u6293\u53d6\u5931\u8d25\u3001\u76ee\u6807\u6d88\u5931\u3001\u6807\u7b7e\u53d8\u5316\u6216\u5b9e\u4f8b\u9000\u51fa\u3002PD \u5206\u79bb\u4e0e Router \u770b\u677f\u4f1a\u628a Role \u76f4\u63a5\u52a0\u5165\u6bcf\u6761 PromQL\uff1b\u4e0d\u5339\u914d\u6240\u9009 Role \u7684\u6307\u6807\u9762\u677f\u4f1a\u663e\u793a No data\u3002",
+        "content": "# SGLang \u670d\u52a1\u603b\u89c8 (SGLang Service Overview)\n\n\u8986\u76d6 **13 \u4e2a\u6307\u6807\u65cf**\u3002\u7528\u4e8e\u503c\u73ed\u7684\u8bf7\u6c42\u3001Token\u3001\u6838\u5fc3\u5ef6\u8fdf\u3001\u9519\u8bef\u3001\u5065\u5eb7\u548c\u6d3e\u751f\u6307\u6807\u603b\u89c8\u3002 \u6570\u636e\u6e90\uff1a`Prometheus`\u3002\u5148\u7528\u201c\u91c7\u96c6\u5065\u5eb7\u201d\u533a\u5206\u6293\u53d6\u6545\u969c\uff0c\u518d\u5224\u65ad\u672a\u542f\u7528\u3001\u7248\u672c\u672a\u66b4\u9732\u6216\u96f6\u4e8b\u4ef6\u3002\u5c11\u6570\u8de8\u89d2\u8272\u6d3e\u751f\u6307\u6807\u4e0d\u53d7\u5168\u90e8\u53d8\u91cf\u63a7\u5236\uff0c\u5177\u4f53\u8303\u56f4\u89c1\u9762\u677f Tooltip\u3002",
         "mode": "markdown"
       },
       "title": "\u770b\u677f\u8303\u56f4 (Dashboard Scope)",
@@ -44,7 +44,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 3
       },
       "id": 2,
       "panels": [],
@@ -100,9 +100,9 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 6,
+        "w": 8,
         "x": 0,
-        "y": 6
+        "y": 4
       },
       "id": 3,
       "targets": [
@@ -118,60 +118,6 @@
         }
       ],
       "title": "\u91c7\u96c6\u76ee\u6807\u72b6\u6001\uff081 \u4e3a UP\uff0c0 \u4e3a DOWN\uff09",
-      "type": "stat",
-      "x-panelKind": "scrape-health",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "\u7edf\u8ba1\u5e26\u6709 `expected=\"true\"` \u4e14\u5339\u914d\u5f53\u524d\u53d8\u91cf\u7684 SGLang target\u3002Prometheus \u65e0\u6cd5\u77e5\u9053\u672a\u5199\u5165\u670d\u52a1\u53d1\u73b0\u6587\u4ef6\u7684\u5916\u90e8\u671f\u671b\u6570\u91cf\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 6
-      },
-      "id": 4,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "count(up{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=~\"$role\"})",
-          "legendFormat": "\u7eb3\u7ba1",
-          "refId": "Q01",
-          "instant": true
-        }
-      ],
-      "title": "\u7eb3\u7ba1\u76ee\u6807\u6570",
       "type": "stat",
       "x-panelKind": "scrape-health",
       "options": {
@@ -225,11 +171,11 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 6
+        "w": 8,
+        "x": 8,
+        "y": 4
       },
-      "id": 5,
+      "id": 4,
       "targets": [
         {
           "datasource": {
@@ -243,180 +189,6 @@
         }
       ],
       "title": "\u6700\u8fd1\u6210\u529f\u91c7\u96c6\u8ddd\u4eca\u65f6\u95f4",
-      "type": "stat",
-      "x-panelKind": "scrape-health",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Prometheus `scrape_samples_scraped` \u6307\u6807\u3002\u7a81\u7136\u964d\u4e3a 0 \u6216\u660e\u663e\u4e0b\u964d\u53ef\u80fd\u8868\u793a exporter \u5f02\u5e38\u3001\u6307\u6807\u6ce8\u518c\u53d8\u5316\u6216\u89d2\u8272/\u7248\u672c\u53d8\u5316\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 14
-      },
-      "id": 6,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "max by (role, instance) (scrape_samples_scraped{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=~\"$role\"})",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "\u6bcf\u6b21\u91c7\u96c6\u6837\u672c\u6570\uff08Prometheus \u5355\u6b21\u6293\u53d6\u63a5\u6536\u7684\u6837\u672c\u6570\u91cf\uff09",
-      "type": "timeseries",
-      "x-panelKind": "scrape-health",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Prometheus `scrape_duration_seconds` \u6307\u6807\u3002\u7528\u4e8e\u8bc6\u522b exporter \u54cd\u5e94\u53d8\u6162\u6216\u6293\u53d6\u63a5\u8fd1\u8d85\u65f6\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "s",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 14
-      },
-      "id": 7,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "max by (role, instance) (scrape_duration_seconds{job=\"file_sd_nodes\",expected=\"true\",instance=~\"$instance\",role=~\"$role\"})",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "\u91c7\u96c6\u8017\u65f6\uff08Prometheus \u5b8c\u6210\u5355\u6b21\u6293\u53d6\u6240\u9700\u79d2\u6570\uff09",
-      "type": "timeseries",
-      "x-panelKind": "scrape-health",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Prometheus \u81ea\u76d1\u63a7\u6307\u6807 `prometheus_rule_group_rules`\u3002\u5f53\u524d\u89c4\u5219\u6a21\u677f\u5e94\u62a5\u544a 41 \u6761\uff1b\u8fd9\u6bd4\u7edf\u8ba1\u8f93\u51fa\u65f6\u5e8f\u66f4\u80fd\u8bc6\u522b\u89c4\u5219\u7ec4\u662f\u5426\u52a0\u8f7d\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 22
-      },
-      "id": 8,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "max(prometheus_rule_group_rules{rule_group=~\".*;sglang[.]recording\"})",
-          "legendFormat": "\u89c4\u5219\u6570",
-          "refId": "Q01",
-          "instant": true
-        }
-      ],
-      "title": "SGLang \u8bb0\u5f55\u89c4\u5219\u6570\u91cf",
       "type": "stat",
       "x-panelKind": "scrape-health",
       "options": {
@@ -466,11 +238,11 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 22
+        "w": 8,
+        "x": 16,
+        "y": 4
       },
-      "id": 9,
+      "id": 5,
       "targets": [
         {
           "datasource": {
@@ -508,71 +280,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 12
       },
-      "id": 10,
+      "id": 6,
       "panels": [],
       "title": "\u5173\u952e\u5f15\u64ce\u6307\u6807 (Key Engine Metrics)",
       "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u5df2\u5904\u7406\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_requests_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u5904\u7406\u5b8c\u6210\u7684\u63a8\u7406\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002\n- PD \u5206\u79bb\u53e3\u5f84\uff1a\u8fd9\u662f\u5404\u9636\u6bb5\u5b8c\u6210\u901f\u7387\uff0c\u4e0d\u662f\u53ef\u76f8\u52a0\u7684\u7aef\u5230\u7aef\u5ba2\u6237 RPS\uff1b\u5ba2\u6237\u8bf7\u6c42\u901f\u7387\u8bf7\u67e5\u770b Router \u7684 `smg_router_requests_total`\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "ops",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 31
-      },
-      "id": 11,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:num_requests_total{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "\u9636\u6bb5\u5b8c\u6210\u901f\u7387\uff08Prefill/Decode \u5404\u9636\u6bb5\u6bcf\u79d2\u5b8c\u6210\u8bf7\u6c42\u6570\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
     },
     {
       "datasource": {
@@ -600,10 +313,10 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 8,
-        "y": 31
+        "x": 0,
+        "y": 13
       },
-      "id": 12,
+      "id": 7,
       "targets": [
         {
           "datasource": {
@@ -615,12 +328,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Prefill \u541e\u5410\uff08\u6bcf\u79d2\u5904\u7406\u7684\u8f93\u5165 Token \u6570\uff09",
+      "title": "Prefill \u541e\u5410",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -659,10 +372,10 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 16,
-        "y": 31
+        "x": 8,
+        "y": 13
       },
-      "id": 13,
+      "id": 8,
       "targets": [
         {
           "datasource": {
@@ -674,12 +387,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Decode \u541e\u5410\uff08\u6bcf\u79d2\u751f\u6210\u7684\u8f93\u51fa Token \u6570\uff09",
+      "title": "Decode \u541e\u5410",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -718,10 +431,10 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 0,
-        "y": 39
+        "x": 16,
+        "y": 13
       },
-      "id": 14,
+      "id": 9,
       "targets": [
         {
           "datasource": {
@@ -733,12 +446,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "\u4e2d\u6b62\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "title": "\u4e2d\u6b62\u8bf7\u6c42\u901f\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -777,10 +490,10 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 8,
-        "y": 39
+        "x": 0,
+        "y": 21
       },
-      "id": 15,
+      "id": 10,
       "targets": [
         {
           "datasource": {
@@ -792,12 +505,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "\u8fd0\u884c\u4e2d\u8bf7\u6c42\u6570\uff08\u8c03\u5ea6\u5668\u5f53\u524d\u6b63\u5728\u8fd0\u884c\u7684\u8bf7\u6c42\u6570\uff09",
+      "title": "\u8fd0\u884c\u4e2d\u8bf7\u6c42\u6570",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -836,10 +549,10 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 16,
-        "y": 39
+        "x": 8,
+        "y": 21
       },
-      "id": 16,
+      "id": 11,
       "targets": [
         {
           "datasource": {
@@ -851,12 +564,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "\u7b49\u5f85\u961f\u5217\u8bf7\u6c42\u6570\uff08\u8c03\u5ea6\u5668\u666e\u901a\u7b49\u5f85\u961f\u5217\u4e2d\u7684\u8bf7\u6c42\u6570\uff09",
+      "title": "\u7b49\u5f85\u961f\u5217\u8bf7\u6c42\u6570",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -896,10 +609,10 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 0,
-        "y": 47
+        "x": 16,
+        "y": 21
       },
-      "id": 17,
+      "id": 12,
       "targets": [
         {
           "datasource": {
@@ -911,72 +624,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Token \u6c60\u4f7f\u7528\u7387\uff08Token \u5185\u5b58\u6c60\u7684\u603b\u4f53\u4f7f\u7528\u7387\uff09",
+      "title": "Token \u6c60\u4f7f\u7528\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u5f15\u64ce\u5229\u7528\u7387\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:utilization`\n- \u6307\u6807\u7c7b\u578b\uff1a`gauge`\n- \u8bf4\u660e\uff1a\u8c03\u5ea6\u5668\u8ba1\u7b97\u5f97\u5230\u7684\u5f53\u524d\u5f15\u64ce\u5229\u7528\u7387\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "percentunit",
-          "max": 1,
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 47
-      },
-      "id": 18,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "max by (role, instance, model_name) (sglang:utilization{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"})",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "\u5f15\u64ce\u5229\u7528\u7387\uff08\u8c03\u5ea6\u5668\u8ba1\u7b97\u5f97\u5230\u7684\u5f53\u524d\u5f15\u64ce\u5229\u7528\u7387\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1015,10 +668,10 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 16,
-        "y": 47
+        "x": 0,
+        "y": 29
       },
-      "id": 19,
+      "id": 13,
       "targets": [
         {
           "datasource": {
@@ -1048,13 +701,13 @@
           "refId": "Q03"
         }
       ],
-      "title": "\u9996 Token \u5ef6\u8fdf\uff08TTFT\uff09\uff08\u4ece\u8bf7\u6c42\u8fdb\u5165\u5230\u751f\u6210\u9996\u4e2a Token \u7684\u8017\u65f6\u5206\u5e03\uff09",
+      "title": "\u9996 Token \u5ef6\u8fdf\uff08TTFT\uff09",
       "x-querySource": "recording-rule-with-raw-fallback",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1093,10 +746,10 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 0,
-        "y": 55
+        "x": 8,
+        "y": 29
       },
-      "id": 20,
+      "id": 14,
       "targets": [
         {
           "datasource": {
@@ -1126,13 +779,13 @@
           "refId": "Q03"
         }
       ],
-      "title": "Token \u95f4\u5ef6\u8fdf\uff08ITL\uff09\uff08\u76f8\u90bb\u8f93\u51fa Token \u4e4b\u95f4\u7684\u8017\u65f6\u5206\u5e03\uff09",
+      "title": "Token \u95f4\u5ef6\u8fdf\uff08ITL\uff09",
       "x-querySource": "recording-rule-with-raw-fallback",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1171,10 +824,10 @@
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 8,
-        "y": 55
+        "x": 16,
+        "y": 29
       },
-      "id": 21,
+      "id": 15,
       "targets": [
         {
           "datasource": {
@@ -1204,91 +857,13 @@
           "refId": "Q03"
         }
       ],
-      "title": "\u8bf7\u6c42\u7aef\u5230\u7aef\u5ef6\u8fdf\uff08\u8bf7\u6c42\u4ece\u8fdb\u5165\u670d\u52a1\u5230\u5b8c\u6210\u7684\u7aef\u5230\u7aef\u8017\u65f6\u5206\u5e03\uff09",
+      "title": "\u8bf7\u6c42\u7aef\u5230\u7aef\u5ef6\u8fdf",
       "x-querySource": "recording-rule-with-raw-fallback",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aKV Cache \u4f20\u8f93\u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:kv_transfer_latency_ms`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1aKV Cache \u4f20\u8f93\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "ms",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 55
-      },
-      "id": 22,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_kv_transfer_latency_ms_p50:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P50",
-          "refId": "Q01"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_kv_transfer_latency_ms_p95:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
-          "refId": "Q02"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_kv_transfer_latency_ms_p99:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P99",
-          "refId": "Q03"
-        }
-      ],
-      "title": "KV Cache \u4f20\u8f93\u5ef6\u8fdf\uff08KV Cache \u4f20\u8f93\u8017\u65f6\u5206\u5e03\uff09",
-      "x-querySource": "recording-rule-with-raw-fallback",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1328,9 +903,9 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 63
+        "y": 37
       },
-      "id": 23,
+      "id": 16,
       "targets": [
         {
           "datasource": {
@@ -1342,130 +917,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "KV \u4f20\u8f93\u5931\u8d25\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "title": "KV \u4f20\u8f93\u5931\u8d25\u8bf7\u6c42\u901f\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aBootstrap \u5931\u8d25\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_bootstrap_failed_reqs_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1 Bootstrap \u5931\u8d25\u7684\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "ops",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 63
-      },
-      "id": 24,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(sum by (role, instance, model_name) (rate(sglang:num_bootstrap_failed_reqs_total{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))) or (sum by (role, instance, model_name) (rate(sglang:num_requests_total{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval])) * 0)",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Bootstrap \u5931\u8d25\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aPrefill \u91cd\u8bd5\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_prefill_retries_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u6267\u884c\u7684 Prefill \u91cd\u8bd5\u6b21\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002\n- \u56fa\u5b9a\u89d2\u8272\uff1a\u6b64\u9762\u677f\u53ea\u67e5\u8be2 `sglang-prefill`\uff1bRole \u53d8\u91cf\u672a\u9009\u62e9\u8be5\u89d2\u8272\u65f6\u4e0d\u8fd4\u56de\u6570\u636e\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "ops",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 63
-      },
-      "id": 25,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(sum by (role, instance, model_name) (rate(sglang:num_prefill_retries_total{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\"}[$__rate_interval]))) or (sum by (role, instance, model_name) (rate(sglang:num_requests_total{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\"}[$__rate_interval])) * 0)",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Prefill \u91cd\u8bd5\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1484,9 +941,9 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 71
+        "y": 45
       },
-      "id": 26,
+      "id": 17,
       "panels": [],
       "title": "\u5173\u952e Router \u6307\u6807 (Key Router Metrics)",
       "type": "row"
@@ -1496,7 +953,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter HTTP \u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`smg_http_requests_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u6309 HTTP \u65b9\u6cd5\u548c\u8def\u5f84\u7d2f\u8ba1 Router \u6536\u5230\u7684\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8def\u7531\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_requests_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u6309 Router \u7c7b\u578b\u3001\u540e\u7aef\u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u3001\u6a21\u578b\u3001\u63a5\u53e3\u548c\u6d41\u5f0f\u6a21\u5f0f\u7d2f\u8ba1\u8def\u7531\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1518,26 +975,26 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 72
+        "y": 46
       },
-      "id": 27,
+      "id": 18,
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "sum by (role, instance) (rate(smg_http_requests_total{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))",
+          "expr": "sum by (role, instance) (rate(smg_router_requests_total{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01"
         }
       ],
-      "title": "Router HTTP \u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "title": "\u5ba2\u6237\u8bf7\u6c42\u901f\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1578,9 +1035,9 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 72
+        "y": 46
       },
-      "id": 28,
+      "id": 19,
       "targets": [
         {
           "datasource": {
@@ -1610,358 +1067,12 @@
           "refId": "Q03"
         }
       ],
-      "title": "Router HTTP \u54cd\u5e94\u5360\u6bd4\uff08\u6309\u6210\u529f\u30015xx \u4e0e 429 \u5206\u7c7b\uff09",
+      "title": "Router HTTP \u54cd\u5e94\u5360\u6bd4",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aHTTP \u9650\u6d41\u51b3\u7b56\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`smg_http_rate_limit_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u6309\u5141\u8bb8\u6216\u62d2\u7edd\u7ed3\u679c\u7d2f\u8ba1 HTTP \u9650\u6d41\u51b3\u7b56\u6b21\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "ops",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 72
-      },
-      "id": 29,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance) (rate(smg_http_rate_limit_total{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "HTTP \u9650\u6d41\u51b3\u7b56\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u6d3b\u8dc3 HTTP \u8fde\u63a5\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`smg_http_connections_active`\n- \u6307\u6807\u7c7b\u578b\uff1a`gauge`\n- \u8bf4\u660e\uff1aRouter \u5f53\u524d\u6d3b\u8dc3\u7684 HTTP \u8fde\u63a5\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 80
-      },
-      "id": 30,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "max by (role, instance) (smg_http_connections_active{instance=~\"$instance\",role=~\"$role\"})",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Router \u6d3b\u8dc3 HTTP \u8fde\u63a5\u6570\uff08Router \u5f53\u524d\u6d3b\u8dc3\u7684 HTTP \u8fde\u63a5\u6570\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8def\u7531\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_requests_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u6309 Router \u7c7b\u578b\u3001\u540e\u7aef\u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u3001\u6a21\u578b\u3001\u63a5\u53e3\u548c\u6d41\u5f0f\u6a21\u5f0f\u7d2f\u8ba1\u8def\u7531\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "ops",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 80
-      },
-      "id": 31,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance) (rate(smg_router_requests_total{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "\u5ba2\u6237\u8bf7\u6c42\u901f\u7387\uff08Router \u6bcf\u79d2\u63a5\u6536\u7684\u63a8\u7406\u8bf7\u6c42\u6570\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8def\u7531\u8bf7\u6c42\u9519\u8bef\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_request_errors_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u6309 Router\u3001\u540e\u7aef\u3001\u8fde\u63a5\u6a21\u5f0f\u3001\u6a21\u578b\u3001\u63a5\u53e3\u548c\u9519\u8bef\u7c7b\u578b\u7d2f\u8ba1\u8def\u7531\u9519\u8bef\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002\n- \u5c55\u793a\u53e3\u5f84\uff1a\u6309\u5355\u6761\u539f\u59cb\u6807\u7b7e\u5e8f\u5217\u8ba1\u7b97\u6bcf\u79d2\u901f\u7387\uff0c\u4ec5\u5c55\u793a\u5f53\u524d\u503c\u6700\u9ad8\u7684 10 \u6761\uff1b\u8868\u683c\u4fdd\u7559 Worker\u3001\u6a21\u578b\u3001\u63a5\u53e3\u548c\u9519\u8bef\u7c7b\u578b\u7b49 exporter \u5b9e\u9645\u63d0\u4f9b\u7684\u6807\u7b7e\u3002\n- \u96f6\u503c\u8bed\u4e49\uff1a\u539f Counter \u672a\u6ce8\u518c\u4f46\u57fa\u51c6\u8bf7\u6c42 Counter \u5b58\u5728\u65f6\u663e\u793a 0\uff1b\u4e24\u8005\u90fd\u4e0d\u5b58\u5728\u65f6\u4ecd\u663e\u793a No data\uff0c\u5e94\u68c0\u67e5\u91c7\u96c6\u5065\u5eb7\u6216\u7248\u672c\u652f\u6301\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "ops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 80
-      },
-      "id": 32,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(topk(10, rate(smg_router_request_errors_total{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))) or (sum by (role, instance) (rate(smg_router_requests_total{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval])) * 0)",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01",
-          "instant": true,
-          "format": "table"
-        }
-      ],
-      "title": "\u8def\u7531\u8bf7\u6c42\u9519\u8bef\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aWorker \u6c60\u89c4\u6a21\n- Prometheus \u539f\u6307\u6807\uff1a`smg_worker_pool_size`\n- \u6307\u6807\u7c7b\u578b\uff1a`gauge`\n- \u8bf4\u660e\uff1a\u6309 Worker \u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u548c\u6a21\u578b\u7edf\u8ba1\u5f53\u524d Worker \u6570\u91cf\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 88
-      },
-      "id": 33,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "max by (role, instance) (smg_worker_pool_size{instance=~\"$instance\",role=~\"$role\"})",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Worker \u6c60\u89c4\u6a21\uff08\u6309 Worker \u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u548c\u6a21\u578b\u7edf\u8ba1\u5f53\u524d Worker \u6570\u91cf\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aWorker \u6d3b\u8dc3\u8bf7\u6c42\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`smg_worker_requests_active`\n- \u6307\u6807\u7c7b\u578b\uff1a`gauge`\n- \u8bf4\u660e\uff1a\u6bcf\u4e2a Worker \u5f53\u524d\u6b63\u5728\u8fd0\u884c\u7684\u8bf7\u6c42\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 88
-      },
-      "id": 34,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "max by (role, instance) (smg_worker_requests_active{instance=~\"$instance\",role=~\"$role\"})",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Worker \u6d3b\u8dc3\u8bf7\u6c42\u6570\uff08\u6bcf\u4e2a Worker \u5f53\u524d\u6b63\u5728\u8fd0\u884c\u7684\u8bf7\u6c42\u6570\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1994,9 +1105,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 88
+        "y": 46
       },
-      "id": 35,
+      "id": 20,
       "targets": [
         {
           "datasource": {
@@ -2009,7 +1120,7 @@
           "instant": true
         }
       ],
-      "title": "\u5065\u5eb7 Worker \u603b\u6570\uff08Router \u5f53\u524d\u53ef\u7528\u7684\u540e\u7aef Worker \u6570\u91cf\uff09",
+      "title": "\u5065\u5eb7 Worker \u603b\u6570",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -2026,916 +1137,6 @@
         "wideLayout": true
       },
       "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aWorker \u91cd\u8bd5\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`smg_worker_retries_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u6309 Worker \u7c7b\u578b\u548c\u63a5\u53e3\u7d2f\u8ba1\u91cd\u8bd5\u6b21\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "ops",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 96
-      },
-      "id": 36,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "sum by (role, instance) (rate(smg_worker_retries_total{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Worker \u91cd\u8bd5\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aWorker \u91cd\u8bd5\u8017\u5c3d\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`smg_worker_retries_exhausted_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u6309 Worker \u7c7b\u578b\u548c\u63a5\u53e3\u7d2f\u8ba1\u5df2\u8017\u5c3d\u5168\u90e8\u91cd\u8bd5\u673a\u4f1a\u7684\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002\n- \u5c55\u793a\u53e3\u5f84\uff1a\u6309\u5355\u6761\u539f\u59cb\u6807\u7b7e\u5e8f\u5217\u8ba1\u7b97\u6bcf\u79d2\u901f\u7387\uff0c\u4ec5\u5c55\u793a\u5f53\u524d\u503c\u6700\u9ad8\u7684 10 \u6761\uff1b\u8868\u683c\u4fdd\u7559 Worker\u3001\u6a21\u578b\u3001\u63a5\u53e3\u548c\u9519\u8bef\u7c7b\u578b\u7b49 exporter \u5b9e\u9645\u63d0\u4f9b\u7684\u6807\u7b7e\u3002\n- \u96f6\u503c\u8bed\u4e49\uff1a\u539f Counter \u672a\u6ce8\u518c\u4f46\u57fa\u51c6\u8bf7\u6c42 Counter \u5b58\u5728\u65f6\u663e\u793a 0\uff1b\u4e24\u8005\u90fd\u4e0d\u5b58\u5728\u65f6\u4ecd\u663e\u793a No data\uff0c\u5e94\u68c0\u67e5\u91c7\u96c6\u5065\u5eb7\u6216\u7248\u672c\u652f\u6301\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "ops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 96
-      },
-      "id": 37,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(topk(10, rate(smg_worker_retries_exhausted_total{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))) or (sum by (role, instance) (rate(smg_router_requests_total{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval])) * 0)",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01",
-          "instant": true,
-          "format": "table"
-        }
-      ],
-      "title": "Worker \u91cd\u8bd5\u8017\u5c3d\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true
-      },
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aWorker \u7194\u65ad\u5668\u72b6\u6001\n- Prometheus \u539f\u6307\u6807\uff1a`smg_worker_cb_state`\n- \u6307\u6807\u7c7b\u578b\uff1a`gauge`\n- \u8bf4\u660e\uff1a\u6bcf\u4e2a Worker \u7684\u7194\u65ad\u5668\u72b6\u6001\uff1a0 \u4e3a\u5173\u95ed\u30011 \u4e3a\u6253\u5f00\u30012 \u4e3a\u534a\u5f00\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 96
-      },
-      "id": 38,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "max by (role, instance) (smg_worker_cb_state{instance=~\"$instance\",role=~\"$role\"})",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Worker \u7194\u65ad\u5668\u72b6\u6001\uff08\u6bcf\u4e2a Worker \u7684\u7194\u65ad\u5668\u72b6\u6001\uff1a0 \u4e3a\u5173\u95ed\u30011 \u4e3a\u6253\u5f00\u30012 \u4e3a\u534a\u5f00\uff09",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "type": "timeseries"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 104
-      },
-      "id": 39,
-      "panels": [],
-      "title": "PD \u94fe\u8def\u6d3e\u751f\u6307\u6807 (PD Pipeline Derived Metrics)",
-      "type": "row",
-      "x-panelKind": "derived"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "\u8ba1\u7b97\u516c\u5f0f\uff1aPrefill \u9636\u6bb5\u5b8c\u6210\u901f\u7387 / Decode \u9636\u6bb5\u5b8c\u6210\u901f\u7387\uff0c\u6309\u6a21\u578b\u805a\u5408\uff1b\u63a5\u8fd1 1 \u901a\u5e38\u8868\u793a\u4e24\u9636\u6bb5\u541e\u5410\u5339\u914d\u3002\u8be5\u6307\u6807\u662f\u8de8\u89d2\u8272\u5168\u5c40\u6307\u6807\uff0c\u4e0d\u53d7 Role/Instance \u53d8\u91cf\u5f71\u54cd\u3002\u4f18\u5148\u67e5\u8be2 recording rule\uff0c\u65e7\u65f6\u95f4\u7a97\u81ea\u52a8\u56de\u9000\u539f\u59cb Counter\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 105
-      },
-      "id": 40,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_prefill_decode_throughput_ratio:5m{model_name=~\"$model\"}) or (sum by (model_name) (rate(sglang:num_requests_total{role=\"sglang-prefill\",model_name=~\"$model\"}[$__rate_interval])) / clamp_min(sum by (model_name) (rate(sglang:num_requests_total{role=\"sglang-decode\",model_name=~\"$model\"}[$__rate_interval])), 1e-9))",
-          "legendFormat": "{{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Prefill/Decode \u541e\u5410\u6bd4\uff08\u4e24\u9636\u6bb5\u6bcf\u79d2\u5b8c\u6210\u8bf7\u6c42\u6570\u4e4b\u6bd4\uff09",
-      "type": "timeseries",
-      "x-panelKind": "derived",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "\u8ba1\u7b97\u516c\u5f0f\uff1aRouter \u6ce8\u518c\u7684 Prefill Worker \u6570 / Decode Worker \u6570\uff1b\u63a5\u8fd1 1 \u8868\u793a\u4e24\u7c7b Worker \u6570\u91cf\u76f8\u5f53\uff0c\u4f46\u6b63\u5e38\u533a\u95f4\u4ecd\u53d6\u51b3\u4e8e\u5355 Worker \u5bb9\u91cf\u3002\u4ec5\u5728 Role \u9009\u62e9\u5305\u542b Router \u65f6\u5c55\u793a\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 105
-      },
-      "id": 41,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_prefill_decode_worker_capacity_ratio{role=~\"$role\",instance=~\"$instance\",model=~\"$model\"}) or (sum by (role, instance, model) (smg_worker_pool_size{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\",model=~\"$model\",worker_type=\"prefill\"}) / clamp_min(sum by (role, instance, model) (smg_worker_pool_size{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\",model=~\"$model\",worker_type=\"decode\"}), 1))",
-          "legendFormat": "{{role}} / {{instance}} / {{model}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Prefill/Decode Worker \u5bb9\u91cf\u6bd4\uff08Router \u6ce8\u518c\u7684\u4e24\u7c7b Worker \u6570\u91cf\u6bd4\uff09",
-      "type": "timeseries",
-      "x-panelKind": "derived",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_kv_transfer_failure_ratio:5m`\u3002\u5206\u6bcd\u4e3a\u76f8\u540c Role/Instance/Model \u7684\u9636\u6bb5\u5b8c\u6210\u8bf7\u6c42\u901f\u7387\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "percentunit",
-          "max": 1,
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 113
-      },
-      "id": 42,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_kv_transfer_failure_ratio:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}) or ((sum by (role, instance, model_name) (rate(sglang:num_transfer_failed_reqs_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) or sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])), 1e-9))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "KV \u4f20\u8f93\u5931\u8d25\u7387\uff08\u5931\u8d25\u8bf7\u6c42\u5360\u9636\u6bb5\u5b8c\u6210\u8bf7\u6c42\u7684\u6bd4\u4f8b\uff09",
-      "type": "timeseries",
-      "x-panelKind": "derived",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_bootstrap_failure_ratio:5m`\u3002\u7528\u4e8e\u8bc6\u522b PD Bootstrap \u5efa\u94fe\u5931\u8d25\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "percentunit",
-          "max": 1,
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 113
-      },
-      "id": 43,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_bootstrap_failure_ratio:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}) or ((sum by (role, instance, model_name) (rate(sglang:num_bootstrap_failed_reqs_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) or sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])), 1e-9))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Bootstrap \u5931\u8d25\u7387\uff08\u5931\u8d25\u8bf7\u6c42\u5360\u9636\u6bb5\u5b8c\u6210\u8bf7\u6c42\u7684\u6bd4\u4f8b\uff09",
-      "type": "timeseries",
-      "x-panelKind": "derived",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_prefill_retry_ratio:5m`\u3002\u4ec5 Prefill Role \u6709\u6570\u636e\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "percentunit",
-          "max": 1,
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 121
-      },
-      "id": 44,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_prefill_retry_ratio:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}) or ((sum by (role, instance, model_name) (rate(sglang:num_prefill_retries_total{role=~\"$role\",role=\"sglang-prefill\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) or sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",role=\"sglang-prefill\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",role=\"sglang-prefill\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])), 1e-9))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Prefill \u91cd\u8bd5\u7387\uff08\u91cd\u8bd5\u6b21\u6570\u5360 Prefill \u5b8c\u6210\u8bf7\u6c42\u7684\u6bd4\u4f8b\uff09",
-      "type": "timeseries",
-      "x-panelKind": "derived",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_kv_transfer_latency_ms_p99:5m`\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "ms",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 121
-      },
-      "id": 45,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_kv_transfer_latency_ms_p99:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}) or (histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval]))))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "KV \u4f20\u8f93 P99 \u5ef6\u8fdf\uff08\u6700\u8fd1 5 \u5206\u949f\u7684\u957f\u5c3e\u4f20\u8f93\u8017\u65f6\uff09",
-      "type": "timeseries",
-      "x-panelKind": "derived",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_kv_transfer_speed_gb_s_p99:5m`\uff0c\u5355\u4f4d\u4e3a GB/s\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "suffix: GB/s",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 129
-      },
-      "id": 46,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_kv_transfer_speed_gb_s_p99:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}) or (histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_speed_gb_s_bucket{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval]))))",
-          "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "KV \u4f20\u8f93 P99 \u901f\u5ea6\uff08\u6700\u8fd1 5 \u5206\u949f\u7684\u4f20\u8f93\u901f\u5ea6\u5206\u4f4d\uff09",
-      "type": "timeseries",
-      "x-panelKind": "derived",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 137
-      },
-      "id": 47,
-      "panels": [],
-      "title": "Router \u53ef\u7528\u6027\u6d3e\u751f\u6307\u6807 (Router Availability Derived Metrics)",
-      "type": "row",
-      "x-panelKind": "derived"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_router_error_ratio:5m`\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "percentunit",
-          "max": 1,
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 138
-      },
-      "id": 48,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_router_error_ratio:5m{role=~\"$role\",instance=~\"$instance\"}) or ((sum by (role, instance) (rate(smg_router_request_errors_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])) or sum by (role, instance) (rate(smg_router_requests_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance) (rate(smg_router_requests_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])), 1e-9))",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Router \u9519\u8bef\u7387\uff08\u8def\u7531\u9519\u8bef\u5360 Router \u8bf7\u6c42\u7684\u6bd4\u4f8b\uff09",
-      "type": "timeseries",
-      "x-panelKind": "derived",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_router_retry_exhausted_ratio:5m`\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "percentunit",
-          "max": 1,
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 138
-      },
-      "id": 49,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_router_retry_exhausted_ratio:5m{role=~\"$role\",instance=~\"$instance\"}) or ((sum by (role, instance) (rate(smg_worker_retries_exhausted_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])) or sum by (role, instance) (rate(smg_router_requests_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance) (rate(smg_router_requests_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])), 1e-9))",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "\u91cd\u8bd5\u8017\u5c3d\u7387\uff08\u8017\u5c3d\u5168\u90e8\u91cd\u8bd5\u7684\u8bf7\u6c42\u6bd4\u4f8b\uff09",
-      "type": "timeseries",
-      "x-panelKind": "derived",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_router_healthy_workers`\u3002\u5f53\u524d\u539f\u6307\u6807\u65e0 Worker \u7c7b\u578b\u548c\u6a21\u578b\u6807\u7b7e\uff0c\u53ea\u80fd\u51c6\u786e\u5c55\u793a\u603b\u6570\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 146
-      },
-      "id": 50,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_router_healthy_workers{role=~\"$role\",instance=~\"$instance\"}) or (sum by (role, instance) (smg_worker_health{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}))",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01",
-          "instant": true
-        }
-      ],
-      "title": "\u5065\u5eb7 Worker \u603b\u6570\uff08Router \u5f53\u524d\u53ef\u7528\u540e\u7aef\u6570\u91cf\uff09",
-      "type": "stat",
-      "x-panelKind": "derived",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_router_open_circuit_breakers`\u3002\u539f\u6307\u6807\u72b6\u6001 0/1/2 \u5206\u522b\u8868\u793a Closed/Open/Half-open\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 146
-      },
-      "id": 51,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_router_open_circuit_breakers{role=~\"$role\",instance=~\"$instance\"}) or (sum by (role, instance) (smg_worker_cb_state{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"} == bool 1))",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01",
-          "instant": true
-        }
-      ],
-      "title": "\u6253\u5f00\u7684\u7194\u65ad\u5668\u6570\u91cf\uff08\u72b6\u6001\u4e3a Open \u7684 Worker \u6570\uff09",
-      "type": "stat",
-      "x-panelKind": "derived",
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto",
-        "wideLayout": true
-      }
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Prometheus"
-      },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_router_worker_load_skew`\u3002\u63a5\u8fd1 1 \u8868\u793a\u8f83\u5747\u8861\uff0c\u5347\u9ad8\u8868\u793a\u6700\u5fd9 Worker \u660e\u663e\u9ad8\u4e8e\u5e73\u5747\u503c\u3002",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "min": 0,
-          "unit": "short",
-          "custom": {
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "lineWidth": 1,
-            "showPoints": "never",
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 154
-      },
-      "id": 52,
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Prometheus"
-          },
-          "expr": "(my_prometheus:sglang_router_worker_load_skew{role=~\"$role\",instance=~\"$instance\"}) or (max by (role, instance) (smg_worker_requests_active{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}) / clamp_min(avg by (role, instance) (smg_worker_requests_active{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}), 1e-9))",
-          "legendFormat": "{{role}} / {{instance}}",
-          "refId": "Q01"
-        }
-      ],
-      "title": "Worker \u8d1f\u8f7d\u504f\u659c\uff08\u6d3b\u8dc3\u8bf7\u6c42\u6570 Max/Avg\uff09",
-      "type": "timeseries",
-      "x-panelKind": "derived",
-      "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      }
     }
   ],
   "refresh": "30s",
@@ -3034,10 +1235,6 @@
   "weekStart": "",
   "x-metricsCatalog": [
     {
-      "name": "sglang:num_requests_total",
-      "type": "counter"
-    },
-    {
       "name": "sglang:prompt_tokens_total",
       "type": "counter"
     },
@@ -3062,10 +1259,6 @@
       "type": "gauge"
     },
     {
-      "name": "sglang:utilization",
-      "type": "gauge"
-    },
-    {
       "name": "sglang:time_to_first_token_seconds",
       "type": "histogram"
     },
@@ -3078,23 +1271,11 @@
       "type": "histogram"
     },
     {
-      "name": "sglang:kv_transfer_latency_ms",
-      "type": "histogram"
-    },
-    {
       "name": "sglang:num_transfer_failed_reqs_total",
       "type": "counter"
     },
     {
-      "name": "sglang:num_bootstrap_failed_reqs_total",
-      "type": "counter"
-    },
-    {
-      "name": "sglang:num_prefill_retries_total",
-      "type": "counter"
-    },
-    {
-      "name": "smg_http_requests_total",
+      "name": "smg_router_requests_total",
       "type": "counter"
     },
     {
@@ -3102,43 +1283,7 @@
       "type": "counter"
     },
     {
-      "name": "smg_http_rate_limit_total",
-      "type": "counter"
-    },
-    {
-      "name": "smg_http_connections_active",
-      "type": "gauge"
-    },
-    {
-      "name": "smg_router_requests_total",
-      "type": "counter"
-    },
-    {
-      "name": "smg_router_request_errors_total",
-      "type": "counter"
-    },
-    {
-      "name": "smg_worker_pool_size",
-      "type": "gauge"
-    },
-    {
-      "name": "smg_worker_requests_active",
-      "type": "gauge"
-    },
-    {
       "name": "smg_worker_health",
-      "type": "gauge"
-    },
-    {
-      "name": "smg_worker_retries_total",
-      "type": "counter"
-    },
-    {
-      "name": "smg_worker_retries_exhausted_total",
-      "type": "counter"
-    },
-    {
-      "name": "smg_worker_cb_state",
       "type": "gauge"
     }
   ]

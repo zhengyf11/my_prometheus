@@ -25,14 +25,14 @@
   "panels": [
     {
       "gridPos": {
-        "h": 5,
+        "h": 3,
         "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "content": "# SGLang Router \u4e0e Worker (SGLang Router and Worker)\n\n\u672c\u770b\u677f\u8986\u76d6 **35 \u4e2a\u6307\u6807\u65cf**\u3002\u5c55\u793a Router \u8bf7\u6c42\u3001Worker \u6c60\u3001\u7194\u65ad\u3001\u91cd\u8bd5\u548c\u8def\u7531\u65f6\u5ef6\u3002 \u770b\u677f\u4f7f\u7528\u5171\u4eab Prometheus \u6570\u636e\u6e90 `Prometheus`\uff0c\u5e76\u901a\u8fc7 SGLang `role` \u6807\u7b7e\u9009\u62e9\u91c7\u96c6\u76ee\u6807\u3002\u9762\u677f\u663e\u793a No data \u65f6\uff0c\u5fc5\u987b\u5148\u67e5\u770b\u201c\u91c7\u96c6\u5065\u5eb7\u201d\u5206\u7ec4\uff1a\u5b83\u65e2\u53ef\u80fd\u8868\u793a\u89d2\u8272\u4e0d\u9002\u7528\u6216\u529f\u80fd\u672a\u542f\u7528\uff0c\u4e5f\u53ef\u80fd\u8868\u793a\u6293\u53d6\u5931\u8d25\u3001\u76ee\u6807\u6d88\u5931\u3001\u6807\u7b7e\u53d8\u5316\u6216\u5b9e\u4f8b\u9000\u51fa\u3002PD \u5206\u79bb\u4e0e Router \u770b\u677f\u4f1a\u628a Role \u76f4\u63a5\u52a0\u5165\u6bcf\u6761 PromQL\uff1b\u4e0d\u5339\u914d\u6240\u9009 Role \u7684\u6307\u6807\u9762\u677f\u4f1a\u663e\u793a No data\u3002",
+        "content": "# SGLang Router \u4e0e Worker (SGLang Router and Worker)\n\n\u8986\u76d6 **35 \u4e2a\u6307\u6807\u65cf**\u3002\u5c55\u793a Router \u8bf7\u6c42\u3001Worker \u6c60\u3001\u7194\u65ad\u3001\u91cd\u8bd5\u548c\u8def\u7531\u65f6\u5ef6\u3002 \u6570\u636e\u6e90\uff1a`Prometheus`\u3002\u5148\u7528\u201c\u91c7\u96c6\u5065\u5eb7\u201d\u533a\u5206\u6293\u53d6\u6545\u969c\uff0c\u518d\u5224\u65ad\u672a\u542f\u7528\u3001\u7248\u672c\u672a\u66b4\u9732\u6216\u96f6\u4e8b\u4ef6\u3002\u5c11\u6570\u8de8\u89d2\u8272\u6d3e\u751f\u6307\u6807\u4e0d\u53d7\u5168\u90e8\u53d8\u91cf\u63a7\u5236\uff0c\u5177\u4f53\u8303\u56f4\u89c1\u9762\u677f Tooltip\u3002",
         "mode": "markdown"
       },
       "title": "\u770b\u677f\u8303\u56f4 (Dashboard Scope)",
@@ -44,7 +44,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 3
       },
       "id": 2,
       "panels": [],
@@ -102,7 +102,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 6
+        "y": 4
       },
       "id": 3,
       "targets": [
@@ -156,7 +156,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 6
+        "y": 4
       },
       "id": 4,
       "targets": [
@@ -227,7 +227,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 6
+        "y": 4
       },
       "id": 5,
       "targets": [
@@ -288,7 +288,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 14
+        "y": 12
       },
       "id": 6,
       "targets": [
@@ -309,7 +309,7 @@
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -348,7 +348,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 12
       },
       "id": 7,
       "targets": [
@@ -369,7 +369,7 @@
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -401,7 +401,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 20
       },
       "id": 8,
       "targets": [
@@ -468,7 +468,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 20
       },
       "id": 9,
       "targets": [
@@ -508,7 +508,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 28
       },
       "id": 10,
       "panels": [],
@@ -542,7 +542,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 31
+        "y": 29
       },
       "id": 11,
       "targets": [
@@ -556,12 +556,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Router HTTP \u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "title": "Router HTTP \u8bf7\u6c42\u901f\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -602,7 +602,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 31
+        "y": 29
       },
       "id": 12,
       "targets": [
@@ -634,12 +634,12 @@
           "refId": "Q03"
         }
       ],
-      "title": "Router HTTP \u54cd\u5e94\u5360\u6bd4\uff08\u6309\u6210\u529f\u30015xx \u4e0e 429 \u5206\u7c7b\uff09",
+      "title": "Router HTTP \u54cd\u5e94\u5360\u6bd4",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -679,7 +679,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 31
+        "y": 29
       },
       "id": 13,
       "targets": [
@@ -693,12 +693,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "HTTP \u9650\u6d41\u51b3\u7b56\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "title": "HTTP \u9650\u6d41\u51b3\u7b56\u901f\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -738,7 +738,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 39
+        "y": 37
       },
       "id": 14,
       "targets": [
@@ -752,12 +752,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Router \u6d3b\u8dc3 HTTP \u8fde\u63a5\u6570\uff08Router \u5f53\u524d\u6d3b\u8dc3\u7684 HTTP \u8fde\u63a5\u6570\uff09",
+      "title": "Router \u6d3b\u8dc3 HTTP \u8fde\u63a5\u6570",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -797,7 +797,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 39
+        "y": 37
       },
       "id": 15,
       "targets": [
@@ -811,12 +811,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "\u5ba2\u6237\u8bf7\u6c42\u901f\u7387\uff08Router \u6bcf\u79d2\u63a5\u6536\u7684\u63a8\u7406\u8bf7\u6c42\u6570\uff09",
+      "title": "\u5ba2\u6237\u8bf7\u6c42\u901f\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -849,7 +849,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 39
+        "y": 37
       },
       "id": 16,
       "targets": [
@@ -865,7 +865,7 @@
           "format": "table"
         }
       ],
-      "title": "\u8def\u7531\u8bf7\u6c42\u9519\u8bef\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "title": "\u8def\u7531\u8bf7\u6c42\u9519\u8bef\u901f\u7387",
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -907,7 +907,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 47
+        "y": 45
       },
       "id": 17,
       "targets": [
@@ -921,12 +921,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Worker \u6c60\u89c4\u6a21\uff08\u6309 Worker \u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u548c\u6a21\u578b\u7edf\u8ba1\u5f53\u524d Worker \u6570\u91cf\uff09",
+      "title": "Worker \u6c60\u89c4\u6a21",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -966,7 +966,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 47
+        "y": 45
       },
       "id": 18,
       "targets": [
@@ -980,12 +980,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Worker \u6d3b\u8dc3\u8bf7\u6c42\u6570\uff08\u6bcf\u4e2a Worker \u5f53\u524d\u6b63\u5728\u8fd0\u884c\u7684\u8bf7\u6c42\u6570\uff09",
+      "title": "Worker \u6d3b\u8dc3\u8bf7\u6c42\u6570",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1018,7 +1018,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 47
+        "y": 45
       },
       "id": 19,
       "targets": [
@@ -1033,7 +1033,7 @@
           "instant": true
         }
       ],
-      "title": "\u5065\u5eb7 Worker \u603b\u6570\uff08Router \u5f53\u524d\u53ef\u7528\u7684\u540e\u7aef Worker \u6570\u91cf\uff09",
+      "title": "\u5065\u5eb7 Worker \u603b\u6570",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -1078,7 +1078,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 55
+        "y": 53
       },
       "id": 20,
       "targets": [
@@ -1092,12 +1092,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Worker \u91cd\u8bd5\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "title": "Worker \u91cd\u8bd5\u901f\u7387",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1130,7 +1130,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 55
+        "y": 53
       },
       "id": 21,
       "targets": [
@@ -1146,7 +1146,7 @@
           "format": "table"
         }
       ],
-      "title": "Worker \u91cd\u8bd5\u8017\u5c3d\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "title": "Worker \u91cd\u8bd5\u8017\u5c3d\u8bf7\u6c42\u901f\u7387",
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -1188,7 +1188,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 55
+        "y": 53
       },
       "id": 22,
       "targets": [
@@ -1202,12 +1202,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Worker \u7194\u65ad\u5668\u72b6\u6001\uff08\u6bcf\u4e2a Worker \u7684\u7194\u65ad\u5668\u72b6\u6001\uff1a0 \u4e3a\u5173\u95ed\u30011 \u4e3a\u6253\u5f00\u30012 \u4e3a\u534a\u5f00\uff09",
+      "title": "Worker \u7194\u65ad\u5668\u72b6\u6001",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1226,7 +1226,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 63
+        "y": 61
       },
       "id": 23,
       "panels": [
@@ -1257,7 +1257,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 64
+            "y": 62
           },
           "id": 24,
           "targets": [
@@ -1289,13 +1289,13 @@
               "refId": "Q03"
             }
           ],
-          "title": "Router HTTP \u8bf7\u6c42\u8017\u65f6\uff08\u6309 HTTP \u65b9\u6cd5\u548c\u8def\u5f84\u7edf\u8ba1 Router \u8bf7\u6c42\u8017\u65f6\u5206\u5e03\uff09",
+          "title": "Router HTTP \u8bf7\u6c42\u8017\u65f6",
           "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1335,7 +1335,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 64
+            "y": 62
           },
           "id": 25,
           "targets": [
@@ -1367,13 +1367,13 @@
               "refId": "Q03"
             }
           ],
-          "title": "\u8def\u7531\u8bf7\u6c42\u8017\u65f6\uff08\u6309 Router \u7c7b\u578b\u3001\u540e\u7aef\u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u3001\u6a21\u578b\u548c\u63a5\u53e3\u7edf\u8ba1\u8bf7\u6c42\u8017\u65f6\u5206\u5e03\uff09",
+          "title": "\u8def\u7531\u8bf7\u6c42\u8017\u65f6",
           "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1413,7 +1413,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 72
+            "y": 70
           },
           "id": 26,
           "targets": [
@@ -1436,12 +1436,12 @@
               "refId": "Q02"
             }
           ],
-          "title": "Router \u6d41\u6c34\u7ebf\u9636\u6bb5\u8017\u65f6\uff08gRPC Router \u5404\u6d41\u6c34\u7ebf\u9636\u6bb5\u7684\u8017\u65f6\u5206\u5e03\uff09",
+          "title": "Router \u6d41\u6c34\u7ebf\u9636\u6bb5\u8017\u65f6",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1481,7 +1481,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 72
+            "y": 70
           },
           "id": 27,
           "targets": [
@@ -1513,13 +1513,13 @@
               "refId": "Q03"
             }
           ],
-          "title": "Router \u9996 Token \u5ef6\u8fdf\uff08gRPC Router \u89c2\u6d4b\u7684\u9996 Token \u5ef6\u8fdf\u5206\u5e03\uff09",
+          "title": "Router \u9996 Token \u5ef6\u8fdf",
           "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1559,7 +1559,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 80
+            "y": 78
           },
           "id": 28,
           "targets": [
@@ -1591,13 +1591,13 @@
               "refId": "Q03"
             }
           ],
-          "title": "Router \u5355\u8f93\u51fa Token \u8017\u65f6\uff08gRPC Router \u89c2\u6d4b\u7684\u6bcf\u4e2a\u8f93\u51fa Token \u5e73\u5747\u8017\u65f6\u5206\u5e03\uff09",
+          "title": "Router \u5355\u8f93\u51fa Token \u8017\u65f6",
           "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1637,7 +1637,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 80
+            "y": 78
           },
           "id": 29,
           "targets": [
@@ -1669,13 +1669,13 @@
               "refId": "Q03"
             }
           ],
-          "title": "Router \u751f\u6210\u603b\u8017\u65f6\uff08gRPC Router \u89c2\u6d4b\u7684\u5b8c\u6574\u751f\u6210\u8fc7\u7a0b\u8017\u65f6\u5206\u5e03\uff09",
+          "title": "Router \u751f\u6210\u603b\u8017\u65f6",
           "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1698,7 +1698,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 88
+        "y": 86
       },
       "id": 30,
       "panels": [
@@ -1729,7 +1729,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 89
+            "y": 87
           },
           "id": 31,
           "targets": [
@@ -1743,12 +1743,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u5904\u7406\u4e2d\u8bf7\u6c42\u65f6\u957f\u5206\u5e03\uff08\u6309\u8bf7\u6c42\u5df2\u5904\u7406\u65f6\u957f\u5212\u5206\u7684\u5f53\u524d\u5728\u9014\u8bf7\u6c42\u6570\uff09",
+          "title": "\u5904\u7406\u4e2d\u8bf7\u6c42\u65f6\u957f\u5206\u5e03",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1788,7 +1788,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 89
+            "y": 87
           },
           "id": 32,
           "targets": [
@@ -1802,12 +1802,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u4e0a\u6e38\u54cd\u5e94\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "\u4e0a\u6e38\u54cd\u5e94\u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1847,7 +1847,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 97
+            "y": 95
           },
           "id": 33,
           "targets": [
@@ -1861,12 +1861,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Router \u5904\u7406 Token \u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "Router \u5904\u7406 Token \u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1889,7 +1889,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 105
+        "y": 103
       },
       "id": 34,
       "panels": [
@@ -1920,7 +1920,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 106
+            "y": 104
           },
           "id": 35,
           "targets": [
@@ -1934,12 +1934,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Worker \u6d3b\u8dc3\u8fde\u63a5\u6570\uff08\u6309 Worker \u7c7b\u578b\u548c\u8fde\u63a5\u6a21\u5f0f\u7edf\u8ba1\u5f53\u524d\u6d3b\u8dc3\u8fde\u63a5\u6570\uff09",
+          "title": "Worker \u6d3b\u8dc3\u8fde\u63a5\u6570",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -1979,7 +1979,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 106
+            "y": 104
           },
           "id": 36,
           "targets": [
@@ -1993,12 +1993,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Worker \u5065\u5eb7\u68c0\u67e5\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "Worker \u5065\u5eb7\u68c0\u67e5\u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2038,7 +2038,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 114
+            "y": 112
           },
           "id": 37,
           "targets": [
@@ -2052,12 +2052,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Worker \u9009\u62e9\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "Worker \u9009\u62e9\u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2090,7 +2090,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 114
+            "y": 112
           },
           "id": 38,
           "targets": [
@@ -2106,7 +2106,7 @@
               "format": "table"
             }
           ],
-          "title": "Worker \u9519\u8bef\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "Worker \u9519\u8bef\u901f\u7387",
           "options": {
             "cellHeight": "sm",
             "footer": {
@@ -2148,7 +2148,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 122
+            "y": 120
           },
           "id": 39,
           "targets": [
@@ -2162,12 +2162,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Worker \u6d3b\u8dc3\u8def\u7531\u952e\u6570\uff08\u6bcf\u4e2a Worker \u5f53\u524d\u5173\u8054\u7684\u6d3b\u8dc3\u8def\u7531\u952e\u6570\u91cf\uff09",
+          "title": "Worker \u6d3b\u8dc3\u8def\u7531\u952e\u6570",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2190,7 +2190,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 130
+        "y": 128
       },
       "id": 40,
       "panels": [
@@ -2221,7 +2221,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 131
+            "y": 129
           },
           "id": 41,
           "targets": [
@@ -2235,12 +2235,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u624b\u52a8\u8def\u7531\u7b56\u7565\u7f13\u5b58\u6761\u76ee\u6570\uff08\u624b\u52a8\u8def\u7531\u7b56\u7565\u7f13\u5b58\u4e2d\u7684\u5f53\u524d\u8def\u7531\u6761\u76ee\u6570\uff09",
+          "title": "\u624b\u52a8\u8def\u7531\u7b56\u7565\u7f13\u5b58\u6761\u76ee\u6570",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2280,7 +2280,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 131
+            "y": 129
           },
           "id": 42,
           "targets": [
@@ -2294,12 +2294,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u624b\u52a8\u8def\u7531\u7b56\u7565\u5206\u652f\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "\u624b\u52a8\u8def\u7531\u7b56\u7565\u5206\u652f\u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2339,7 +2339,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 139
+            "y": 137
           },
           "id": 43,
           "targets": [
@@ -2353,12 +2353,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u4e00\u81f4\u6027\u54c8\u5e0c\u7b56\u7565\u5206\u652f\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "\u4e00\u81f4\u6027\u54c8\u5e0c\u7b56\u7565\u5206\u652f\u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2398,7 +2398,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 139
+            "y": 137
           },
           "id": 44,
           "targets": [
@@ -2412,12 +2412,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "\u524d\u7f00\u54c8\u5e0c\u7b56\u7565\u5206\u652f\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "\u524d\u7f00\u54c8\u5e0c\u7b56\u7565\u5206\u652f\u901f\u7387",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2450,7 +2450,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 147
+            "y": 145
           },
           "id": 45,
           "targets": [
@@ -2466,7 +2466,7 @@
               "format": "table"
             }
           ],
-          "title": "\u7194\u65ad\u5668\u72b6\u6001\u8f6c\u6362\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "\u7194\u65ad\u5668\u72b6\u6001\u8f6c\u6362\u901f\u7387",
           "options": {
             "cellHeight": "sm",
             "footer": {
@@ -2501,7 +2501,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 147
+            "y": 145
           },
           "id": 46,
           "targets": [
@@ -2517,7 +2517,7 @@
               "format": "table"
             }
           ],
-          "title": "\u7194\u65ad\u5668\u8bf7\u6c42\u7ed3\u679c\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+          "title": "\u7194\u65ad\u5668\u8bf7\u6c42\u7ed3\u679c\u901f\u7387",
           "options": {
             "cellHeight": "sm",
             "footer": {
@@ -2559,7 +2559,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 155
+            "y": 153
           },
           "id": 47,
           "targets": [
@@ -2573,12 +2573,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Worker \u8fde\u7eed\u5931\u8d25\u6b21\u6570\uff08\u6bcf\u4e2a Worker \u5f53\u524d\u8fde\u7eed\u5931\u8d25\u6b21\u6570\uff09",
+          "title": "Worker \u8fde\u7eed\u5931\u8d25\u6b21\u6570",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2618,7 +2618,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 155
+            "y": 153
           },
           "id": 48,
           "targets": [
@@ -2632,12 +2632,12 @@
               "refId": "Q01"
             }
           ],
-          "title": "Worker \u8fde\u7eed\u6210\u529f\u6b21\u6570\uff08\u6bcf\u4e2a Worker \u5f53\u524d\u8fde\u7eed\u6210\u529f\u6b21\u6570\uff09",
+          "title": "Worker \u8fde\u7eed\u6210\u529f\u6b21\u6570",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",
@@ -2677,7 +2677,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 163
+            "y": 161
           },
           "id": 49,
           "targets": [
@@ -2700,12 +2700,12 @@
               "refId": "Q02"
             }
           ],
-          "title": "Worker \u91cd\u8bd5\u9000\u907f\u8017\u65f6\uff08\u6309\u91cd\u8bd5\u6b21\u6570\u7edf\u8ba1\u9000\u907f\u7b49\u5f85\u65f6\u95f4\u5206\u5e03\uff09",
+          "title": "Worker \u91cd\u8bd5\u9000\u907f\u8017\u65f6",
           "options": {
             "legend": {
               "calcs": [
                 "lastNotNull",
-                "mean"
+                "max"
               ],
               "displayMode": "table",
               "placement": "bottom",

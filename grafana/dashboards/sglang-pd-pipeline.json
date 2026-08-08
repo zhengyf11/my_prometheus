@@ -25,14 +25,14 @@
   "panels": [
     {
       "gridPos": {
-        "h": 5,
+        "h": 3,
         "w": 24,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
-        "content": "# SGLang PD \u94fe\u8def (SGLang PD Pipeline)\n\n\u672c\u770b\u677f\u8986\u76d6 **12 \u4e2a\u6307\u6807\u65cf**\u3002\u96c6\u4e2d\u5c55\u793a PD \u8bf7\u6c42\u65f6\u5ef6\u94fe\u8def\u3001\u9636\u6bb5\u961f\u5217\u548c KV \u4f20\u8f93\u6307\u6807\u3002 \u770b\u677f\u4f7f\u7528\u5171\u4eab Prometheus \u6570\u636e\u6e90 `Prometheus`\uff0c\u5e76\u901a\u8fc7 SGLang `role` \u6807\u7b7e\u9009\u62e9\u91c7\u96c6\u76ee\u6807\u3002\u9762\u677f\u663e\u793a No data \u65f6\uff0c\u5fc5\u987b\u5148\u67e5\u770b\u201c\u91c7\u96c6\u5065\u5eb7\u201d\u5206\u7ec4\uff1a\u5b83\u65e2\u53ef\u80fd\u8868\u793a\u89d2\u8272\u4e0d\u9002\u7528\u6216\u529f\u80fd\u672a\u542f\u7528\uff0c\u4e5f\u53ef\u80fd\u8868\u793a\u6293\u53d6\u5931\u8d25\u3001\u76ee\u6807\u6d88\u5931\u3001\u6807\u7b7e\u53d8\u5316\u6216\u5b9e\u4f8b\u9000\u51fa\u3002PD \u5206\u79bb\u4e0e Router \u770b\u677f\u4f1a\u628a Role \u76f4\u63a5\u52a0\u5165\u6bcf\u6761 PromQL\uff1b\u4e0d\u5339\u914d\u6240\u9009 Role \u7684\u6307\u6807\u9762\u677f\u4f1a\u663e\u793a No data\u3002",
+        "content": "# SGLang PD \u94fe\u8def (SGLang PD Pipeline)\n\n\u8986\u76d6 **12 \u4e2a\u6307\u6807\u65cf**\u3002\u96c6\u4e2d\u5c55\u793a PD \u8bf7\u6c42\u65f6\u5ef6\u94fe\u8def\u3001\u9636\u6bb5\u961f\u5217\u548c KV \u4f20\u8f93\u6307\u6807\u3002 \u6570\u636e\u6e90\uff1a`Prometheus`\u3002\u5148\u7528\u201c\u91c7\u96c6\u5065\u5eb7\u201d\u533a\u5206\u6293\u53d6\u6545\u969c\uff0c\u518d\u5224\u65ad\u672a\u542f\u7528\u3001\u7248\u672c\u672a\u66b4\u9732\u6216\u96f6\u4e8b\u4ef6\u3002\u5c11\u6570\u8de8\u89d2\u8272\u6d3e\u751f\u6307\u6807\u4e0d\u53d7\u5168\u90e8\u53d8\u91cf\u63a7\u5236\uff0c\u5177\u4f53\u8303\u56f4\u89c1\u9762\u677f Tooltip\u3002",
         "mode": "markdown"
       },
       "title": "\u770b\u677f\u8303\u56f4 (Dashboard Scope)",
@@ -44,7 +44,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 3
       },
       "id": 2,
       "panels": [],
@@ -102,7 +102,7 @@
         "h": 8,
         "w": 6,
         "x": 0,
-        "y": 6
+        "y": 4
       },
       "id": 3,
       "targets": [
@@ -156,7 +156,7 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 6
+        "y": 4
       },
       "id": 4,
       "targets": [
@@ -227,7 +227,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 6
+        "y": 4
       },
       "id": 5,
       "targets": [
@@ -288,7 +288,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 14
+        "y": 12
       },
       "id": 6,
       "targets": [
@@ -309,7 +309,7 @@
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -348,7 +348,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 12
       },
       "id": 7,
       "targets": [
@@ -369,7 +369,7 @@
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -401,7 +401,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 20
       },
       "id": 8,
       "targets": [
@@ -468,7 +468,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 20
       },
       "id": 9,
       "targets": [
@@ -508,7 +508,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 28
       },
       "id": 10,
       "panels": [],
@@ -542,7 +542,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 31
+        "y": 29
       },
       "id": 11,
       "targets": [
@@ -565,12 +565,12 @@
           "refId": "Q02"
         }
       ],
-      "title": "\u8bf7\u6c42\u6392\u961f\u8017\u65f6\uff08\u8bf7\u6c42\u5728\u8c03\u5ea6\u961f\u5217\u4e2d\u7b49\u5f85\u7684\u65f6\u95f4\u5206\u5e03\uff09",
+      "title": "\u8bf7\u6c42\u6392\u961f\u8017\u65f6",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -610,7 +610,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 31
+        "y": 29
       },
       "id": 12,
       "targets": [
@@ -633,12 +633,12 @@
           "refId": "Q02"
         }
       ],
-      "title": "Prefill \u5ef6\u8fdf\u5668\u7b49\u5f85\u8017\u65f6\uff08Prefill \u5ef6\u8fdf\u5668\u7684\u7b49\u5f85\u65f6\u95f4\u5206\u5e03\uff09",
+      "title": "Prefill \u5ef6\u8fdf\u5668\u7b49\u5f85\u8017\u65f6",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -678,7 +678,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 39
+        "y": 37
       },
       "id": 13,
       "targets": [
@@ -701,12 +701,12 @@
           "refId": "Q02"
         }
       ],
-      "title": "KV \u4f20\u8f93 Bootstrap \u8017\u65f6\uff08KV \u4f20\u8f93 Bootstrap \u9636\u6bb5\u8017\u65f6\u5206\u5e03\uff09",
+      "title": "KV \u4f20\u8f93 Bootstrap \u8017\u65f6",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -746,7 +746,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 39
+        "y": 37
       },
       "id": 14,
       "targets": [
@@ -769,12 +769,12 @@
           "refId": "Q02"
         }
       ],
-      "title": "KV \u4f20\u8f93\u5206\u914d\u7b49\u5f85\u8017\u65f6\uff08KV \u4f20\u8f93\u7b49\u5f85\u5185\u5b58\u5206\u914d\u7684\u8017\u65f6\u5206\u5e03\uff09",
+      "title": "KV \u4f20\u8f93\u5206\u914d\u7b49\u5f85\u8017\u65f6",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -814,7 +814,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 47
+        "y": 45
       },
       "id": 15,
       "targets": [
@@ -837,12 +837,12 @@
           "refId": "Q02"
         }
       ],
-      "title": "\u8bf7\u6c42\u9636\u6bb5\u8017\u65f6\uff08\u8bf7\u6c42\u5404\u5904\u7406\u9636\u6bb5\u7684\u8017\u65f6\u5206\u5e03\uff09",
+      "title": "\u8bf7\u6c42\u9636\u6bb5\u8017\u65f6",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -861,7 +861,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 55
+        "y": 53
       },
       "id": 16,
       "panels": [],
@@ -895,7 +895,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 56
+        "y": 54
       },
       "id": 17,
       "targets": [
@@ -909,12 +909,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Prefill Bootstrap \u961f\u5217\u8bf7\u6c42\u6570\uff08Prefill \u8282\u70b9 Bootstrap \u961f\u5217\u4e2d\u7684\u8bf7\u6c42\u6570\uff09",
+      "title": "Prefill Bootstrap \u961f\u5217\u8bf7\u6c42\u6570",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -954,7 +954,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 56
+        "y": 54
       },
       "id": 18,
       "targets": [
@@ -968,12 +968,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Prefill \u4f20\u8f93\u4e2d\u8bf7\u6c42\u6570\uff08Prefill \u8282\u70b9\u5df2\u8fdb\u5165\u5904\u7406\u6216 KV \u4f20\u8f93\u6d41\u7a0b\u7684\u8bf7\u6c42\u6570\uff09",
+      "title": "Prefill \u4f20\u8f93\u4e2d\u8bf7\u6c42\u6570",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1013,7 +1013,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 64
+        "y": 62
       },
       "id": 19,
       "targets": [
@@ -1027,12 +1027,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Decode \u9884\u5206\u914d\u961f\u5217\u8bf7\u6c42\u6570\uff08Decode \u8282\u70b9\u7b49\u5f85 KV Cache \u9884\u5206\u914d\u7684\u8bf7\u6c42\u6570\uff09",
+      "title": "Decode \u9884\u5206\u914d\u961f\u5217\u8bf7\u6c42\u6570",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1072,7 +1072,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 64
+        "y": 62
       },
       "id": 20,
       "targets": [
@@ -1086,12 +1086,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "Decode \u4f20\u8f93\u961f\u5217\u8bf7\u6c42\u6570\uff08Decode \u8282\u70b9\u7b49\u5f85\u6216\u8fdb\u884c KV Cache \u4f20\u8f93\u7684\u8bf7\u6c42\u6570\uff09",
+      "title": "Decode \u4f20\u8f93\u961f\u5217\u8bf7\u6c42\u6570",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1131,7 +1131,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 72
+        "y": 70
       },
       "id": 21,
       "targets": [
@@ -1145,12 +1145,12 @@
           "refId": "Q01"
         }
       ],
-      "title": "\u5f85\u9884\u5206\u914d Token \u4f7f\u7528\u91cf\uff08\u5c1a\u672a\u5b9e\u9645\u5b8c\u6210\u9884\u5206\u914d\u7684\u5f85\u5904\u7406 Token \u4f7f\u7528\u91cf\uff09",
+      "title": "\u5f85\u9884\u5206\u914d Token \u4f7f\u7528\u91cf",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1190,7 +1190,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 72
+        "y": 70
       },
       "id": 22,
       "targets": [
@@ -1213,12 +1213,12 @@
           "refId": "Q02"
         }
       ],
-      "title": "KV Cache \u4f20\u8f93\u901f\u5ea6\uff08KV Cache \u4f20\u8f93\u901f\u5ea6\u5206\u5e03\uff09",
+      "title": "KV Cache \u4f20\u8f93\u901f\u5ea6",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",
@@ -1258,7 +1258,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 80
+        "y": 78
       },
       "id": 23,
       "targets": [
@@ -1281,12 +1281,12 @@
           "refId": "Q02"
         }
       ],
-      "title": "KV Cache \u4f20\u8f93\u6570\u636e\u91cf\uff08\u5355\u6b21 KV Cache \u4f20\u8f93\u6570\u636e\u91cf\u5206\u5e03\uff09",
+      "title": "KV Cache \u4f20\u8f93\u6570\u636e\u91cf",
       "options": {
         "legend": {
           "calcs": [
             "lastNotNull",
-            "mean"
+            "max"
           ],
           "displayMode": "table",
           "placement": "bottom",

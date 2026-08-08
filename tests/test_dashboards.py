@@ -262,7 +262,7 @@ class DashboardTests(unittest.TestCase):
         )
         self.assertIn("Router Mesh 集群 (Router Mesh)", split_sections)
 
-    def test_dashboards_use_explanatory_metric_titles_and_preserve_raw_mapping(self):
+    def test_dashboards_use_short_metric_titles_and_preserve_raw_mapping(self):
         original_titles = {
             "unified": "SGLang PD Unified Metrics",
             "split": "SGLang PD Disaggregated and Router Metrics",
@@ -277,7 +277,8 @@ class DashboardTests(unittest.TestCase):
 
             metric_names = [item["name"] for item in dashboard["x-metricsCatalog"]]
             for panel in self.metric_panels(dashboard):
-                self.assertRegex(panel["title"], r"^.+（.+）$")
+                self.assertLessEqual(len(panel["title"]), 24)
+                self.assertNotIn("每秒", panel["title"])
                 for metric_name in metric_names:
                     self.assertNotIn(metric_name, panel["title"])
                     for target in panel["targets"]:
@@ -368,8 +369,8 @@ class DashboardTests(unittest.TestCase):
             )
 
             info = next(panel for panel in self.all_panels(dashboard) if panel["type"] == "text")
-            self.assertIn("抓取失败", info["options"]["content"])
-            self.assertIn("目标消失", info["options"]["content"])
+            self.assertIn("抓取故障", info["options"]["content"])
+            self.assertIn("版本未暴露", info["options"]["content"])
 
             for panel in self.data_panels(dashboard):
                 if panel["type"] == "timeseries":
@@ -395,9 +396,9 @@ class DashboardTests(unittest.TestCase):
 
     def test_counter_panels_are_named_and_documented_as_rates(self):
         expected_titles = {
-            "sglang:num_requests_total": "请求完成速率（每秒完成的推理请求数）",
-            "sglang:prompt_tokens_total": "Prefill 吞吐（每秒处理的输入 Token 数）",
-            "sglang:generation_tokens_total": "Decode 吞吐（每秒生成的输出 Token 数）",
+            "sglang:num_requests_total": "请求完成速率",
+            "sglang:prompt_tokens_total": "Prefill 吞吐",
+            "sglang:generation_tokens_total": "Decode 吞吐",
         }
         for dashboard in self.dashboards.values():
             for item in dashboard["x-metricsCatalog"]:
@@ -421,7 +422,7 @@ class DashboardTests(unittest.TestCase):
                     ):
                         self.assertEqual(
                             panel["title"],
-                            "阶段完成速率（Prefill/Decode 各阶段每秒完成请求数）",
+                            "阶段完成速率",
                         )
                         self.assertIn("不是可相加的端到端客户 RPS", panel["description"])
                     else:
@@ -586,6 +587,20 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(self.dashboards["unified"]["refresh"], "1m")
         self.assertEqual(self.dashboards["split"]["refresh"], "1m")
 
+        overview = self.operational["sglang-service-overview.json"]
+        self.assertEqual(len(self.metric_panels(overview)), 13)
+        self.assertEqual(
+            len([
+                panel for panel in self.all_panels(overview)
+                if panel.get("x-panelKind") == "scrape-health"
+            ]),
+            4,
+        )
+        self.assertFalse(any(
+            panel.get("x-panelKind") == "derived"
+            for panel in self.all_panels(overview)
+        ))
+
     def test_full_catalog_dashboards_collapse_non_core_rows_correctly(self):
         expected_expanded = {
             "unified": {"Key Engine Metrics", "Request Latency Pipeline"},
@@ -613,6 +628,9 @@ class DashboardTests(unittest.TestCase):
                     self.assertEqual(defaults["max"], 1)
                 for step in defaults.get("thresholds", {}).get("steps", []):
                     self.assertNotEqual(step.get("value"), 80)
+                if panel["type"] == "timeseries":
+                    calcs = panel["options"]["legend"]["calcs"]
+                    self.assertEqual(calcs, ["lastNotNull", "max"])
 
         for metric_name in (
             "smg_router_request_errors_total",
