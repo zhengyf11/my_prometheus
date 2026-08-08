@@ -321,7 +321,35 @@ Dashboard JSON 中通过固定 UID 引用：
 
 不同 SGLang 服务不需要创建多个 Grafana 数据源。它们由 Prometheus target 的 `instance` 和 `role` 标签区分。
 
-### 6.2 Dashboard JSON 的关键字段
+### 6.2 Dashboard、Panel 和 JSON 文件的关系
+
+Grafana 中的 Dashboard 和 Panel 不是同一个层级：
+
+- Dashboard 是一整张看板，每个 Dashboard 对应仓库中的一个 JSON 文件。
+- Panel 是 Dashboard 内的一张图表、数字、表格或说明区域，配置在 JSON 的 `panels[]` 中。
+
+本项目当前提供 8 张 SGLang Dashboard，因此仓库中有 8 个 SGLang JSON：
+
+| Dashboard JSON | 类型 | 用途 |
+|---|---|---|
+| `sglang-pd-unified.json` | 全量看板 | PD 合部的完整指标目录 |
+| `sglang-pd-disaggregated.json` | 全量看板 | PD 分离与 Router 的完整指标目录 |
+| `sglang-service-overview.json` | 运维看板 | 日常值班入口，只展开核心健康和 SLI |
+| `sglang-pd-pipeline.json` | 运维看板 | PD 队列、阶段时延和 KV 传输 |
+| `sglang-engine-scheduler.json` | 运维看板 | Engine、Scheduler、请求和 Token |
+| `sglang-router-worker.json` | 运维看板 | Router、Worker、重试和熔断 |
+| `sglang-kv-capacity.json` | 运维看板 | KV Cache、容量和计算运行时 |
+| `sglang-optional-features.json` | 运维看板 | LoRA、HiCache、MCP、Mesh 等低频功能 |
+
+它们是“2 张全量看板 + 6 张专项运维看板”的关系。全量看板用于查阅所有指标并兼容原有 URL；Service Overview 用于值班；其余专项看板用于按故障领域深入排查。部分指标会在多张看板中重复出现，例如 TTFT 同时出现在总览、PD Pipeline 和全量看板中。这只是不同观察视角，不会导致 Prometheus 重复采集或重复存储指标。
+
+8 个 JSON 都使用同一个 Prometheus 数据源和同一套 Role、Instance、Model 标签，由仓库中的 `tools/generate_sglang_dashboards.py` 统一生成。正式修改应调整生成器后重新生成，不能只手工修改某一个 JSON，否则下次生成时会被覆盖。仓库文件安装后位于：
+
+```text
+/var/lib/grafana/dashboards/sglang/
+```
+
+### 6.3 Dashboard JSON 的关键字段
 
 | JSON 字段 | 作用 |
 |---|---|
@@ -340,7 +368,7 @@ Dashboard JSON 中通过固定 UID 引用：
 
 修改标题不会改变数据，修改 `targets[].expr` 才会改变查询内容。
 
-### 6.3 Dashboard 变量
+### 6.4 Dashboard 变量
 
 PD 合部看板变量：
 
@@ -365,7 +393,7 @@ Role 下拉项不是在 Grafana 中写死的，而是来自 Prometheus 中 `up` 
 
 PD 分离与 Router 看板的普通 PromQL 包含 `role=~"$role"`，PD 合部查询固定为 `role="sglang-unified"`。Prefill Token 指标额外固定 `role="sglang-prefill"`，Decode Token 指标额外固定 `role="sglang-decode"`；Role 未选择对应阶段时查询为空。跨角色的 Prefill/Decode 吞吐比按模型全局计算，不受 Role/Instance 变量影响，面板说明中会明确标注。Grafana 静态 JSON 无法根据查询结果可靠地自动隐藏任意面板，因此不适用面板可能保留布局。
 
-### 6.4 采集健康与 No data 判断
+### 6.5 采集健康与 No data 判断
 
 两个 SGLang 看板顶部都有“采集健康 (Scrape Health)”分组。该分组查询的是 Prometheus 自动生成的采集指标，不依赖 SGLang 是否注册某个业务指标：
 
@@ -381,7 +409,7 @@ PD 分离与 Router 看板的普通 PromQL 包含 `role=~"$role"`，PD 合部查
 
 因此，业务面板出现 `No data` 时应先检查采集健康。只有 target 为 `UP`、采集新鲜、样本数非 0 且规则无失败后，才继续判断角色不适用、功能未启用、尚未触发或版本变化。已确认懒注册的错误 Counter 使用请求 Counter 作为零值基线：错误指标不存在但请求指标存在时显示 0；二者都不存在时保留 No data。所有时序面板的 `spanNulls` 为 `false`。
 
-### 6.5 面板查询
+### 6.6 面板查询
 
 每个面板的查询位于：
 
@@ -443,7 +471,7 @@ TTFT、ITL、端到端延迟、KV 传输延迟以及 Router 核心时延同时�
 
 `$__rate_interval` 由 Grafana 根据时间范围、面板宽度和数据源采集周期动态计算，不是固定的 15 秒。
 
-### 6.6 面板名称、映射和分类
+### 6.7 面板名称、映射和分类
 
 指标面板使用简短中文标题，缩写如 TTFT 可保留；英文名、解释和原始指标不再挤占标题。完整映射保留在两个位置：
 
@@ -460,7 +488,7 @@ SGLang 指标中的 `sglang:utilization` 表示引擎调度利用率，不是 GP
 
 两张全量指标看板用于兼容和指标查阅，刷新周期为 1 分钟，非核心 Row 默认折叠并把子面板嵌套在 Row 中，折叠时不会发起这些查询。六张运维看板按 `Service Overview`、`PD Pipeline`、`Engine / Scheduler`、`Router / Worker`、`KV / Capacity`、`Optional Features` 拆分；总览和 PD 链路使用 30 秒刷新，详情使用 1 分钟。核心 Histogram 面板优先查询 recording rules，并为历史窗口回退原始 bucket；高基数错误类面板使用 `topk(10)` 即时表格。
 
-### 6.7 翻译和重新生成
+### 6.8 翻译和重新生成
 
 SGLang Dashboard 由生成器维护，不建议直接大规模手改生成后的 JSON：
 
