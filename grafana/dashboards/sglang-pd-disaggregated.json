@@ -412,7 +412,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u5df2\u5904\u7406\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_requests_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u5904\u7406\u5b8c\u6210\u7684\u63a8\u7406\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u5df2\u5904\u7406\u8bf7\u6c42\u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:num_requests_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u5904\u7406\u5b8c\u6210\u7684\u63a8\u7406\u8bf7\u6c42\u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002\n- PD \u5206\u79bb\u53e3\u5f84\uff1a\u8fd9\u662f\u5404\u9636\u6bb5\u5b8c\u6210\u901f\u7387\uff0c\u4e0d\u662f\u53ef\u76f8\u52a0\u7684\u7aef\u5230\u7aef\u5ba2\u6237 RPS\uff1b\u5ba2\u6237\u8bf7\u6c42\u901f\u7387\u8bf7\u67e5\u770b Router \u7684 `smg_router_requests_total`\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -448,7 +448,7 @@
           "refId": "Q01"
         }
       ],
-      "title": "\u8bf7\u6c42\u5b8c\u6210\u901f\u7387\uff08\u6bcf\u79d2\u5b8c\u6210\u7684\u63a8\u7406\u8bf7\u6c42\u6570\uff09",
+      "title": "\u9636\u6bb5\u5b8c\u6210\u901f\u7387\uff08Prefill/Decode \u5404\u9636\u6bb5\u6bcf\u79d2\u5b8c\u6210\u8bf7\u6c42\u6570\uff09",
       "options": {
         "legend": {
           "calcs": [
@@ -471,7 +471,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aPrefill Token \u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:prompt_tokens_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u5904\u7406\u7684\u8f93\u5165\uff08Prefill\uff09Token \u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aPrefill Token \u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:prompt_tokens_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u5904\u7406\u7684\u8f93\u5165\uff08Prefill\uff09Token \u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002\n- \u56fa\u5b9a\u89d2\u8272\uff1a\u6b64\u9762\u677f\u53ea\u67e5\u8be2 `sglang-prefill`\uff1bRole \u53d8\u91cf\u672a\u9009\u62e9\u8be5\u89d2\u8272\u65f6\u4e0d\u8fd4\u56de\u6570\u636e\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -502,7 +502,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:prompt_tokens_total{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))",
+          "expr": "sum by (role, instance, model_name) (rate(sglang:prompt_tokens_total{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\"}[$__rate_interval]))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -530,7 +530,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u751f\u6210 Token \u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:generation_tokens_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u5904\u7406\u7684\u751f\u6210 Token \u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002",
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u751f\u6210 Token \u603b\u6570\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:generation_tokens_total`\n- \u6307\u6807\u7c7b\u578b\uff1a`counter`\n- \u8bf4\u660e\uff1a\u7d2f\u8ba1\u5904\u7406\u7684\u751f\u6210 Token \u6570\u3002\n- \u9762\u677f\u53e3\u5f84\uff1a\u4f7f\u7528 `rate()` \u5c55\u793a\u6bcf\u79d2\u901f\u7387\uff0c\u4e0d\u662f\u7d2f\u8ba1\u603b\u6570\u3002\n- \u56fa\u5b9a\u89d2\u8272\uff1a\u6b64\u9762\u677f\u53ea\u67e5\u8be2 `sglang-decode`\uff1bRole \u53d8\u91cf\u672a\u9009\u62e9\u8be5\u89d2\u8272\u65f6\u4e0d\u8fd4\u56de\u6570\u636e\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -561,7 +561,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "sum by (role, instance, model_name) (rate(sglang:generation_tokens_total{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))",
+          "expr": "sum by (role, instance, model_name) (rate(sglang:generation_tokens_total{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\"}[$__rate_interval]))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -886,7 +886,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u9996 Token \u5ef6\u8fdf\uff08TTFT\uff09\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:time_to_first_token_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u4ece\u8bf7\u6c42\u8fdb\u5165\u5230\u751f\u6210\u9996\u4e2a Token \u7684\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u9996 Token \u5ef6\u8fdf\uff08TTFT\uff09\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:time_to_first_token_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u4ece\u8bf7\u6c42\u8fdb\u5165\u5230\u751f\u6210\u9996\u4e2a Token \u7684\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -917,7 +917,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_ttft_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_ttft_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P50",
           "refId": "Q01"
         },
@@ -926,7 +926,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_ttft_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_ttft_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
           "refId": "Q02"
         },
@@ -935,13 +935,13 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_ttft_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_ttft_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:time_to_first_token_seconds_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P99",
           "refId": "Q03"
         }
       ],
       "title": "\u9996 Token \u5ef6\u8fdf\uff08TTFT\uff09\uff08\u4ece\u8bf7\u6c42\u8fdb\u5165\u5230\u751f\u6210\u9996\u4e2a Token \u7684\u8017\u65f6\u5206\u5e03\uff09",
-      "x-querySource": "recording-rule",
+      "x-querySource": "recording-rule-with-raw-fallback",
       "options": {
         "legend": {
           "calcs": [
@@ -964,7 +964,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aToken \u95f4\u5ef6\u8fdf\uff08ITL\uff09\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:inter_token_latency_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u76f8\u90bb\u8f93\u51fa Token \u4e4b\u95f4\u7684\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aToken \u95f4\u5ef6\u8fdf\uff08ITL\uff09\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:inter_token_latency_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u76f8\u90bb\u8f93\u51fa Token \u4e4b\u95f4\u7684\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -995,7 +995,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_itl_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_itl_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P50",
           "refId": "Q01"
         },
@@ -1004,7 +1004,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_itl_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_itl_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
           "refId": "Q02"
         },
@@ -1013,13 +1013,13 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_itl_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_itl_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:inter_token_latency_seconds_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P99",
           "refId": "Q03"
         }
       ],
       "title": "Token \u95f4\u5ef6\u8fdf\uff08ITL\uff09\uff08\u76f8\u90bb\u8f93\u51fa Token \u4e4b\u95f4\u7684\u8017\u65f6\u5206\u5e03\uff09",
-      "x-querySource": "recording-rule",
+      "x-querySource": "recording-rule-with-raw-fallback",
       "options": {
         "legend": {
           "calcs": [
@@ -1042,7 +1042,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8bf7\u6c42\u7aef\u5230\u7aef\u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:e2e_request_latency_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u8bf7\u6c42\u4ece\u8fdb\u5165\u670d\u52a1\u5230\u5b8c\u6210\u7684\u7aef\u5230\u7aef\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8bf7\u6c42\u7aef\u5230\u7aef\u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:e2e_request_latency_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u8bf7\u6c42\u4ece\u8fdb\u5165\u670d\u52a1\u5230\u5b8c\u6210\u7684\u7aef\u5230\u7aef\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1073,7 +1073,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_e2e_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_e2e_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P50",
           "refId": "Q01"
         },
@@ -1082,7 +1082,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_e2e_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_e2e_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
           "refId": "Q02"
         },
@@ -1091,13 +1091,13 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_e2e_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_e2e_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:e2e_request_latency_seconds_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P99",
           "refId": "Q03"
         }
       ],
       "title": "\u8bf7\u6c42\u7aef\u5230\u7aef\u5ef6\u8fdf\uff08\u8bf7\u6c42\u4ece\u8fdb\u5165\u670d\u52a1\u5230\u5b8c\u6210\u7684\u7aef\u5230\u7aef\u8017\u65f6\u5206\u5e03\uff09",
-      "x-querySource": "recording-rule",
+      "x-querySource": "recording-rule-with-raw-fallback",
       "options": {
         "legend": {
           "calcs": [
@@ -1120,7 +1120,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aKV Cache \u4f20\u8f93\u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:kv_transfer_latency_ms`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1aKV Cache \u4f20\u8f93\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+      "description": "- \u4e2d\u6587\u540d\u79f0\uff1aKV Cache \u4f20\u8f93\u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`sglang:kv_transfer_latency_ms`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1aKV Cache \u4f20\u8f93\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u6beb\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1151,7 +1151,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_kv_transfer_latency_ms_p50:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_kv_transfer_latency_ms_p50:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.50, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P50",
           "refId": "Q01"
         },
@@ -1160,7 +1160,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_kv_transfer_latency_ms_p95:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_kv_transfer_latency_ms_p95:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.95, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P95",
           "refId": "Q02"
         },
@@ -1169,13 +1169,13 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_kv_transfer_latency_ms_p99:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_kv_transfer_latency_ms_p99:5m{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}) or (histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}} / P99",
           "refId": "Q03"
         }
       ],
       "title": "KV Cache \u4f20\u8f93\u5ef6\u8fdf\uff08KV Cache \u4f20\u8f93\u8017\u65f6\u5206\u5e03\uff09",
-      "x-querySource": "recording-rule",
+      "x-querySource": "recording-rule-with-raw-fallback",
       "options": {
         "legend": {
           "calcs": [
@@ -1679,7 +1679,7 @@
           "refId": "Q01"
         }
       ],
-      "title": "\u8def\u7531\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "title": "\u5ba2\u6237\u8bf7\u6c42\u901f\u7387\uff08Router \u6bcf\u79d2\u63a5\u6536\u7684\u63a8\u7406\u8bf7\u6c42\u6570\uff09",
       "options": {
         "legend": {
           "calcs": [
@@ -2107,7 +2107,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_prefill_decode_throughput_ratio:5m`\u3002\u6309\u6a21\u578b\u6bd4\u8f83 Prefill \u4e0e Decode \u7684 5 \u5206\u949f\u8bf7\u6c42\u541e\u5410\u3002",
+      "description": "\u8ba1\u7b97\u516c\u5f0f\uff1aPrefill \u9636\u6bb5\u5b8c\u6210\u901f\u7387 / Decode \u9636\u6bb5\u5b8c\u6210\u901f\u7387\uff0c\u6309\u6a21\u578b\u805a\u5408\uff1b\u63a5\u8fd1 1 \u901a\u5e38\u8868\u793a\u4e24\u9636\u6bb5\u541e\u5410\u5339\u914d\u3002\u8be5\u6307\u6807\u662f\u8de8\u89d2\u8272\u5168\u5c40\u6307\u6807\uff0c\u4e0d\u53d7 Role/Instance \u53d8\u91cf\u5f71\u54cd\u3002\u4f18\u5148\u67e5\u8be2 recording rule\uff0c\u65e7\u65f6\u95f4\u7a97\u81ea\u52a8\u56de\u9000\u539f\u59cb Counter\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2138,7 +2138,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_prefill_decode_throughput_ratio:5m{model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_prefill_decode_throughput_ratio:5m{model_name=~\"$model\"}) or (sum by (model_name) (rate(sglang:num_requests_total{role=\"sglang-prefill\",model_name=~\"$model\"}[$__rate_interval])) / clamp_min(sum by (model_name) (rate(sglang:num_requests_total{role=\"sglang-decode\",model_name=~\"$model\"}[$__rate_interval])), 1e-9))",
           "legendFormat": "{{model_name}}",
           "refId": "Q01"
         }
@@ -2167,7 +2167,7 @@
         "type": "prometheus",
         "uid": "Prometheus"
       },
-      "description": "Recording rule\uff1a`my_prometheus:sglang_prefill_decode_worker_capacity_ratio`\u3002\u6570\u636e\u6765\u81ea Router Worker Pool\uff0c\u5e76\u6309 Router \u5b9e\u4f8b\u548c\u6a21\u578b\u805a\u5408\u3002",
+      "description": "\u8ba1\u7b97\u516c\u5f0f\uff1aRouter \u6ce8\u518c\u7684 Prefill Worker \u6570 / Decode Worker \u6570\uff1b\u63a5\u8fd1 1 \u8868\u793a\u4e24\u7c7b Worker \u6570\u91cf\u76f8\u5f53\uff0c\u4f46\u6b63\u5e38\u533a\u95f4\u4ecd\u53d6\u51b3\u4e8e\u5355 Worker \u5bb9\u91cf\u3002\u4ec5\u5728 Role \u9009\u62e9\u5305\u542b Router \u65f6\u5c55\u793a\u3002",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -2198,8 +2198,8 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_prefill_decode_worker_capacity_ratio{model=~\"$model\"}",
-          "legendFormat": "{{instance}} / {{model}}",
+          "expr": "(my_prometheus:sglang_prefill_decode_worker_capacity_ratio{role=~\"$role\",instance=~\"$instance\",model=~\"$model\"}) or (sum by (role, instance, model) (smg_worker_pool_size{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\",model=~\"$model\",worker_type=\"prefill\"}) / clamp_min(sum by (role, instance, model) (smg_worker_pool_size{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\",model=~\"$model\",worker_type=\"decode\"}), 1))",
+          "legendFormat": "{{role}} / {{instance}} / {{model}}",
           "refId": "Q01"
         }
       ],
@@ -2259,7 +2259,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_kv_transfer_failure_ratio:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_kv_transfer_failure_ratio:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}) or ((sum by (role, instance, model_name) (rate(sglang:num_transfer_failed_reqs_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) or sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])), 1e-9))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -2320,7 +2320,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_bootstrap_failure_ratio:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_bootstrap_failure_ratio:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}) or ((sum by (role, instance, model_name) (rate(sglang:num_bootstrap_failed_reqs_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) or sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])), 1e-9))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -2381,7 +2381,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_prefill_retry_ratio:5m{instance=~\"$instance\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_prefill_retry_ratio:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}) or ((sum by (role, instance, model_name) (rate(sglang:num_prefill_retries_total{role=~\"$role\",role=\"sglang-prefill\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) or sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",role=\"sglang-prefill\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance, model_name) (rate(sglang:num_requests_total{role=~\"$role\",role=\"sglang-prefill\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval])), 1e-9))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -2441,7 +2441,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_kv_transfer_latency_ms_p99:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_kv_transfer_latency_ms_p99:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}) or (histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_latency_ms_bucket{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -2501,7 +2501,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_kv_transfer_speed_gb_s_p99:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}",
+          "expr": "(my_prometheus:sglang_kv_transfer_speed_gb_s_p99:5m{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}) or (histogram_quantile(0.99, sum by (role, instance, model_name, le) (rate(sglang:kv_transfer_speed_gb_s_bucket{role=~\"$role\",instance=~\"$instance\",model_name=~\"$model\"}[$__rate_interval]))))",
           "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
           "refId": "Q01"
         }
@@ -2576,7 +2576,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_router_error_ratio:5m{instance=~\"$instance\"}",
+          "expr": "(my_prometheus:sglang_router_error_ratio:5m{role=~\"$role\",instance=~\"$instance\"}) or ((sum by (role, instance) (rate(smg_router_request_errors_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])) or sum by (role, instance) (rate(smg_router_requests_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance) (rate(smg_router_requests_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])), 1e-9))",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01"
         }
@@ -2637,7 +2637,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_router_retry_exhausted_ratio:5m{instance=~\"$instance\"}",
+          "expr": "(my_prometheus:sglang_router_retry_exhausted_ratio:5m{role=~\"$role\",instance=~\"$instance\"}) or ((sum by (role, instance) (rate(smg_worker_retries_exhausted_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])) or sum by (role, instance) (rate(smg_router_requests_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])) * 0) / clamp_min(sum by (role, instance) (rate(smg_router_requests_total{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}[$__rate_interval])), 1e-9))",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01"
         }
@@ -2690,7 +2690,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_router_healthy_workers{instance=~\"$instance\"}",
+          "expr": "(my_prometheus:sglang_router_healthy_workers{role=~\"$role\",instance=~\"$instance\"}) or (sum by (role, instance) (smg_worker_health{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}))",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01",
           "instant": true
@@ -2744,7 +2744,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_router_open_circuit_breakers{instance=~\"$instance\"}",
+          "expr": "(my_prometheus:sglang_router_open_circuit_breakers{role=~\"$role\",instance=~\"$instance\"}) or (sum by (role, instance) (smg_worker_cb_state{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"} == bool 1))",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01",
           "instant": true
@@ -2805,7 +2805,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "my_prometheus:sglang_router_worker_load_skew{instance=~\"$instance\"}",
+          "expr": "(my_prometheus:sglang_router_worker_load_skew{role=~\"$role\",instance=~\"$instance\"}) or (max by (role, instance) (smg_worker_requests_active{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}) / clamp_min(avg by (role, instance) (smg_worker_requests_active{role=~\"$role\",role=\"sglang-router\",instance=~\"$instance\"}), 1e-9))",
           "legendFormat": "{{role}} / {{instance}}",
           "refId": "Q01"
         }
@@ -3657,7 +3657,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"4000|4000[.]0\"}[$__range])))",
+              "expr": "round(sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"4000|4000[.]0\"}[$__range])))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 0-4k",
               "refId": "Q01",
               "instant": true
@@ -3667,7 +3667,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"15000|15000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"4000|4000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"15000|15000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"4000|4000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 4k-15k",
               "refId": "Q02",
               "instant": true
@@ -3677,7 +3677,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"60000|60000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"15000|15000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"60000|60000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"15000|15000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 15k-60k",
               "refId": "Q03",
               "instant": true
@@ -3687,7 +3687,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"300000|300000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"60000|60000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"300000|300000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"60000|60000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 60k-300k",
               "refId": "Q04",
               "instant": true
@@ -3697,7 +3697,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"1000000|1000000[.]0|1e[+]06\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"300000|300000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"1000000|1000000[.]0|1e[+]06\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"300000|300000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 300k-1M",
               "refId": "Q05",
               "instant": true
@@ -3707,7 +3707,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"1000000|1000000[.]0|1e[+]06\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"1000000|1000000[.]0|1e[+]06\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 1M+",
               "refId": "Q06",
               "instant": true
@@ -3767,7 +3767,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "clamp_max(clamp_min(1 - (sum by (role, instance, model_name) (rate(sglang:uncached_prompt_tokens_histogram_sum{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))) / clamp_min((sum by (role, instance, model_name) (rate(sglang:prompt_tokens_histogram_sum{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))), 1e-9), 0), 1)",
+              "expr": "clamp_max(clamp_min(1 - (sum by (role, instance, model_name) (rate(sglang:uncached_prompt_tokens_histogram_sum{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\"}[$__rate_interval]))) / clamp_min((sum by (role, instance, model_name) (rate(sglang:prompt_tokens_histogram_sum{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\"}[$__rate_interval]))), 1e-9), 0), 1)",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
               "refId": "Q01"
             }
@@ -3819,7 +3819,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"500|500[.]0\"}[$__range])))",
+              "expr": "round(sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"500|500[.]0\"}[$__range])))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 0-500",
               "refId": "Q01",
               "instant": true
@@ -3829,7 +3829,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"2000|2000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"500|500[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"2000|2000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"500|500[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 500-2k",
               "refId": "Q02",
               "instant": true
@@ -3839,7 +3839,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"8000|8000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"2000|2000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"8000|8000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"2000|2000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 2k-8k",
               "refId": "Q03",
               "instant": true
@@ -3849,7 +3849,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"30000|30000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"8000|8000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"30000|30000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"8000|8000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 8k-30k",
               "refId": "Q04",
               "instant": true
@@ -3859,7 +3859,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"100000|100000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"30000|30000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"100000|100000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"30000|30000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 30k-100k",
               "refId": "Q05",
               "instant": true
@@ -3869,7 +3869,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"100000|100000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"100000|100000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 100k+",
               "refId": "Q06",
               "instant": true
@@ -9560,7 +9560,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter HTTP \u8bf7\u6c42\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_http_request_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6309 HTTP \u65b9\u6cd5\u548c\u8def\u5f84\u7edf\u8ba1 Router \u8bf7\u6c42\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter HTTP \u8bf7\u6c42\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_http_request_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6309 HTTP \u65b9\u6cd5\u548c\u8def\u5f84\u7edf\u8ba1 Router \u8bf7\u6c42\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9591,7 +9591,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_http_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_http_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_http_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P50",
               "refId": "Q01"
             },
@@ -9600,7 +9600,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_http_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_http_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_http_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P95",
               "refId": "Q02"
             },
@@ -9609,13 +9609,13 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_http_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_http_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_http_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P99",
               "refId": "Q03"
             }
           ],
           "title": "Router HTTP \u8bf7\u6c42\u8017\u65f6\uff08\u6309 HTTP \u65b9\u6cd5\u548c\u8def\u5f84\u7edf\u8ba1 Router \u8bf7\u6c42\u8017\u65f6\u5206\u5e03\uff09",
-          "x-querySource": "recording-rule",
+          "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
@@ -9638,7 +9638,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8def\u7531\u8bf7\u6c42\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_request_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6309 Router \u7c7b\u578b\u3001\u540e\u7aef\u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u3001\u6a21\u578b\u548c\u63a5\u53e3\u7edf\u8ba1\u8bf7\u6c42\u8017\u65f6\u5206\u5e03\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+          "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8def\u7531\u8bf7\u6c42\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_request_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6309 Router \u7c7b\u578b\u3001\u540e\u7aef\u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u3001\u6a21\u578b\u548c\u63a5\u53e3\u7edf\u8ba1\u8bf7\u6c42\u8017\u65f6\u5206\u5e03\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9669,7 +9669,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_request_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_request_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P50",
               "refId": "Q01"
             },
@@ -9678,7 +9678,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_request_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_request_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P95",
               "refId": "Q02"
             },
@@ -9687,13 +9687,13 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_request_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_request_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P99",
               "refId": "Q03"
             }
           ],
           "title": "\u8def\u7531\u8bf7\u6c42\u8017\u65f6\uff08\u6309 Router \u7c7b\u578b\u3001\u540e\u7aef\u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u3001\u6a21\u578b\u548c\u63a5\u53e3\u7edf\u8ba1\u8bf7\u6c42\u8017\u65f6\u5206\u5e03\uff09",
-          "x-querySource": "recording-rule",
+          "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
@@ -9784,7 +9784,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u9996 Token \u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_ttft_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u9996 Token \u5ef6\u8fdf\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u9996 Token \u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_ttft_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u9996 Token \u5ef6\u8fdf\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9815,7 +9815,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_ttft_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_ttft_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_ttft_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P50",
               "refId": "Q01"
             },
@@ -9824,7 +9824,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_ttft_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_ttft_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_ttft_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P95",
               "refId": "Q02"
             },
@@ -9833,13 +9833,13 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_ttft_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_ttft_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_ttft_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P99",
               "refId": "Q03"
             }
           ],
           "title": "Router \u9996 Token \u5ef6\u8fdf\uff08gRPC Router \u89c2\u6d4b\u7684\u9996 Token \u5ef6\u8fdf\u5206\u5e03\uff09",
-          "x-querySource": "recording-rule",
+          "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
@@ -9862,7 +9862,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u5355\u8f93\u51fa Token \u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_tpot_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u6bcf\u4e2a\u8f93\u51fa Token \u5e73\u5747\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u5355\u8f93\u51fa Token \u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_tpot_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u6bcf\u4e2a\u8f93\u51fa Token \u5e73\u5747\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9893,7 +9893,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_tpot_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_tpot_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_tpot_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P50",
               "refId": "Q01"
             },
@@ -9902,7 +9902,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_tpot_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_tpot_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_tpot_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P95",
               "refId": "Q02"
             },
@@ -9911,13 +9911,13 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_tpot_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_tpot_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_tpot_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P99",
               "refId": "Q03"
             }
           ],
           "title": "Router \u5355\u8f93\u51fa Token \u8017\u65f6\uff08gRPC Router \u89c2\u6d4b\u7684\u6bcf\u4e2a\u8f93\u51fa Token \u5e73\u5747\u8017\u65f6\u5206\u5e03\uff09",
-          "x-querySource": "recording-rule",
+          "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
@@ -9940,7 +9940,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u751f\u6210\u603b\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_generation_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u5b8c\u6574\u751f\u6210\u8fc7\u7a0b\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u751f\u6210\u603b\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_generation_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u5b8c\u6574\u751f\u6210\u8fc7\u7a0b\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -9971,7 +9971,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_generation_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_generation_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_generation_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P50",
               "refId": "Q01"
             },
@@ -9980,7 +9980,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_generation_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_generation_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_generation_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P95",
               "refId": "Q02"
             },
@@ -9989,13 +9989,13 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_generation_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_generation_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_generation_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P99",
               "refId": "Q03"
             }
           ],
           "title": "Router \u751f\u6210\u603b\u8017\u65f6\uff08gRPC Router \u89c2\u6d4b\u7684\u5b8c\u6574\u751f\u6210\u8fc7\u7a0b\u8017\u65f6\u5206\u5e03\uff09",
-          "x-querySource": "recording-rule",
+          "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [

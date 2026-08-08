@@ -109,7 +109,7 @@ groups:
         expr: sum by (model_name) (rate(sglang:num_requests_total{job="file_sd_nodes",role="sglang-prefill"}[5m])) / clamp_min(sum by (model_name) (rate(sglang:num_requests_total{job="file_sd_nodes",role="sglang-decode"}[5m])), 1e-9)
 
       - record: my_prometheus:sglang_prefill_decode_worker_capacity_ratio
-        expr: sum by (instance, model) (smg_worker_pool_size{job="file_sd_nodes",role="sglang-router",worker_type="prefill"}) / clamp_min(sum by (instance, model) (smg_worker_pool_size{job="file_sd_nodes",role="sglang-router",worker_type="decode"}), 1)
+        expr: sum by (role, instance, model) (smg_worker_pool_size{job="file_sd_nodes",role="sglang-router",worker_type="prefill"}) / clamp_min(sum by (role, instance, model) (smg_worker_pool_size{job="file_sd_nodes",role="sglang-router",worker_type="decode"}), 1)
 
       - record: my_prometheus:sglang_router_error_ratio:5m
         expr: sum by (role, instance) (rate(smg_router_request_errors_total{job="file_sd_nodes",role="sglang-router"}[5m])) / clamp_min(sum by (role, instance) (rate(smg_router_requests_total{job="file_sd_nodes",role="sglang-router"}[5m])), 1e-9)

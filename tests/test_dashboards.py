@@ -377,7 +377,44 @@ class DashboardTests(unittest.TestCase):
                     all("rate(" in target["expr"] for target in panel["targets"])
                 )
                 if item["name"] in expected_titles:
-                    self.assertEqual(panel["title"], expected_titles[item["name"]])
+                    if (
+                        item["name"] == "sglang:num_requests_total"
+                        and dashboard["uid"] != "my-prometheus-sglang-pd-unified"
+                    ):
+                        self.assertEqual(
+                            panel["title"],
+                            "阶段完成速率（Prefill/Decode 各阶段每秒完成请求数）",
+                        )
+                        self.assertIn("不是可相加的端到端客户 RPS", panel["description"])
+                    else:
+                        self.assertEqual(panel["title"], expected_titles[item["name"]])
+
+    def test_split_token_throughput_panels_are_fixed_to_their_stage(self):
+        for dashboard in [self.dashboards["split"], *self.operational.values()]:
+            for metric_name, fixed_role in (
+                ("sglang:prompt_tokens_total", "sglang-prefill"),
+                ("sglang:generation_tokens_total", "sglang-decode"),
+            ):
+                panels = self.panels_for_metric(dashboard, metric_name)
+                if not panels:
+                    continue
+                panel = panels[0]
+                expression = panel["targets"][0]["expr"]
+                self.assertIn('role=~"$role"', expression)
+                self.assertIn('role="{0}"'.format(fixed_role), expression)
+                self.assertIn("固定角色", panel["description"])
+
+    def test_recorded_latency_queries_fall_back_to_raw_histograms(self):
+        for dashboard in self.dashboards.values():
+            for metric_name in (
+                "sglang:time_to_first_token_seconds",
+                "sglang:inter_token_latency_seconds",
+                "sglang:e2e_request_latency_seconds",
+            ):
+                for target in self.panels_for_metric(dashboard, metric_name)[0]["targets"]:
+                    self.assertIn("my_prometheus:", target["expr"])
+                    self.assertIn(" or ", target["expr"])
+                    self.assertIn(metric_name + "_bucket", target["expr"])
 
     def test_histograms_use_approved_summary_statistics(self):
         special_histograms = {
@@ -480,7 +517,8 @@ class DashboardTests(unittest.TestCase):
         for panel in data:
             self.assertEqual(len(panel["targets"]), 1)
             self.assertIn("my_prometheus:", panel["targets"][0]["expr"])
-            self.assertNotIn("histogram_quantile", panel["targets"][0]["expr"])
+            self.assertIn(" or ", panel["targets"][0]["expr"])
+            self.assertRegex(panel["targets"][0]["expr"], r"(?:sglang:|smg_)")
             if panel["type"] == "timeseries":
                 self.assertFalse(
                     panel["fieldConfig"]["defaults"]["custom"]["spanNulls"]

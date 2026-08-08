@@ -869,7 +869,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"4000|4000[.]0\"}[$__range])))",
+              "expr": "round(sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"4000|4000[.]0\"}[$__range])))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 0-4k",
               "refId": "Q01",
               "instant": true
@@ -879,7 +879,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"15000|15000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"4000|4000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"15000|15000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"4000|4000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 4k-15k",
               "refId": "Q02",
               "instant": true
@@ -889,7 +889,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"60000|60000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"15000|15000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"60000|60000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"15000|15000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 15k-60k",
               "refId": "Q03",
               "instant": true
@@ -899,7 +899,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"300000|300000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"60000|60000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"300000|300000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"60000|60000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 60k-300k",
               "refId": "Q04",
               "instant": true
@@ -909,7 +909,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"1000000|1000000[.]0|1e[+]06\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"300000|300000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"1000000|1000000[.]0|1e[+]06\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"300000|300000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 300k-1M",
               "refId": "Q05",
               "instant": true
@@ -919,7 +919,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"1000000|1000000[.]0|1e[+]06\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:prompt_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\",le=~\"1000000|1000000[.]0|1e[+]06\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 1M+",
               "refId": "Q06",
               "instant": true
@@ -979,7 +979,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "clamp_max(clamp_min(1 - (sum by (role, instance, model_name) (rate(sglang:uncached_prompt_tokens_histogram_sum{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))) / clamp_min((sum by (role, instance, model_name) (rate(sglang:prompt_tokens_histogram_sum{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__rate_interval]))), 1e-9), 0), 1)",
+              "expr": "clamp_max(clamp_min(1 - (sum by (role, instance, model_name) (rate(sglang:uncached_prompt_tokens_histogram_sum{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\"}[$__rate_interval]))) / clamp_min((sum by (role, instance, model_name) (rate(sglang:prompt_tokens_histogram_sum{instance=~\"$instance\",role=~\"$role\",role=\"sglang-prefill\",model_name=~\"$model\"}[$__rate_interval]))), 1e-9), 0), 1)",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}}",
               "refId": "Q01"
             }
@@ -1031,7 +1031,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"500|500[.]0\"}[$__range])))",
+              "expr": "round(sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"500|500[.]0\"}[$__range])))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 0-500",
               "refId": "Q01",
               "instant": true
@@ -1041,7 +1041,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"2000|2000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"500|500[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"2000|2000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"500|500[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 500-2k",
               "refId": "Q02",
               "instant": true
@@ -1051,7 +1051,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"8000|8000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"2000|2000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"8000|8000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"2000|2000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 2k-8k",
               "refId": "Q03",
               "instant": true
@@ -1061,7 +1061,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"30000|30000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"8000|8000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"30000|30000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"8000|8000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 8k-30k",
               "refId": "Q04",
               "instant": true
@@ -1071,7 +1071,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"100000|100000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"30000|30000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"100000|100000[.]0\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"30000|30000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 30k-100k",
               "refId": "Q05",
               "instant": true
@@ -1081,7 +1081,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",model_name=~\"$model\",le=~\"100000|100000[.]0\"}[$__range]))), 0))",
+              "expr": "round(clamp_min((sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_count{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\"}[$__range]))) - (sum by (role, instance, model_name) (increase(sglang:generation_tokens_histogram_bucket{instance=~\"$instance\",role=~\"$role\",role=\"sglang-decode\",model_name=~\"$model\",le=~\"100000|100000[.]0\"}[$__range]))), 0))",
               "legendFormat": "{{role}} / {{instance}} / {{model_name}} / 100k+",
               "refId": "Q06",
               "instant": true

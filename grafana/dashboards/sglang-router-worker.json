@@ -703,7 +703,7 @@
           "refId": "Q01"
         }
       ],
-      "title": "\u8def\u7531\u8bf7\u6c42\u901f\u7387\uff08\u539f\u59cb\u7d2f\u8ba1\u6307\u6807\u6bcf\u79d2\u589e\u52a0\u7684\u6570\u91cf\uff09",
+      "title": "\u5ba2\u6237\u8bf7\u6c42\u901f\u7387\uff08Router \u6bcf\u79d2\u63a5\u6536\u7684\u63a8\u7406\u8bf7\u6c42\u6570\uff09",
       "options": {
         "legend": {
           "calcs": [
@@ -1127,7 +1127,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter HTTP \u8bf7\u6c42\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_http_request_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6309 HTTP \u65b9\u6cd5\u548c\u8def\u5f84\u7edf\u8ba1 Router \u8bf7\u6c42\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter HTTP \u8bf7\u6c42\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_http_request_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6309 HTTP \u65b9\u6cd5\u548c\u8def\u5f84\u7edf\u8ba1 Router \u8bf7\u6c42\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1158,7 +1158,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_http_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_http_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_http_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P50",
               "refId": "Q01"
             },
@@ -1167,7 +1167,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_http_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_http_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_http_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P95",
               "refId": "Q02"
             },
@@ -1176,13 +1176,13 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_http_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_http_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_http_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P99",
               "refId": "Q03"
             }
           ],
           "title": "Router HTTP \u8bf7\u6c42\u8017\u65f6\uff08\u6309 HTTP \u65b9\u6cd5\u548c\u8def\u5f84\u7edf\u8ba1 Router \u8bf7\u6c42\u8017\u65f6\u5206\u5e03\uff09",
-          "x-querySource": "recording-rule",
+          "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
@@ -1205,7 +1205,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8def\u7531\u8bf7\u6c42\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_request_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6309 Router \u7c7b\u578b\u3001\u540e\u7aef\u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u3001\u6a21\u578b\u548c\u63a5\u53e3\u7edf\u8ba1\u8bf7\u6c42\u8017\u65f6\u5206\u5e03\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+          "description": "- \u4e2d\u6587\u540d\u79f0\uff1a\u8def\u7531\u8bf7\u6c42\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_request_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1a\u6309 Router \u7c7b\u578b\u3001\u540e\u7aef\u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u3001\u6a21\u578b\u548c\u63a5\u53e3\u7edf\u8ba1\u8bf7\u6c42\u8017\u65f6\u5206\u5e03\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1236,7 +1236,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_request_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_request_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P50",
               "refId": "Q01"
             },
@@ -1245,7 +1245,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_request_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_request_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P95",
               "refId": "Q02"
             },
@@ -1254,13 +1254,13 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_request_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_request_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_request_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P99",
               "refId": "Q03"
             }
           ],
           "title": "\u8def\u7531\u8bf7\u6c42\u8017\u65f6\uff08\u6309 Router \u7c7b\u578b\u3001\u540e\u7aef\u7c7b\u578b\u3001\u8fde\u63a5\u6a21\u5f0f\u3001\u6a21\u578b\u548c\u63a5\u53e3\u7edf\u8ba1\u8bf7\u6c42\u8017\u65f6\u5206\u5e03\uff09",
-          "x-querySource": "recording-rule",
+          "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
@@ -1351,7 +1351,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u9996 Token \u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_ttft_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u9996 Token \u5ef6\u8fdf\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u9996 Token \u5ef6\u8fdf\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_ttft_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u9996 Token \u5ef6\u8fdf\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1382,7 +1382,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_ttft_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_ttft_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_ttft_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P50",
               "refId": "Q01"
             },
@@ -1391,7 +1391,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_ttft_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_ttft_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_ttft_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P95",
               "refId": "Q02"
             },
@@ -1400,13 +1400,13 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_ttft_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_ttft_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_ttft_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P99",
               "refId": "Q03"
             }
           ],
           "title": "Router \u9996 Token \u5ef6\u8fdf\uff08gRPC Router \u89c2\u6d4b\u7684\u9996 Token \u5ef6\u8fdf\u5206\u5e03\uff09",
-          "x-querySource": "recording-rule",
+          "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
@@ -1429,7 +1429,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u5355\u8f93\u51fa Token \u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_tpot_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u6bcf\u4e2a\u8f93\u51fa Token \u5e73\u5747\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u5355\u8f93\u51fa Token \u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_tpot_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u6bcf\u4e2a\u8f93\u51fa Token \u5e73\u5747\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1460,7 +1460,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_tpot_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_tpot_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_tpot_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P50",
               "refId": "Q01"
             },
@@ -1469,7 +1469,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_tpot_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_tpot_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_tpot_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P95",
               "refId": "Q02"
             },
@@ -1478,13 +1478,13 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_tpot_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_tpot_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_tpot_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P99",
               "refId": "Q03"
             }
           ],
           "title": "Router \u5355\u8f93\u51fa Token \u8017\u65f6\uff08gRPC Router \u89c2\u6d4b\u7684\u6bcf\u4e2a\u8f93\u51fa Token \u5e73\u5747\u8017\u65f6\u5206\u5e03\uff09",
-          "x-querySource": "recording-rule",
+          "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
@@ -1507,7 +1507,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u751f\u6210\u603b\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_generation_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u5b8c\u6574\u751f\u6210\u8fc7\u7a0b\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff0c\u907f\u514d\u6bcf\u6b21\u6253\u5f00\u770b\u677f\u91cd\u590d\u626b\u63cf Histogram buckets\u3002",
+          "description": "- \u4e2d\u6587\u540d\u79f0\uff1aRouter \u751f\u6210\u603b\u8017\u65f6\n- Prometheus \u539f\u6307\u6807\uff1a`smg_router_generation_duration_seconds`\n- \u6307\u6807\u7c7b\u578b\uff1a`histogram`\n- \u8bf4\u660e\uff1agRPC Router \u89c2\u6d4b\u7684\u5b8c\u6574\u751f\u6210\u8fc7\u7a0b\u8017\u65f6\u5206\u5e03\uff0c\u5355\u4f4d\u4e3a\u79d2\u3002\n- \u503c\u73ed\u53e3\u5f84\uff1a\u5c55\u793a P50\u3001P95 \u548c P99\uff0c\u4e0d\u4f7f\u7528\u5e73\u5747\u503c\u63a9\u76d6\u957f\u5c3e\u3002\n- \u67e5\u8be2\u6765\u6e90\uff1a\u4f18\u5148\u4f7f\u7528 30 \u79d2\u8ba1\u7b97\u4e00\u6b21\u7684 5 \u5206\u949f recording rules\uff1b\u5386\u53f2\u65f6\u95f4\u65e9\u4e8e\u89c4\u5219\u521b\u5efa\u65f6\u95f4\u65f6\uff0c\u81ea\u52a8\u56de\u9000\u5230\u539f\u59cb Histogram buckets\u3002",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1538,7 +1538,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_generation_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_generation_seconds_p50:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.50, sum by (role, instance, le) (rate(smg_router_generation_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P50",
               "refId": "Q01"
             },
@@ -1547,7 +1547,7 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_generation_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_generation_seconds_p95:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.95, sum by (role, instance, le) (rate(smg_router_generation_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P95",
               "refId": "Q02"
             },
@@ -1556,13 +1556,13 @@
                 "type": "prometheus",
                 "uid": "Prometheus"
               },
-              "expr": "my_prometheus:sglang_router_generation_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}",
+              "expr": "(my_prometheus:sglang_router_generation_seconds_p99:5m{instance=~\"$instance\",role=~\"$role\"}) or (histogram_quantile(0.99, sum by (role, instance, le) (rate(smg_router_generation_duration_seconds_bucket{instance=~\"$instance\",role=~\"$role\"}[$__rate_interval]))))",
               "legendFormat": "{{role}} / {{instance}} / P99",
               "refId": "Q03"
             }
           ],
           "title": "Router \u751f\u6210\u603b\u8017\u65f6\uff08gRPC Router \u89c2\u6d4b\u7684\u5b8c\u6574\u751f\u6210\u8fc7\u7a0b\u8017\u65f6\u5206\u5e03\uff09",
-          "x-querySource": "recording-rule",
+          "x-querySource": "recording-rule-with-raw-fallback",
           "options": {
             "legend": {
               "calcs": [
