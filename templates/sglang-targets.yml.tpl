@@ -1,5 +1,6 @@
 # ${managed_marker}
-# Replace these placeholder addresses with the actual SGLang metrics endpoints.
+# Replace these placeholder addresses with actual endpoints and set expected to "true".
+# Keep expected="false" only for reserved targets that must not affect health or alerts.
 - targets:
     - 127.0.0.1:39000
   labels:

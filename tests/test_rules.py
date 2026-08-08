@@ -54,6 +54,7 @@ class PrometheusRuleTests(unittest.TestCase):
             "SGLangWorkerCircuitBreakerOpen",
             "SGLangRouterMeshDisconnected",
         }.issubset(alerts))
+        self.assertIn('expr: up{expected!="false"} == 0', self.content)
 
     def test_rules_do_not_invent_unapproved_slo_thresholds(self):
         for alert_name in (

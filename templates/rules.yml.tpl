@@ -129,7 +129,7 @@ groups:
   - name: my_prometheus.rules
     rules:
       - alert: InstanceDown
-        expr: up == 0
+        expr: up{expected!="false"} == 0
         for: 2m
         labels:
           severity: warning

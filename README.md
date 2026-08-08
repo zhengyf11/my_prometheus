@@ -221,6 +221,7 @@ PD 合部示例：
     - 10.30.0.3:30000
   labels:
     role: sglang-unified
+    expected: "true"
     node: gpu-003
     endpoint: unified_30000
 ```
@@ -233,6 +234,7 @@ PD 分离和 Router 示例：
     - 10.30.0.3:30001
   labels:
     role: sglang-prefill
+    expected: "true"
     node: gpu-003
     endpoint: prefill_30001
 
@@ -240,6 +242,7 @@ PD 分离和 Router 示例：
     - 10.30.0.3:30002
   labels:
     role: sglang-decode
+    expected: "true"
     node: gpu-003
     endpoint: decode_30002
 
@@ -247,6 +250,7 @@ PD 分离和 Router 示例：
     - 10.30.0.3:30003
   labels:
     role: sglang-router
+    expected: "true"
     node: gpu-003
     endpoint: router_30003
 ```
@@ -263,6 +267,7 @@ PD 分离和 Router 示例：
 注意事项：
 
 - 删除未使用的占位条目，不要让 `127.0.0.1:39000-39003` 长期保留为 `DOWN`。
+- 已投入监控的真实目标必须设置 `expected: "true"`；保留但尚未启用的地址设置 `expected: "false"`。SGLang 看板和 `InstanceDown` 告警会排除后者。
 - `targets` 决定实际网络地址；`node` 和 `endpoint` 是便于识别的附加标签。
 - Prometheus 必须能访问该 IP 和端口。SGLang 与 Prometheus 在同一台机器时才使用 `127.0.0.1`。
 - file_sd 默认每 30 秒重新读取 target 文件，正常情况下不需要重启 Prometheus。
@@ -353,7 +358,7 @@ PD 分离看板顶部的 `角色 (Role)` 支持单选、多选和 All；`实例 
 
 两张原全量看板继续保留，兼容已有 URL，但刷新周期调整为 1 分钟，只有采集健康、关键总览和 PD 时延链路默认展开；其他 Row 折叠后按需查询。六张运维看板之间可通过顶部“SGLang 运维看板”下拉链接切换，并保留当前时间范围和变量。
 
-SGLang 面板标题采用 `中文名称（大致解释）`，Prometheus 原始指标名不占用标题或图例，可在面板信息（Panel description）中查看。看板的展示约定如下：
+SGLang 面板使用简短中文标题；英文名、Prometheus 原始指标和详细口径放在面板信息（Panel description）中。看板的展示约定如下：
 
 - Counter 原指标虽然以 `_total` 表示累计值，趋势面板统一使用 `rate()` 展示每秒速率，并使用“请求完成速率”“Prefill 吞吐”“Decode 吞吐”等速率名称，不把速率误称为总数。
 - Engine 模型级指标严格匹配模型 (Model) 变量，并按 Role、Instance、Model 分组；HTTP、进程等实例级指标不带 `model_name`，不受 Model 变量影响。
@@ -363,16 +368,17 @@ SGLang 面板标题采用 `中文名称（大致解释）`，Prometheus 原始�
 - 输入和生成 Token 长度使用分段数量展示；统计窗口是当前选择的 Dashboard 时间范围。
 - 未缓存输入 Token 长度不单独展示，页面使用总输入与未缓存输入 Token 计算缓存命中率。
 - 每个普通指标单独成图；关键指标和请求全链路时延放在靠前的独立分组中。
-- 看板顶部的“采集健康”分组独立展示目标状态、目标缺失状态、最近成功采集距今时间、单次采集样本数和采集耗时。
+- 看板顶部的“采集健康”分组只查询 `expected="true"` 的 SGLang target，展示目标状态、纳管数量、最近成功采集时间、抓取样本/耗时、记录规则数量和规则评估失败。
+- 最近成功采集时间固定使用绿/黄/红阈值，不再按序列随机配色；Service Overview 只展示目标状态、新鲜度和规则失败三个核心健康状态。
 - 时序图不会跨空值连线；Prometheus 抓取中断会显示为曲线缺口。
 - 所有数值轴从 0 开始，比例轴固定为 0–100%；不保留无业务依据的默认阈值 80。
 - 高基数 Router 错误、熔断转换和重试耗尽指标使用 `topk(10)` 即时表格，保留 exporter 原始标签。
 
-“关键引擎指标”分组包含 15 个值班面板，覆盖请求/Token 吞吐、Abort、运行与等待请求、TTFT/ITL/E2E、Token 池/引擎利用率以及 KV 传输失败、重试和延迟。“关键 Router 指标”包含 12 个面板，其中 HTTP 响应按 2xx、5xx、429 展示占比，并展示 Router 错误、限流、重试耗尽、熔断状态和健康 Worker 总数。
+Service Overview 收敛为 13 个业务面板，覆盖客户请求速率、Prefill/Decode Token 吞吐、Abort、运行/等待请求、TTFT/ITL/E2E、Token 使用率、KV 传输失败、HTTP 结果和健康 Worker；完整指标仍在其他详情看板。趋势图图例统一显示当前值和窗口最大值，不用 Mean 掩盖稀疏流量峰值。
 
 当前 SGLang `/metrics` 不提供真实 GPU 利用率和运行时显存占用；`sglang:utilization` 是引擎调度利用率，不能当作 GPU 利用率。需要 GPU 面板时必须另行部署 DCGM Exporter 或 NVIDIA GPU Exporter。当前 `smg_worker_health` 只有 `worker` 标签，没有 `worker_type`/模型标签，因此健康 Worker 只能展示总数，不能准确拆成健康 Prefill/Decode Worker 数。
 
-PD 分离与 Router 看板还包含两个派生指标分组。它们读取 `/etc/prometheus/rules/default.yml` 中以 `my_prometheus:` 开头的 recording rules，展示 PD 吞吐/容量比、KV 失败与重试比例、KV P99 延迟/速度，以及 Router 错误率、重试耗尽率、健康 Worker、打开的熔断器和 Worker 负载偏斜。TTFT、ITL、E2E、KV 和 Router 核心时延也使用 30 秒预计算的 5 分钟 recording rules，避免页面重复扫描 Histogram buckets。
+PD 分离与 Router 看板还包含两个派生指标分组。它们优先读取 `/etc/prometheus/rules/default.yml` 中以 `my_prometheus:` 开头的 recording rules，并使用等价的原始 Counter/Histogram 查询作为回退。这样早于规则创建时间的历史窗口仍可复盘，不会因为 recording rule 没有历史回填而永久 No data。每个派生面板的 Tooltip 写明分子、分母、变量范围和健康方向。
 
 Prometheus 默认启用无需业务阈值的确定性告警，包括 target DOWN、Router 无健康 Worker、KV/Bootstrap 失败、Router 重试耗尽、Worker 熔断器打开和 Router Mesh 断连。查看规则和当前告警：
 
@@ -385,9 +391,11 @@ curl -fsS http://127.0.0.1:9090/api/v1/alerts | python3 -m json.tool
 
 输入 Token 分段为 `0-4k`、`4k-15k`、`15k-60k`、`60k-300k`、`300k-1M`、`1M+`；生成 Token 分段为 `0-500`、`500-2k`、`2k-8k`、`8k-30k`、`30k-100k`、`100k+`。这些区间使用 SGLang 默认 Histogram bucket 的实际边界；每段数值由相邻累计 bucket 相减得到，因此不需要修改 SGLang 启动参数。
 
-在 PD 分离与 Router 看板中，所有 PromQL 都直接带有 `role=~"$role"`。选择 Router 后，PD 指标面板不会查询到 PD 数据；由于 Grafana 静态 Dashboard JSON 不支持按变量动态隐藏任意面板，不适用的 PD 面板仍会保留位置并显示 `No data`。
+在 PD 分离与 Router 看板中，普通 PromQL 带有 `role=~"$role"`。Prefill Token 面板额外固定 `role="sglang-prefill"`，Decode Token 面板额外固定 `role="sglang-decode"`，避免两阶段交叉展示。Prefill/Decode 吞吐比是跨角色全局指标，不受 Role/Instance 变量影响，Tooltip 会明确标注。Grafana 静态 Dashboard JSON 不能按指标存在性可靠地动态隐藏面板，不适用面板仍可能保留位置。
 
-`No data` 不能直接解释为“功能未启用”。先查看“采集健康”分组：`up=0` 表示目标存在但抓取失败；目标缺失状态为 1 表示服务发现、target 配置、标签或变量选择不匹配；最近成功采集距今时间持续增大表示 exporter 或链路已停止成功上报。健康指标正常后，再按以下顺序检查业务指标：
+`No data` 不能直接解释为“功能未启用”。先查看“采集健康”分组：`up=0` 表示纳管目标存在但抓取失败；最近成功采集距今时间持续增大表示 exporter 或链路停止成功上报；规则失败大于 0 表示 recording rule 评估异常。中止、KV/Bootstrap 失败、Prefill 重试、Router 错误和重试耗尽这些已确认的懒注册 Counter，会在基准请求 Counter 存在时显示 0；两者都不存在时仍保留 No data，以免把版本不支持或采集异常伪装成零错误。
+
+Dashboard 根字段 `refresh` 不能根据绝对/相对时间范围自动切换。实时看板默认刷新；分享历史绝对时间链接时，在 Grafana 刷新下拉框选择 `Off`，或删除 URL 中的 `refresh` 参数，避免重复查询不会变化的历史数据。
 
 1. 直接检查 `/metrics` 中是否存在面板查询的指标名。
 2. 在 Prometheus 中查询 `up` 和具体 `sglang:*` 指标。
