@@ -17,17 +17,6 @@ class DashboardTests(unittest.TestCase):
         for name, path in cls.paths.items():
             with open(str(path), "r") as handle:
                 cls.dashboards[name] = json.load(handle)
-        cls.operational = {}
-        for filename in (
-            "sglang-service-overview.json",
-            "sglang-pd-pipeline.json",
-            "sglang-engine-scheduler.json",
-            "sglang-router-worker.json",
-            "sglang-kv-capacity.json",
-            "sglang-optional-features.json",
-        ):
-            with open(str(dashboard_dir / filename), "r") as handle:
-                cls.operational[filename] = json.load(handle)
         with open(str(grafana_dir / "sglang-translations.json"), "r") as handle:
             cls.translations = json.load(handle)
 
@@ -109,7 +98,7 @@ class DashboardTests(unittest.TestCase):
         }
         self.assertEqual(set(self.translations["metrics"]), metric_names)
         self.assertEqual(set(self.translations["categories"]), category_names)
-        self.assertEqual(len(self.translations["dashboards"]), 8)
+        self.assertEqual(len(self.translations["dashboards"]), 2)
         for translation in self.translations["metrics"].values():
             self.assertTrue(translation["title"])
             self.assertTrue(translation["description"])
@@ -147,6 +136,16 @@ class DashboardTests(unittest.TestCase):
         self.assertTrue(role["multi"])
         self.assertTrue(role["includeAll"])
         self.assertEqual(role["allValue"], ".*")
+
+        for dashboard in self.dashboards.values():
+            for variable in dashboard["templating"]["list"]:
+                self.assertEqual(variable["current"]["text"], "All")
+                self.assertEqual(variable["current"]["value"], "$__all")
+                self.assertTrue(variable["current"]["selected"])
+            self.assertTrue(all(
+                link["keepTime"] and not link["includeVars"]
+                for link in dashboard["links"]
+            ))
 
         split_model = next(
             item for item in self.dashboards["split"]["templating"]["list"]
@@ -429,7 +428,7 @@ class DashboardTests(unittest.TestCase):
                         self.assertEqual(panel["title"], expected_titles[item["name"]])
 
     def test_split_token_throughput_panels_are_fixed_to_their_stage(self):
-        for dashboard in [self.dashboards["split"], *self.operational.values()]:
+        for dashboard in [self.dashboards["split"]]:
             for metric_name, fixed_role in (
                 ("sglang:prompt_tokens_total", "sglang-prefill"),
                 ("sglang:generation_tokens_total", "sglang-decode"),
@@ -563,43 +562,14 @@ class DashboardTests(unittest.TestCase):
                     panel["fieldConfig"]["defaults"]["custom"]["spanNulls"]
                 )
 
-    def test_operational_dashboards_are_split_and_refresh_by_cost(self):
-        expected = {
-            "sglang-service-overview.json": ("my-prometheus-sglang-service-overview", "30s"),
-            "sglang-pd-pipeline.json": ("my-prometheus-sglang-pd-pipeline", "30s"),
-            "sglang-engine-scheduler.json": ("my-prometheus-sglang-engine-scheduler", "1m"),
-            "sglang-router-worker.json": ("my-prometheus-sglang-router-worker", "1m"),
-            "sglang-kv-capacity.json": ("my-prometheus-sglang-kv-capacity", "1m"),
-            "sglang-optional-features.json": ("my-prometheus-sglang-optional-features", "1m"),
-        }
-        self.assertEqual(set(self.operational), set(expected))
-        for filename, dashboard in self.operational.items():
-            uid, refresh = expected[filename]
-            self.assertEqual(dashboard["uid"], uid)
-            self.assertEqual(dashboard["refresh"], refresh)
-            panel_ids = [panel["id"] for panel in self.all_panels(dashboard)]
-            self.assertEqual(len(panel_ids), len(set(panel_ids)))
-            for variable in dashboard["templating"]["list"]:
-                self.assertEqual(variable["datasource"]["uid"], "Prometheus")
-            for panel in self.data_panels(dashboard):
-                self.assertEqual(panel["datasource"]["uid"], "Prometheus")
-
+    def test_only_two_sglang_dashboards_are_generated(self):
+        dashboard_dir = self.paths["unified"].parent
+        self.assertEqual(
+            {path.name for path in dashboard_dir.glob("sglang-*.json")},
+            {"sglang-pd-unified.json", "sglang-pd-disaggregated.json"},
+        )
         self.assertEqual(self.dashboards["unified"]["refresh"], "1m")
         self.assertEqual(self.dashboards["split"]["refresh"], "1m")
-
-        overview = self.operational["sglang-service-overview.json"]
-        self.assertEqual(len(self.metric_panels(overview)), 13)
-        self.assertEqual(
-            len([
-                panel for panel in self.all_panels(overview)
-                if panel.get("x-panelKind") == "scrape-health"
-            ]),
-            4,
-        )
-        self.assertFalse(any(
-            panel.get("x-panelKind") == "derived"
-            for panel in self.all_panels(overview)
-        ))
 
     def test_full_catalog_dashboards_collapse_non_core_rows_correctly(self):
         expected_expanded = {
@@ -620,7 +590,7 @@ class DashboardTests(unittest.TestCase):
                     self.assertTrue(row["panels"])
 
     def test_axes_thresholds_and_high_cardinality_tables_are_bounded(self):
-        for dashboard in list(self.dashboards.values()) + list(self.operational.values()):
+        for dashboard in self.dashboards.values():
             for panel in self.data_panels(dashboard):
                 defaults = panel["fieldConfig"]["defaults"]
                 self.assertEqual(defaults["min"], 0)

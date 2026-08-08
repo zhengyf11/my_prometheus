@@ -347,16 +347,10 @@ ssh -L 13000:127.0.0.1:3000 -L 19090:127.0.0.1:9090 \
 - `Linux Hosts/Linux Node Overview`：Linux CPU、内存、磁盘和网络。
 - `SGLang/SGLang PD 合部指标 (SGLang PD Unified Metrics)`：PD 合部指标。
 - `SGLang/SGLang PD 分离与 Router 指标 (SGLang PD Disaggregated and Router Metrics)`：Prefill、Decode 和 Router 指标。
-- `SGLang/SGLang 服务总览 (SGLang Service Overview)`：30 秒刷新的值班入口。
-- `SGLang/SGLang PD 链路 (SGLang PD Pipeline)`：PD 队列、阶段时延和 KV 传输。
-- `SGLang/SGLang 引擎与调度器 (SGLang Engine and Scheduler)`：Engine、Scheduler、请求和 Token。
-- `SGLang/SGLang Router 与 Worker (SGLang Router and Worker)`：Router、Worker、熔断和重试。
-- `SGLang/SGLang KV 与容量 (SGLang KV and Capacity)`：KV/SWA/Mamba 池、容量和计算运行时。
-- `SGLang/SGLang 可选功能 (SGLang Optional Features)`：Grammar、投机解码、LoRA、HiCache、MCP 和 Mesh。
 
 PD 分离看板顶部的 `角色 (Role)` 支持单选、多选和 All；`实例 (Instance)`、`模型 (Model)` 也支持多选。
 
-两张原全量看板继续保留，兼容已有 URL，但刷新周期调整为 1 分钟，只有采集健康、关键总览和 PD 时延链路默认展开；其他 Row 折叠后按需查询。六张运维看板之间可通过顶部“SGLang 运维看板”下拉链接切换，并保留当前时间范围和变量。
+项目只部署这两张 SGLang 看板。采集健康、关键 Engine/Router 指标和请求时延链路优先展示，其他 Row 默认折叠并按需查询。顶部“SGLang 看板”下拉链接只保留时间范围，不携带 Role、Instance、Model，避免不同看板之间传递不兼容变量。
 
 SGLang 面板使用简短中文标题；英文名、Prometheus 原始指标和详细口径放在面板信息（Panel description）中。看板的展示约定如下：
 
@@ -369,12 +363,12 @@ SGLang 面板使用简短中文标题；英文名、Prometheus 原始指标和�
 - 未缓存输入 Token 长度不单独展示，页面使用总输入与未缓存输入 Token 计算缓存命中率。
 - 每个普通指标单独成图；关键指标和请求全链路时延放在靠前的独立分组中。
 - 看板顶部的“采集健康”分组只查询 `expected="true"` 的 SGLang target，展示目标状态、纳管数量、最近成功采集时间、抓取样本/耗时、记录规则数量和规则评估失败。
-- 最近成功采集时间固定使用绿/黄/红阈值，不再按序列随机配色；Service Overview 只展示目标状态、新鲜度和规则失败三个核心健康状态。
+- 最近成功采集时间固定使用绿/黄/红阈值，不再按序列随机配色。
 - 时序图不会跨空值连线；Prometheus 抓取中断会显示为曲线缺口。
 - 所有数值轴从 0 开始，比例轴固定为 0–100%；不保留无业务依据的默认阈值 80。
 - 高基数 Router 错误、熔断转换和重试耗尽指标使用 `topk(10)` 即时表格，保留 exporter 原始标签。
 
-Service Overview 收敛为 13 个业务面板，覆盖客户请求速率、Prefill/Decode Token 吞吐、Abort、运行/等待请求、TTFT/ITL/E2E、Token 使用率、KV 传输失败、HTTP 结果和健康 Worker；完整指标仍在其他详情看板。趋势图图例统一显示当前值和窗口最大值，不用 Mean 掩盖稀疏流量峰值。
+两张看板的关键分组覆盖请求/Token 吞吐、Abort、运行与等待请求、TTFT/ITL/E2E、KV 传输、Router HTTP 结果和健康 Worker。趋势图图例统一显示当前值和窗口最大值，不用 Mean 掩盖稀疏流量峰值。
 
 当前 SGLang `/metrics` 不提供真实 GPU 利用率和运行时显存占用；`sglang:utilization` 是引擎调度利用率，不能当作 GPU 利用率。需要 GPU 面板时必须另行部署 DCGM Exporter 或 NVIDIA GPU Exporter。当前 `smg_worker_health` 只有 `worker` 标签，没有 `worker_type`/模型标签，因此健康 Worker 只能展示总数，不能准确拆成健康 Prefill/Decode Worker 数。
 

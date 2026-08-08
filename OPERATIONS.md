@@ -54,12 +54,6 @@ cd /opt/my_prometheus-installer
 | `/var/lib/grafana/dashboards/linux/node-overview.json` | Linux Dashboard 运行时文件 |
 | `/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json` | PD 合部 Dashboard 运行时文件 |
 | `/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json` | PD 分离与 Router Dashboard 运行时文件 |
-| `/var/lib/grafana/dashboards/sglang/sglang-service-overview.json` | SGLang 服务总览运行时文件 |
-| `/var/lib/grafana/dashboards/sglang/sglang-pd-pipeline.json` | PD 链路运行时文件 |
-| `/var/lib/grafana/dashboards/sglang/sglang-engine-scheduler.json` | Engine/Scheduler 运行时文件 |
-| `/var/lib/grafana/dashboards/sglang/sglang-router-worker.json` | Router/Worker 运行时文件 |
-| `/var/lib/grafana/dashboards/sglang/sglang-kv-capacity.json` | KV/容量运行时文件 |
-| `/var/lib/grafana/dashboards/sglang/sglang-optional-features.json` | 可选功能运行时文件 |
 | `/var/lib/grafana` | Grafana 数据库、插件和运行数据 |
 
 Dashboard 源文件与运行时文件不是同一份：
@@ -69,7 +63,6 @@ Dashboard 源文件与运行时文件不是同一份：
 | Linux | `/opt/my_prometheus-installer/grafana/dashboards/node-overview.json` | `/var/lib/grafana/dashboards/linux/node-overview.json` |
 | PD 合部 | `/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-unified.json` | `/var/lib/grafana/dashboards/sglang/sglang-pd-unified.json` |
 | PD 分离与 Router | `/opt/my_prometheus-installer/grafana/dashboards/sglang-pd-disaggregated.json` | `/var/lib/grafana/dashboards/sglang/sglang-pd-disaggregated.json` |
-| 六张运维看板 | `/opt/my_prometheus-installer/grafana/dashboards/sglang-{service-overview,pd-pipeline,engine-scheduler,router-worker,kv-capacity,optional-features}.json` | `/var/lib/grafana/dashboards/sglang/` 下的同名文件 |
 
 只修改仓库源文件不会改变当前 Grafana 页面。必须重新执行安装器，或把生成后的 JSON 发布到对应运行时目录。
 
@@ -196,7 +189,7 @@ http://<IP>:<端口>/metrics
 | 规则计算周期 | 15 秒 | `/etc/prometheus/prometheus.yml` 的 `global.evaluation_interval` | 计算告警和 recording rule |
 | file_sd 刷新周期 | 30 秒 | `scrape_configs[].file_sd_configs[].refresh_interval` | 重新读取 `/etc/prometheus/targets/*.yml` |
 | Dashboard provider 扫描周期 | 30 秒 | `/etc/grafana/provisioning/dashboards/dashboards.yml` | 重新扫描运行时 Dashboard JSON |
-| SGLang Dashboard 自动刷新 | 总览/PD 链路 30 秒，详情 1 分钟 | Dashboard JSON 根字段 `refresh` | 历史绝对时间复盘时手动设为 Off |
+| SGLang Dashboard 自动刷新 | 1 分钟 | Dashboard JSON 根字段 `refresh` | 历史绝对时间复盘时手动设为 Off |
 | SGLang 默认时间范围 | 最近 6 小时 | Dashboard JSON 根字段 `time` | 初次打开看板的查询范围 |
 
 Grafana 不能根据“绝对历史时间”或“相对实时范围”自动切换刷新。分享事故复盘链接时，应在刷新下拉框选择 `Off`，或删除 URL 中的 `refresh` 参数；实时值班时保留默认刷新。
@@ -328,22 +321,16 @@ Grafana 中的 Dashboard 和 Panel 不是同一个层级：
 - Dashboard 是一整张看板，每个 Dashboard 对应仓库中的一个 JSON 文件。
 - Panel 是 Dashboard 内的一张图表、数字、表格或说明区域，配置在 JSON 的 `panels[]` 中。
 
-本项目当前提供 8 张 SGLang Dashboard，因此仓库中有 8 个 SGLang JSON：
+本项目只提供 2 张 SGLang Dashboard，因此仓库中只有 2 个 SGLang JSON：
 
 | Dashboard JSON | 类型 | 用途 |
 |---|---|---|
-| `sglang-pd-unified.json` | 全量看板 | PD 合部的完整指标目录 |
-| `sglang-pd-disaggregated.json` | 全量看板 | PD 分离与 Router 的完整指标目录 |
-| `sglang-service-overview.json` | 运维看板 | 日常值班入口，只展开核心健康和 SLI |
-| `sglang-pd-pipeline.json` | 运维看板 | PD 队列、阶段时延和 KV 传输 |
-| `sglang-engine-scheduler.json` | 运维看板 | Engine、Scheduler、请求和 Token |
-| `sglang-router-worker.json` | 运维看板 | Router、Worker、重试和熔断 |
-| `sglang-kv-capacity.json` | 运维看板 | KV Cache、容量和计算运行时 |
-| `sglang-optional-features.json` | 运维看板 | LoRA、HiCache、MCP、Mesh 等低频功能 |
+| `sglang-pd-unified.json` | PD 合部 | 关键 Engine 指标和时延优先展示，其他指标按分类折叠 |
+| `sglang-pd-disaggregated.json` | PD 分离与 Router | 关键 Engine、Router 和时延优先展示，其他指标按分类折叠 |
 
-它们是“2 张全量看板 + 6 张专项运维看板”的关系。全量看板用于查阅所有指标并兼容原有 URL；Service Overview 用于值班；其余专项看板用于按故障领域深入排查。部分指标会在多张看板中重复出现，例如 TTFT 同时出现在总览、PD Pipeline 和全量看板中。这只是不同观察视角，不会导致 Prometheus 重复采集或重复存储指标。
+两张看板都保留完整指标目录，但默认只展开采集健康、关键指标和请求时延链路。低频、可选功能和细节分类默认折叠，展开 Row 时才按需查询。
 
-8 个 JSON 都使用同一个 Prometheus 数据源和同一套 Role、Instance、Model 标签，由仓库中的 `tools/generate_sglang_dashboards.py` 统一生成。正式修改应调整生成器后重新生成，不能只手工修改某一个 JSON，否则下次生成时会被覆盖。仓库文件安装后位于：
+两个 JSON 都使用同一个 Prometheus 数据源，由仓库中的 `tools/generate_sglang_dashboards.py` 统一生成。正式修改应调整生成器后重新生成，不能只手工修改 JSON，否则下次生成时会被覆盖。仓库文件安装后位于：
 
 ```text
 /var/lib/grafana/dashboards/sglang/
@@ -386,6 +373,8 @@ label_values(sglang:num_requests_total{instance=~"$instance",role=~"$role",engin
 ```
 
 变量内部名称保持为 `$role`、`$instance`、`$model`。界面标签显示为 `角色 (Role)`、`实例 (Instance)`、`模型 (Model)`。这些变量都支持多选和 All。
+
+生成后的 JSON 将所有多选变量的 `current` 明确初始化为 `All`（值为 `$__all`，按 `allValue: ".*"` 展开）。如果该字段为空，健康查询中的 `role=~"$role"` 和 `instance=~"$instance"` 可能展开为空正则并显示 No data。两张看板之间的链接设置 `includeVars: false`、`keepTime: true`：保留时间范围，但不传递作用域不同的 Role、Instance、Model。
 
 当前 target 和 SGLang exporter 没有统一提供 `cluster`、`namespace`、`service`、`version` 标签，因此不创建永远为空的下拉变量。需要这些维度时，应先在 `/etc/prometheus/targets/*.yml` 的 `labels` 中统一补齐，再扩展 Dashboard 变量与每条 PromQL。当前依赖顺序为 Role -> Instance -> Model，避免 Role All 直接展开无关实例。
 
@@ -439,7 +428,7 @@ Counter 原指标表示进程启动以来的累计值，但趋势面板统一使
 
 在 PD 分离部署中，`sglang:num_requests_total` 表示 Prefill/Decode 各阶段完成速率，同一请求可能在两个阶段分别计数，不能相加当作客户 RPS。客户入口速率使用 Router 的 `smg_router_requests_total`。Prefill 吞吐固定查询 `sglang-prefill`，Decode 吞吐固定查询 `sglang-decode`。
 
-模型级 Engine 指标严格使用 `model_name=~"$model"`，并按 `role, instance, model_name` 聚合。HTTP、进程等实例级指标没有 `model_name` 标签，查询不添加模型过滤，只按 `role, instance` 聚合；这些面板不受模型 (Model) 下拉框影响。Router 当前至少保留 `role, instance`，更细的 `model`、`worker`、`endpoint` 和错误类型维度由对应专项面板处理。
+模型级 Engine 指标严格使用 `model_name=~"$model"`，并按 `role, instance, model_name` 聚合。HTTP、进程等实例级指标没有 `model_name` 标签，查询不添加模型过滤，只按 `role, instance` 聚合；这些面板不受模型 (Model) 下拉框影响。Router 当前至少保留 `role, instance`，更细的标签由对应分类中的面板处理。
 
 普通 Histogram 面板使用两类查询：
 
@@ -480,13 +469,13 @@ TTFT、ITL、端到端延迟、KV 传输延迟以及 Router 核心时延同时�
 
 对于 Counter，结构化翻译仍描述原始累计指标，面板标题则根据 `rate()` 查询派生为速率语义；Panel description 会明确写出“每秒速率，不是累计总数”。
 
-Service Overview 只展开 13 个核心业务面板，并以三个紧凑状态展示 target、新鲜度和规则失败；完整 183 指标目录保留在全量及专项看板。低频 Row 默认折叠，避免首次打开同时发起全部查询。
+PD 合部默认展开关键 Engine 指标和请求时延链路；PD 分离与 Router 默认展开关键 Engine、关键 Router 和请求时延链路。其他 Row 默认折叠，避免首次打开同时发起全部查询。
 
 Router HTTP 响应面板只使用 `smg_http_responses_total`，先按 `status_code` 计算 2xx、5xx、429 的速率，再除以全部响应速率得到占比。健康 Worker 面板对 `smg_worker_health` 求和。当前该指标没有 `worker_type` 或模型标签，因此只能展示健康 Worker 总数，不能可靠拆成健康 Prefill/Decode Worker 数。
 
 SGLang 指标中的 `sglang:utilization` 表示引擎调度利用率，不是 GPU 利用率；`sglang:startup_available_gpu_memory_gb` 只是启动时可用显存，不是运行时显存。真实 GPU 利用率和显存面板需要额外接入 DCGM Exporter 或 NVIDIA GPU Exporter，本项目当前没有这类数据源，因此不生成伪 GPU 面板。
 
-两张全量指标看板用于兼容和指标查阅，刷新周期为 1 分钟，非核心 Row 默认折叠并把子面板嵌套在 Row 中，折叠时不会发起这些查询。六张运维看板按 `Service Overview`、`PD Pipeline`、`Engine / Scheduler`、`Router / Worker`、`KV / Capacity`、`Optional Features` 拆分；总览和 PD 链路使用 30 秒刷新，详情使用 1 分钟。核心 Histogram 面板优先查询 recording rules，并为历史窗口回退原始 bucket；高基数错误类面板使用 `topk(10)` 即时表格。
+两张看板刷新周期均为 1 分钟。非核心 Row 的子面板嵌套在 Row 中，折叠时不会发起查询。核心 Histogram 优先查询 recording rules，并为历史窗口回退原始 bucket；高基数错误类面板使用 `topk(10)` 即时表格。
 
 ### 6.8 翻译和重新生成
 
@@ -499,12 +488,6 @@ tools/generate_sglang_dashboards.py
               v
 grafana/dashboards/sglang-pd-unified.json
 grafana/dashboards/sglang-pd-disaggregated.json
-grafana/dashboards/sglang-service-overview.json
-grafana/dashboards/sglang-pd-pipeline.json
-grafana/dashboards/sglang-engine-scheduler.json
-grafana/dashboards/sglang-router-worker.json
-grafana/dashboards/sglang-kv-capacity.json
-grafana/dashboards/sglang-optional-features.json
 ```
 
 修改后执行：

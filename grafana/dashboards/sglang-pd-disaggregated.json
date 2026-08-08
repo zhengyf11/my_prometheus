@@ -11,13 +11,13 @@
     {
       "asDropdown": true,
       "icon": "external link",
-      "includeVars": true,
+      "includeVars": false,
       "keepTime": true,
       "tags": [
         "sglang-operations"
       ],
       "targetBlank": false,
-      "title": "SGLang \u8fd0\u7ef4\u770b\u677f",
+      "title": "SGLang \u770b\u677f",
       "type": "dashboards"
     }
   ],
@@ -12777,7 +12777,11 @@
     "list": [
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "Prometheus"
@@ -12801,7 +12805,11 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "Prometheus"
@@ -12825,7 +12833,11 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "Prometheus"

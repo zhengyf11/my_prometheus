@@ -1352,7 +1352,11 @@ def info_panel(title, role_text, metric_count, panel_id, y):
 def query_variable(name, label, query, multi=True):
     return {
         "allValue": ".*" if multi else None,
-        "current": {},
+        "current": {
+            "selected": True,
+            "text": "All",
+            "value": "$__all",
+        } if multi else {},
         "datasource": datasource(),
         "definition": query,
         "hide": 0,
@@ -1459,11 +1463,11 @@ def build_dashboard(kind, title, uid, groups, role_text, expanded_groups=None,
         "links": [{
             "asDropdown": True,
             "icon": "external link",
-            "includeVars": True,
+            "includeVars": False,
             "keepTime": True,
             "tags": ["sglang-operations"],
             "targetBlank": False,
-            "title": "SGLang 运维看板",
+            "title": "SGLang 看板",
             "type": "dashboards",
         }],
         "liveNow": False,
@@ -1500,24 +1504,6 @@ def validate_catalog(groups, expected_count):
         raise RuntimeError("duplicate metrics: {0}".format(", ".join(duplicates)))
 
 
-def selected_groups(*names):
-    combined = {}
-    combined.update(ENGINE_GROUPS)
-    combined.update(ROUTER_GROUPS)
-    return OrderedDict((name, combined[name]) for name in names)
-
-
-def selected_metric_groups(*definitions):
-    lookup = {
-        item["name"]: item
-        for item in flatten(ENGINE_GROUPS) + flatten(ROUTER_GROUPS)
-    }
-    return OrderedDict(
-        (title, [lookup[name] for name in names])
-        for title, names in definitions
-    )
-
-
 def main():
     validate_catalog(ENGINE_GROUPS, 122)
     validate_catalog(ROUTER_GROUPS, 61)
@@ -1526,12 +1512,6 @@ def main():
         (
             "SGLang PD Unified Metrics",
             "SGLang PD Disaggregated and Router Metrics",
-            "SGLang Service Overview",
-            "SGLang PD Pipeline",
-            "SGLang Engine and Scheduler",
-            "SGLang Router and Worker",
-            "SGLang KV and Capacity",
-            "SGLang Optional Features",
         ),
         list(ENGINE_GROUPS) + list(ROUTER_GROUPS),
         [item["name"] for item in flatten(ENGINE_GROUPS) + flatten(ROUTER_GROUPS)],
@@ -1565,91 +1545,6 @@ def main():
             include_derived=True,
         ),
     )
-
-    operational_dashboards = (
-        (
-            "sglang-service-overview.json", "SGLang Service Overview",
-            "my-prometheus-sglang-service-overview",
-            selected_metric_groups(
-                ("Key Engine Metrics", (
-                    "sglang:prompt_tokens_total",
-                    "sglang:generation_tokens_total",
-                    "sglang:num_aborted_requests_total",
-                    "sglang:num_running_reqs",
-                    "sglang:num_queue_reqs",
-                    "sglang:token_usage",
-                    "sglang:time_to_first_token_seconds",
-                    "sglang:inter_token_latency_seconds",
-                    "sglang:e2e_request_latency_seconds",
-                    "sglang:num_transfer_failed_reqs_total",
-                )),
-                ("Key Router Metrics", (
-                    "smg_router_requests_total",
-                    "smg_http_responses_total",
-                    "smg_worker_health",
-                )),
-            ),
-            ("Key Engine Metrics", "Key Router Metrics"), "30s", False,
-        ),
-        (
-            "sglang-pd-pipeline.json", "SGLang PD Pipeline",
-            "my-prometheus-sglang-pd-pipeline",
-            selected_groups("Request Latency Pipeline", "PD Queues and KV Transfer"),
-            ("Request Latency Pipeline", "PD Queues and KV Transfer"), "30s", False,
-        ),
-        (
-            "sglang-engine-scheduler.json", "SGLang Engine and Scheduler",
-            "my-prometheus-sglang-engine-scheduler",
-            selected_groups(
-                "HTTP, Process and Functions", "Requests, Tokens and User Latency",
-                "Scheduler State", "Retraction, Queue and Stage Latency",
-            ),
-            ("Scheduler State",), "1m", False,
-        ),
-        (
-            "sglang-router-worker.json", "SGLang Router and Worker",
-            "my-prometheus-sglang-router-worker",
-            selected_groups(
-                "Key Router Metrics", "Router Request Latency Pipeline",
-                "HTTP and Router Requests", "Worker Pool and Health",
-                "Policies, Circuit Breaker and Retries",
-            ),
-            ("Key Router Metrics",), "1m", False,
-        ),
-        (
-            "sglang-kv-capacity.json", "SGLang KV and Capacity",
-            "my-prometheus-sglang-kv-capacity",
-            selected_groups(
-                "KV, SWA and Mamba Pools", "CUDA, Tokens and MFU Runtime",
-                "Engine Capacity and Startup", "PD Queues and KV Transfer",
-                "Prefix Cache and Routing Keys",
-            ),
-            ("KV, SWA and Mamba Pools",), "1m", False,
-        ),
-        (
-            "sglang-optional-features.json", "SGLang Optional Features",
-            "my-prometheus-sglang-optional-features",
-            selected_groups(
-                "Grammar", "Speculative Decoding and Prefill Delayer",
-                "Optional LoRA, HiCache, Streaming and EPLB",
-                "Discovery, MCP and Persistence", "Router Mesh",
-            ),
-            (), "1m", False,
-        ),
-    )
-    for filename, title, uid, groups, expanded, refresh, include_derived in operational_dashboards:
-        write_dashboard(
-            filename,
-            build_dashboard(
-                "split-router", title, uid, groups,
-                "the selected SGLang operational scope",
-                expanded_groups=expanded,
-                refresh=refresh,
-                include_derived=include_derived,
-                compact_health=filename == "sglang-service-overview.json",
-            ),
-        )
-
 
 if __name__ == "__main__":
     main()

@@ -214,12 +214,6 @@ providers:
     for name in (
         "sglang-pd-unified.json",
         "sglang-pd-disaggregated.json",
-        "sglang-service-overview.json",
-        "sglang-pd-pipeline.json",
-        "sglang-engine-scheduler.json",
-        "sglang-router-worker.json",
-        "sglang-kv-capacity.json",
-        "sglang-optional-features.json",
     ):
         copy_file(
             ctx,
@@ -229,12 +223,22 @@ providers:
             owner="grafana",
             group="grafana",
         )
-    legacy_router_dashboard = sglang_dashboard_dir / "sglang-router.json"
-    if getattr(ctx, "dry_run", False):
-        LOG.info("[dry-run] remove legacy dashboard %s", legacy_router_dashboard)
-    elif legacy_router_dashboard.exists():
-        legacy_router_dashboard.unlink()
-        LOG.info("removed legacy dashboard %s", legacy_router_dashboard)
+    obsolete_dashboards = (
+        "sglang-router.json",
+        "sglang-service-overview.json",
+        "sglang-pd-pipeline.json",
+        "sglang-engine-scheduler.json",
+        "sglang-router-worker.json",
+        "sglang-kv-capacity.json",
+        "sglang-optional-features.json",
+    )
+    for name in obsolete_dashboards:
+        obsolete = sglang_dashboard_dir / name
+        if getattr(ctx, "dry_run", False):
+            LOG.info("[dry-run] remove obsolete dashboard %s", obsolete)
+        elif obsolete.exists():
+            obsolete.unlink()
+            LOG.info("removed obsolete dashboard %s", obsolete)
 
 
 def wait_for_grafana(ctx, timeout=90):

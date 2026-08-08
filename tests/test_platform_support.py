@@ -150,12 +150,6 @@ class GrafanaTests(unittest.TestCase):
             "node-overview.json",
             "sglang-pd-unified.json",
             "sglang-pd-disaggregated.json",
-            "sglang-service-overview.json",
-            "sglang-pd-pipeline.json",
-            "sglang-engine-scheduler.json",
-            "sglang-router-worker.json",
-            "sglang-kv-capacity.json",
-            "sglang-optional-features.json",
         ])
         destinations = [str(call[0][2]) for call in copy.call_args_list]
         self.assertIn("/var/lib/grafana/dashboards/linux/node-overview.json", destinations)
@@ -165,7 +159,7 @@ class GrafanaTests(unittest.TestCase):
         self.assertIn("path: /var/lib/grafana/dashboards/linux", provider)
         self.assertIn("folder: SGLang", provider)
         self.assertIn("path: /var/lib/grafana/dashboards/sglang", provider)
-        unlink.assert_called_once()
+        self.assertEqual(unlink.call_count, 7)
 
     def test_provisions_only_shared_prometheus_datasource(self):
         ctx = Context()
